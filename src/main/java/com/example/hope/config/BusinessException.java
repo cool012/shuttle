@@ -13,7 +13,7 @@ public class BusinessException extends RuntimeException {
         this.message = message;
     }
 
-    public static void isExist(int res,String message){
+    public static void check(int res,String message){
         if(res < 1){
             throw new BusinessException(-1,message);
         }

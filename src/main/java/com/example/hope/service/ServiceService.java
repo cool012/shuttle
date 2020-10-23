@@ -26,7 +26,7 @@ public class ServiceService {
     public void insert(String serviceName){
         int res = serviceMapper.insert(serviceName);
         log.info("service insert serviceName -> " + serviceName + " -> res -> " + res);
-        BusinessException.isExist(res,"添加失败");
+        BusinessException.check(res,"添加失败");
     }
 
     /**
@@ -36,7 +36,7 @@ public class ServiceService {
     public void delete(Long id) {
         int res = serviceMapper.delete(id);
         log.info("service delete id -> " + id + " -> res -> " + res);
-        BusinessException.isExist(res,"删除失败");
+        BusinessException.check(res,"删除失败");
     }
 
     /**

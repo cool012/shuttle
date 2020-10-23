@@ -28,7 +28,7 @@ public class ProductService {
     public void insert(Product product){
         int res = productMapper.insert(product);
         log.info("product insert -> " + product.toString() + " -> res -> " + res);
-        BusinessException.isExist(res,"添加失败");
+        BusinessException.check(res,"添加失败");
     }
 
     /**
@@ -38,7 +38,7 @@ public class ProductService {
     public void delete(long id){
         int res = productMapper.delete(id);
         log.info("product delete id -> " + id + " -> res -> " + res);
-        BusinessException.isExist(res,"删除失败");
+        BusinessException.check(res,"删除失败");
     }
 
     /**
@@ -48,7 +48,7 @@ public class ProductService {
     public void update(Product product){
         int res = productMapper.update(product);
         log.info("product update -> " + product.toString() + " -> res -> " + res);
-        BusinessException.isExist(res,"更新失败");
+        BusinessException.check(res,"更新失败");
     }
 
     /**

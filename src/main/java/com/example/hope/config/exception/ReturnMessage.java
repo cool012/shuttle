@@ -1,4 +1,4 @@
-package com.example.hope.model.entity;
+package com.example.hope.config.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

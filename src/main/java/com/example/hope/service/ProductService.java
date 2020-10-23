@@ -1,6 +1,6 @@
 package com.example.hope.service;
 
-import com.example.hope.config.BusinessException;
+import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
 import lombok.extern.log4j.Log4j2;

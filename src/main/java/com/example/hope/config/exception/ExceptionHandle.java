@@ -1,7 +1,6 @@
-package com.example.hope.config;
+package com.example.hope.config.exception;
 
 import com.example.hope.common.utils.ReturnMessageUtil;
-import com.example.hope.model.entity.ReturnMessage;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

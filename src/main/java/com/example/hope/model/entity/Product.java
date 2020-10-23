@@ -16,11 +16,5 @@ public class Product implements Serializable {
     private int price;
     private String image;
     private int service_type;
-
-    public Product(String product_name, int price, String image, int service_type) {
-        this.product_name = product_name;
-        this.price = price;
-        this.image = image;
-        this.service_type = service_type;
-    }
+    private int quantity;
 }

@@ -1,6 +1,6 @@
 package com.example.hope.common.utils;
 
-import com.example.hope.model.entity.ReturnMessage;
+import com.example.hope.config.exception.ReturnMessage;
 
 public class ReturnMessageUtil {
 

@@ -1,4 +1,4 @@
-package com.example.hope.config;
+package com.example.hope.config.exception;
 
 import lombok.Data;
 

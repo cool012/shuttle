@@ -57,8 +57,8 @@ public class JwtUtils {
      * @param token
      * @return
      */
-    public static int getUserId(String token){
-        int userId = parseJWT(token).get("userId", Integer.class);
+    public static long getUserId(String token){
+        long userId = parseJWT(token).get("userId", Integer.class);
         return userId;
     }
 

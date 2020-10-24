@@ -25,4 +25,9 @@ public class User implements Serializable {
     private boolean type;
     private boolean admin;
     private int score;
+
+    public User(long id, String password) {
+        this.id = id;
+        this.password = password;
+    }
 }

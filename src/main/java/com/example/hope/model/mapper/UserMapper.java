@@ -19,6 +19,9 @@ public interface UserMapper {
     @Update("update user set email = #{email},address = #{address} where id = #{id}")
     int update(User user);
 
+    @Update("update user set password = #{password} where id = #{id}")
+    int updatePassword(User user);
+
     @Select("select id,username,password,email,address,type,admin,score from user where id = #{id}")
     User findUserById(long id);
 
@@ -30,4 +33,7 @@ public interface UserMapper {
 
     @Select("select id,username,password,email,address,type,admin,score from user where username = #{name}")
     User findByName(String name);
+
+    @Select("select id,username,password,email,address,type,admin,score from user where email = #{email}")
+    User findByEmail(String email);
 }

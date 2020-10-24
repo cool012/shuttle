@@ -6,6 +6,11 @@ spring:
     password: dhy627
     url: jdbc:mysql://localhost:3306/hope?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: root
+  mail:
+    host: smtp.163.com #SMTP服务器地址
+    username: touwaerioe #登陆账号
+    password: OUWBDRKFVWGKLQUT #登陆密码（或授权码）
+    from: touwaerioe@163.com #邮件发信人（即真实邮箱）
 
     druid:
       type: com.alibaba.druid.pool.DruidDataSource

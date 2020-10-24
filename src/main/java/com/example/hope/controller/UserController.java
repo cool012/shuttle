@@ -45,6 +45,20 @@ public class UserController {
         return ReturnMessageUtil.sucess();
     }
 
+    @ApiOperation("发送邮件")
+    @RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
+    public ReturnMessage<Object> sendEmail(String email) {
+        userService.sendEmail(email);
+        return ReturnMessageUtil.sucess();
+    }
+
+    @ApiOperation("重置密码")
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    public ReturnMessage<Object> resetPassword(String token,String password) {
+        userService.resetPassword(token,password);
+        return ReturnMessageUtil.sucess();
+    }
+
     @Admin
     @ApiOperation("用户删除")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)

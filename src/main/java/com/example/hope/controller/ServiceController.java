@@ -1,5 +1,7 @@
 package com.example.hope.controller;
 
+import com.example.hope.annotation.Admin;
+import com.example.hope.annotation.UserLoginToken;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.service.ServiceService;
@@ -23,6 +25,7 @@ public class ServiceController {
         this.serviceService = serviceService;
     }
 
+    @Admin
     @ApiOperation("添加服务")
     @RequestMapping(value = "/insert/{name}",method = RequestMethod.GET)
     public ReturnMessage<Object> insert(@PathVariable String name){
@@ -30,6 +33,7 @@ public class ServiceController {
         return ReturnMessageUtil.sucess();
     }
 
+    @Admin
     @ApiOperation("删除服务")
     @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
     public ReturnMessage<Object> delete(@PathVariable long id){
@@ -37,6 +41,7 @@ public class ServiceController {
         return ReturnMessageUtil.sucess();
     }
 
+    @UserLoginToken
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll",method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(){

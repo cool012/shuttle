@@ -19,11 +19,10 @@ public class User implements Serializable {
 
     private long id;
     private String username;
-    private String encryption_password;
+    private String password;
     private String email;
     private String address;
-    private boolean user_type;
-    private boolean is_admin;
+    private boolean type;
+    private boolean admin;
     private int score;
-
 }

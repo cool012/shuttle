@@ -1,6 +1,7 @@
 package com.example.hope.service;
 
 import com.example.hope.common.utils.Encoder;
+import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
@@ -28,20 +29,18 @@ public class UserService {
 
     /**
      * 用户注册
-     *
      * @param user
      */
     public void register(User user) {
-        // 加密
-        user.setEncryption_password(Encoder.encode(user.getEncryption_password()));
+        // 用户密码加密
+        user.setPassword(Encoder.encode(user.getPassword()));
         int res = userMapper.insert(user);
-        log.info("user insert -> " + user.toString() + " -> res -> " + res);
+        log.info("user register -> " + user.toString() + " -> res -> " + res);
         BusinessException.check(res, "注册失败");
     }
 
     /**
      * 删除用户
-     *
      * @param id
      */
     public void delete(long id) {
@@ -51,8 +50,7 @@ public class UserService {
     }
 
     /**
-     * 更新用户
-     *
+     * 修改用户信息
      * @param user
      */
     public void update(User user) {
@@ -61,19 +59,21 @@ public class UserService {
         BusinessException.check(res, "更新失败");
     }
 
+    //TODO 修改用户密码
+
     /**
      * 根据id查询用户
-     *
      * @param id
      * @return
      */
-    public List<User> findUserById(long id) {
+    public User findUserById(long id) {
         return userMapper.findUserById(id);
     }
 
+    //TODO 缓存
+
     /**
      * 查询全部用户
-     *
      * @return
      */
     public List<User> findAll() {
@@ -82,14 +82,26 @@ public class UserService {
 
     /**
      * 用户登录
-     *
      * @param username
-     * @param encryption_password
+     * @param password
+     * @param expired  token过期时间，单位：分钟
      * @return
      */
-    public void login(String username, String encryption_password) {
-        encryption_password = Encoder.encode(encryption_password);
-        int res = userMapper.login(username, encryption_password);
-        BusinessException.check(res,"登录失败，用户名或密码错误");
+    public String login(String username, String password, int expired) {
+        String encryption_password = Encoder.encode(password);
+        User user = userMapper.login(username, encryption_password);
+        BusinessException.check(user != null ? 1 : 0, "登录失败，用户名或密码错误");
+        return JwtUtils.createToken(user, expired);
     }
+
+    /**
+     * 按名字查询用户
+     * @param name
+     * @return
+     */
+    public User findByName(String name) {
+        return userMapper.findByName(name);
+    }
+
+    //TODO 按id查询用户
 }

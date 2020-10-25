@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/user")
-@Api("用户相关接口")
+@Api(tags = "用户相关接口")
 public class UserController {
 
     private UserService userService;
@@ -90,7 +90,7 @@ public class UserController {
     }
 
     @ApiOperation("根据名字查询用户")
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/findByName", method = RequestMethod.GET)
     public ReturnMessage<Object> findByName(String username) {
         return ReturnMessageUtil.sucess(userService.findByName(username));
     }

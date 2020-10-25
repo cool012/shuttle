@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @description: 订单实体类
@@ -25,7 +26,7 @@ public class Order implements Serializable {
     // 产品id
     private long pid;
 
-    private Data create_time;
+    private Date create_time;
     private String address;
     private String note;
     private String file_url;

@@ -1,9 +1,7 @@
 package com.example.hope.common.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,8 +30,7 @@ public class MailUtils {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("touwaerioe@163.com");
         message.setTo(to);
-        message.setSubject("重置密码网址");
-        //TODO 加域名
+        message.setSubject("重置密码密钥");
         message.setText(text);
         javaMailSender.send(message);
     }

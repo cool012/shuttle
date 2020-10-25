@@ -14,21 +14,10 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDetail implements Serializable {
+public class OrderDetail extends Order implements Serializable {
 
-    private long id;
-
-    // 用户名
-    private long cid;
-    private String username;
-
-    private long pid;
     private String name;
-
-    private Data create_time;
-    private String address;
-    private String note;
-    private String file_url;
-    private boolean complete;
-    private boolean order_status;
+    private String waiter;
+    private String product;
+    private String type;
 }

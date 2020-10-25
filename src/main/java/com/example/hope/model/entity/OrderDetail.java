@@ -7,23 +7,23 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * @description: 订单实体类
+ * @description: 订单详情实体类
  * @author: DHY
- * @created: 2020/10/23 22:48
+ * @created: 2020/10/25 10:29
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order implements Serializable {
+public class OrderDetail implements Serializable {
 
     private long id;
 
-    // 消费者id
+    // 用户名
     private long cid;
-    // 生产者id
-    private long uid;
-    // 产品id
+    private String username;
+
     private long pid;
+    private String name;
 
     private Data create_time;
     private String address;

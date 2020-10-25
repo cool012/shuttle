@@ -45,6 +45,21 @@ public class UserService {
     }
 
     /**
+     * 用户登录
+     *
+     * @param username
+     * @param password
+     * @param expired  token过期时间，单位：分钟
+     * @return
+     */
+    public String login(String username, String password, int expired) {
+        String encryption_password = Encoder.encode(password);
+        User user = userMapper.login(username, encryption_password);
+        BusinessException.check(user != null ? 1 : 0, "登录失败，用户名或密码错误");
+        return JwtUtils.createToken(user, expired);
+    }
+
+    /**
      * 删除用户
      *
      * @param id
@@ -79,8 +94,8 @@ public class UserService {
     }
 
     /**
-     * 重置密码 -> 输入邮箱，点击发送邮件 -> 根据user加密生成token -> 从邮箱访问 /reset/{token} （前端） ->
-     * 前端获取url中token -> 重置密码（输入新密码） -> /user/restPassword
+     * 重置密码 -> 输入邮箱，点击发送邮件 -> 根据user加密生成token -> 邮箱发送成功，跳转到（前端）重置密码界面 ->
+     * 用户获取邮箱中的token，提交新密码 -> 重置密码（输入新密码） -> /user/restPassword
      *
      * @param password
      */
@@ -96,7 +111,6 @@ public class UserService {
      *
      * @param email
      */
-    //TODO 邮箱设置唯一约束
     public void sendEmail(String email) {
         User user = findByEmail(email);
         // 检查邮箱存不存在
@@ -150,20 +164,6 @@ public class UserService {
         return userMapper.findAll();
     }
 
-    /**
-     * 用户登录
-     *
-     * @param username
-     * @param password
-     * @param expired  token过期时间，单位：分钟
-     * @return
-     */
-    public String login(String username, String password, int expired) {
-        String encryption_password = Encoder.encode(password);
-        User user = userMapper.login(username, encryption_password);
-        BusinessException.check(user != null ? 1 : 0, "登录失败，用户名或密码错误");
-        return JwtUtils.createToken(user, expired);
-    }
 
     /**
      * 按名字查询用户

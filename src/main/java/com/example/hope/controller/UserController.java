@@ -88,4 +88,10 @@ public class UserController {
     public ReturnMessage<Object> findAll() {
         return ReturnMessageUtil.sucess(userService.findAll());
     }
+
+    @ApiOperation("根据名字查询用户")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByName(String username) {
+        return ReturnMessageUtil.sucess(userService.findByName(username));
+    }
 }

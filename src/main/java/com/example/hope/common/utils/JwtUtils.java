@@ -23,9 +23,9 @@ public class JwtUtils {
 
             long nowMillis = System.currentTimeMillis();
             Date now = new Date(nowMillis);
-
+            // TODO 重新生成签名密钥，考虑安全性
             //生成签名密钥
-            byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("ZGh5NjI3CiA=");
+            byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("QC%*gHZH8#");
             Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
             // 添加构成JWT的参数

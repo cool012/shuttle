@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface ProductMapper {
 
-    @Insert("insert into product(product_name,price,image,service_type) values(#{product_name},#{price},#{image},#{service_type})")
+    @Insert("insert into product(product_name,price,image,service_type,quantity) values(#{product_name},#{price},#{image},#{service_type},#{quantity})")
     int insert(Product product);
 
     @Delete("delete from product where id = #{id}")

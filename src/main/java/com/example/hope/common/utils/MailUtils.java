@@ -34,7 +34,7 @@ public class MailUtils {
         message.setTo(to);
         message.setSubject("重置密码网址");
         //TODO 加域名
-        message.setText("/user/resetPassword/" + text);
+        message.setText(text);
         javaMailSender.send(message);
     }
 }

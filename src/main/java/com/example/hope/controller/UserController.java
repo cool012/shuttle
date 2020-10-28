@@ -9,10 +9,7 @@ import com.example.hope.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @description: 用户相关路由
@@ -94,4 +91,18 @@ public class UserController {
     public ReturnMessage<Object> findByName(String username) {
         return ReturnMessageUtil.sucess(userService.findByName(username));
     }
+
+    @RequestMapping(value = "/reduceScore/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> reduceScore(@PathVariable long id) {
+        userService.reduceScore(id);
+        return ReturnMessageUtil.sucess();
+    }
+
+
+    @RequestMapping(value = "/addScore/{id}/{quantity}", method = RequestMethod.GET)
+    public ReturnMessage<Object> addScore(@PathVariable long id,@PathVariable int quantity) {
+        userService.addScore(id,quantity);
+        return ReturnMessageUtil.sucess();
+    }
+
 }

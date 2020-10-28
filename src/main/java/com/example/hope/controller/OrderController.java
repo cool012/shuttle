@@ -9,8 +9,11 @@ import com.example.hope.service.OrderService;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @description: 订单相关路由
@@ -25,7 +28,7 @@ public class OrderController {
     private OrderService orderService;
 
     @Autowired
-    public OrderController(OrderServiceIpm orderService){
+    public OrderController(OrderServiceIpm orderService) {
         this.orderService = orderService;
     }
 
@@ -54,30 +57,52 @@ public class OrderController {
     }
 
     @UserLoginToken
+    @ApiOperation("服务员接单")
+    @RequestMapping(value = "/receive/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> receiveOrder(@PathVariable long id) {
+        orderService.receive(id);
+        return ReturnMessageUtil.sucess();
+    }
+
+    @UserLoginToken
+    @ApiOperation("完成订单")
+    @RequestMapping(value = "/completed/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> insert(@PathVariable long id) {
+        orderService.completed(id);
+        return ReturnMessageUtil.sucess();
+    }
+
     @ApiOperation("查询全部订单")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll() {
-        return ReturnMessageUtil.sucess(orderService.findAll());
+    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findAll(option));
     }
 
     @Admin
     @ApiOperation("根据产品id查询订单")
     @RequestMapping(value = "/findByPid/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByPid(@PathVariable long id) {
-        return ReturnMessageUtil.sucess(orderService.findByPid(id));
+    public ReturnMessage<Object> findByPid(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByPid(id, option));
     }
 
     @UserLoginToken
     @ApiOperation("根据消费者id查询订单")
     @RequestMapping(value = "/findByCid/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByCid(@PathVariable long id) {
-        return ReturnMessageUtil.sucess(orderService.findByCid(id));
+    public ReturnMessage<Object> findByCid(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByCid(id, option));
     }
 
     @UserLoginToken
     @ApiOperation("根据生产者id查询订单")
     @RequestMapping(value = "/findByUid/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByUid(@PathVariable long id) {
-        return ReturnMessageUtil.sucess(orderService.findByUid(id));
+    public ReturnMessage<Object> findByUid(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByUid(id, option));
+    }
+
+    @UserLoginToken
+    @ApiOperation("按服务类型查询订单")
+    @RequestMapping(value = "/findByType/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByType(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByType(id, option));
     }
 }

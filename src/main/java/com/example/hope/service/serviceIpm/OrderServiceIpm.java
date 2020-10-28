@@ -1,15 +1,18 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.OrderDetail;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
+import com.example.hope.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description: 订单服务类
@@ -22,9 +25,12 @@ public class OrderServiceIpm implements OrderService {
 
     private OrderMapper orderMapper;
 
+    private UserService userService;
+
     @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper){
+    public OrderServiceIpm(OrderMapper orderMapper,UserService userService){
         this.orderMapper = orderMapper;
+        this.userService = userService;
     }
 
     /**
@@ -58,12 +64,45 @@ public class OrderServiceIpm implements OrderService {
         BusinessException.check(res,"更新失败");
     }
 
+
     /**
-     * 查询全部订单
+     * 接单
+     * @param id
      * @return
      */
-    public List<OrderDetail> findAll(){
-        return orderMapper.findAll(" ");
+    @Override
+    public void receive(long id){
+        // TODO 检查
+        userService.reduceScore(id);
+        int res = orderMapper.receive(id);
+        log.info("order receiveOrder -> " + id + " -> res -> " + res);
+        BusinessException.check(res,"接单失败");
+    }
+
+    /**
+     * 完成订单
+     * @param id
+     */
+    @Override
+    public void completed(long id){
+        int res = orderMapper.completed(id);
+        log.info("order completed -> " + id + " -> res -> " + res);
+        BusinessException.check(res,"完成订单失败");
+    }
+
+    /**
+     * 查询全部订单
+     * @param option [sort,order,completed,received]
+     *               - sort 排序 values["create_time"] default:create_time
+     *               - order 排序方式 values["0","1"] default:0
+     *               - complete 完成 values["0","1"," "] default:" "
+     *               - received 接单 values["0","1"," "] default:" "
+     * @return
+     */
+    public List<OrderDetail> findAll(Map<String,String> option){
+        Utils.check_map(option);
+        List<OrderDetail> list = orderMapper.findAll("all",option.get("sort"),option.get("order"), option.get("completed"),option.get("received"));
+        return list;
     }
 
     /**
@@ -71,8 +110,9 @@ public class OrderServiceIpm implements OrderService {
      * @param pid
      * @return
      */
-    public List<OrderDetail> findByPid(long pid){
-        return orderMapper.findByPid(pid,"pid");
+    public List<OrderDetail> findByPid(long pid,Map<String,String> option){
+        Utils.check_map(option);
+        return orderMapper.findByPid(pid,"pid",option.get("sort"),option.get("order"), option.get("completed"),option.get("received"));
     }
 
     /**
@@ -80,8 +120,9 @@ public class OrderServiceIpm implements OrderService {
      * @param cid
      * @return
      */
-    public List<OrderDetail> findByCid(long cid){
-        return orderMapper.findByCid(cid,"cid");
+    public List<OrderDetail> findByCid(long cid,Map<String,String> option){
+        Utils.check_map(option);
+        return orderMapper.findByCid(cid,"cid",option.get("sort"),option.get("order"), option.get("completed"),option.get("received"));
     }
 
     /**
@@ -89,49 +130,21 @@ public class OrderServiceIpm implements OrderService {
      * @param uid
      * @return
      */
-    public List<OrderDetail> findByUid(long uid){
-        return orderMapper.findByUid(uid,"uid");
-    }
-
-    /**
-     * 接单
-     * @param id
-     * @return
-     */
-    public void receiveOrder(long id){
-        int res = orderMapper.receiveOrder(id);
-        log.info("order receiveOrder -> " + id + " -> res -> " + res);
-        BusinessException.check(res,"接单失败");
-    }
-
-    /**
-     * 查询已接单或未结单的订单
-     * @param received 已接单/未接单
-     * @return
-     */
-    @Override
-    public List<OrderDetail> isReceived(boolean received) {
-        return orderMapper.isReceived(received);
-    }
-
-    /**
-     * 查询已完成或未完成的订单
-     * @param completed 已完成/未完成
-     * @return
-     */
-    @Override
-    public List<OrderDetail> isCompleted(boolean completed) {
-        return orderMapper.isCompleted(completed);
+    public List<OrderDetail> findByUid(long uid,Map<String,String> option){
+        Utils.check_map(option);
+        return orderMapper.findByUid(uid,"uid",option.get("sort"),option.get("order"), option.get("completed"),option.get("received"));
     }
 
     /**
      * 按服务类型查询订单
      * @param id
-     * @param received 已接单/未接单
      * @return
      */
     @Override
-    public List<OrderDetail> findByType(long id,boolean received) {
-        return orderMapper.findByType(id,received);
+    public List<OrderDetail> findByType(long id, Map<String,String> option) {
+        Utils.check_map(option);
+        return orderMapper.findByType(id,"sid",option.get("sort"),option.get("order"), option.get("completed"),option.get("received"));
     }
+
+    //TODO WebSocket
 }

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Mapper
@@ -20,29 +21,26 @@ public interface OrderMapper {
     @Update("update orders set address = #{address},note = #{note},file_url = #{file_url} where id = #{id}")
     int update(Order order);
 
-    @SelectProvider(type = OrderProvider.class,method = "chooseIdName")
-    List<OrderDetail> findAll(String idName);
+    @SelectProvider(type = OrderProvider.class,method = "choose")
+    List<OrderDetail> findAll(@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
 
-    @SelectProvider(type = OrderProvider.class,method = "chooseIdName")
-    List<OrderDetail> findByPid(long pid,String idName);
+    @SelectProvider(type = OrderProvider.class,method = "choose")
+    List<OrderDetail> findByPid(long pid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
 
-    @SelectProvider(type = OrderProvider.class,method = "chooseIdName")
-    List<OrderDetail> findByCid(long cid,String idName);
+    @SelectProvider(type = OrderProvider.class,method = "choose")
+    List<OrderDetail> findByCid(long cid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
 
-    @SelectProvider(type = OrderProvider.class,method = "chooseIdName")
-    List<OrderDetail> findByUid(long uid,String idName);
+    @SelectProvider(type = OrderProvider.class,method = "choose")
+    List<OrderDetail> findByUid(long uid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
 
-    @Update("update order set order_status = 1 where id = #{id}")
-    int receiveOrder(long id);
+    @SelectProvider(type = OrderProvider.class,method = "choose")
+    List<OrderDetail> findByType(long sid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
 
-    @SelectProvider(type = OrderProvider.class,method = "isReceived")
-    List<OrderDetail> isReceived(boolean received);
+    @Update("update orders set order_status = 1 where id = #{id}")
+    int receive(long id);
 
-    @SelectProvider(type = OrderProvider.class,method = "isCompleted")
-    List<OrderDetail> isCompleted(boolean completed);
-
-    @SelectProvider(type = OrderProvider.class,method = "isReceived")
-    List<OrderDetail> findByType(long id,boolean received);
+    @Update("update orders set completed = 1 where id = #{id}")
+    int completed(long id);
 
     class OrderProvider{
 
@@ -60,13 +58,13 @@ public interface OrderMapper {
                 "and c.pid = d.id " +
                 "and d.service_type = e.id";
 
-        String completed_sql = "and complete = 1";
+        String completed_sql = " and complete = 1";
 
-        String notCompleted_sql = "and complete = 0";
+        String notCompleted_sql = " and complete = 0";
 
-        String received_sql = "and order_status = 1";
+        String received_sql = " and order_status = 1";
 
-        String notReceived_sql = "and order_status = 0";
+        String notReceived_sql = " and order_status = 0";
 
         String pid = " and c.pid = #{pid}";
 
@@ -74,23 +72,80 @@ public interface OrderMapper {
 
         String uid = " and c.uid = #{uid}";
 
-        public String isCompleted(boolean completed){
-            return completed ? sql + completed_sql : sql + notCompleted_sql;
-        }
+        String sid = " and c.sid = #{sid}";
 
-        public String isReceived(boolean received){
-            return received ? sql + received_sql : sql + notReceived_sql;
-        }
+        String create_time = " order by create_time ";
 
-        public String chooseIdName(String idName){
-             switch (idName){
-                 case "pid":
-                     return sql + pid;
-                 case "cid":
-                     return sql + cid;
-                 case "uid":
-                     return sql + uid;
-             }
+        // 正序
+        String ASC = "ASC";
+
+        // 倒序
+        String DESC ="DESC";
+
+        public String choose(Map<String,Object> para) {
+
+            if(para.get("completed") != null){
+                switch (para.get("completed").toString()){
+                    case "1":
+                        sql = sql + completed_sql;
+                        break;
+                    case "0":
+                        sql = sql + notCompleted_sql;
+                        break;
+                    case " ":
+                        break;
+                }
+            }
+
+            if(para.get("received") != null){
+                switch (para.get("received").toString()){
+                    case "1":
+                        sql = sql + received_sql;
+                        break;
+                    case "0":
+                        sql = sql + notReceived_sql;
+                        break;
+                    case " ":
+                        break;
+
+                }
+            }
+
+            if(para.get("idName") != null) {
+                switch (para.get("idName").toString()) {
+                    case "pid":
+                        sql = sql + pid;
+                        break;
+                    case "cid":
+                        sql = sql + cid;
+                        break;
+                    case "uid":
+                        sql = sql + uid;
+                        break;
+                    case "sid":
+                        sql = sql + sid;
+                        break;
+                }
+            }
+
+            if(para.get("sort") != null) {
+                switch (para.get("sort").toString()) {
+                    case "create_time":
+                        sql = sql + create_time;
+                        break;
+                }
+            }
+
+            if(para.get("order") != null) {
+                switch (para.get("order").toString()) {
+                    case "ASC":
+                        sql = sql + ASC;
+                        break;
+                    case "DESC":
+                        sql = sql + DESC;
+                        break;
+                }
+            }
              return sql;
         }
     }

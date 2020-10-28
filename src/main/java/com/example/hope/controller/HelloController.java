@@ -3,7 +3,10 @@ package com.example.hope.controller;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @Api(tags = "测试")
@@ -29,7 +32,11 @@ public class HelloController {
 
     @GetMapping("/query")
     public String textXSS(String text){
-        System.out.println(text);
         return text;
+    }
+
+    @GetMapping("/map")
+    public void map(@RequestParam Map<String,String> map){
+        System.out.println(map.get("user"));
     }
 }

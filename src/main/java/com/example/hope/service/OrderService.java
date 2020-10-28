@@ -2,8 +2,11 @@ package com.example.hope.service;
 
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.OrderDetail;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
 
@@ -13,21 +16,17 @@ public interface OrderService {
 
     void update(Order order);
 
-    List<OrderDetail> findAll();
+    void receive(long id);
 
-    List<OrderDetail> findByPid(long pid);
+    void completed(long id);
 
-    List<OrderDetail> findByCid(long cid);
+    List<OrderDetail> findAll(Map<String,String> option);
 
-    List<OrderDetail> findByUid(long uid);
+    List<OrderDetail> findByPid(long pid, Map<String,String> option);
 
-    void receiveOrder(long id);
+    List<OrderDetail> findByCid(long cid, Map<String,String> option);
 
-    List<OrderDetail> isReceived(boolean received);
+    List<OrderDetail> findByUid(long uid, Map<String,String> option);
 
-    List<OrderDetail> isCompleted(boolean completed);
-
-    List<OrderDetail> findByType(long id,boolean received);
-
-    //TODO 查询按时间排序的订单
+    List<OrderDetail> findByType(long id, Map<String,String> option);
 }

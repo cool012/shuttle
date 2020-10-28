@@ -94,6 +94,36 @@ public class UserService {
     }
 
     /**
+     * 增加点数
+     *
+     * @param id
+     * @param quantity 数量
+     */
+    // TODO 支付宝、微信SDK
+    public void addScore(long id, int quantity) {
+        int res = userMapper.addScore(id, quantity);
+        log.info("user addScore -> " + id + " -> res -> " + res);
+        BusinessException.check(res, "增加点数失败");
+    }
+
+    /**
+     * 点数减1
+     *
+     * @param id
+     */
+    // TODO 事务
+    public void reduceScore(long id) {
+
+        if (findByScore(id) == 0) {
+            throw new BusinessException(-1, "用户点数为0");
+        }
+
+        int res = userMapper.reduceScore(id);
+        log.info("user reduceScore -> " + id + " -> res -> " + res);
+        BusinessException.check(res, "减少点数失败");
+    }
+
+    /**
      * 重置密码 -> 输入邮箱，点击发送邮件 -> 根据user加密生成token -> 邮箱发送成功，跳转到（前端）重置密码界面 ->
      * 用户获取邮箱中的token，提交新密码 -> 重置密码（输入新密码） -> /user/restPassword
      *
@@ -173,5 +203,15 @@ public class UserService {
      */
     public User findByName(String name) {
         return userMapper.findByName(name);
+    }
+
+    /**
+     * 查询用户点数
+     *
+     * @param id
+     * @return
+     */
+    public int findByScore(long id) {
+        return userMapper.findByScore(id);
     }
 }

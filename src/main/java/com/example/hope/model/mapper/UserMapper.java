@@ -22,18 +22,27 @@ public interface UserMapper {
     @Update("update user set password = #{password} where id = #{id}")
     int updatePassword(User user);
 
-    @Select("select id,username,password,email,address,type,admin,score from user where id = #{id}")
+    @Update("update user set score = score + #{quantity} where id = #{id}")
+    int addScore(long id,int quantity);
+
+    @Update("update user set score = score - 1 where id = #{id}")
+    int reduceScore(long id);
+
+    @Select("select id,username,email,address,type,admin,score from user where id = #{id}")
     User findUserById(long id);
 
-    @Select("select id,username,password,email,address,type,admin,score from user")
+    @Select("select id,username,email,address,type,admin,score from user")
     List<User> findAll();
 
     @Select("select id,username,admin from user where username = #{username} and password = #{encryption_password}")
     User login(String username,String encryption_password);
 
-    @Select("select id,username,password,email,address,type,admin,score from user where username = #{name}")
+    @Select("select id,username,email,address,type,admin,score from user where username = #{name}")
     User findByName(String name);
 
-    @Select("select id,username,password,email,address,type,admin,score from user where email = #{email}")
+    @Select("select id,username,email,address,type,admin,score from user where email = #{email}")
     User findByEmail(String email);
+
+    @Select("select score from user where id = #{id}")
+    int findByScore(long id);
 }

@@ -2,6 +2,7 @@ package com.example.hope.common.utils;
 
 import com.example.hope.model.entity.User;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -24,6 +25,7 @@ public class JwtUtils {
             long nowMillis = System.currentTimeMillis();
             Date now = new Date(nowMillis);
             //生成签名密钥
+            // TODO key
             byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("QC%*gHZH8#");
             Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 

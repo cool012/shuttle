@@ -7,6 +7,8 @@ import com.example.hope.service.ProductService;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
@@ -31,6 +33,7 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "product",allEntries = true)
     public void insert(Product product) {
         int res = productMapper.insert(product);
         log.info("product insert -> " + product.toString() + " -> res -> " + res);
@@ -44,6 +47,7 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "product",allEntries = true)
     public void delete(long id) {
         int res = productMapper.delete(id);
         log.info("product delete id -> " + id + " -> res -> " + res);
@@ -57,6 +61,7 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "product",allEntries = true)
     public void update(Product product) {
         int res = productMapper.update(product);
         log.info("product update -> " + product.toString() + " -> res -> " + res);
@@ -70,6 +75,7 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
+    @Cacheable(value = "product",key = "#serviceId")
     public List<Product> findAllByType(long serviceId) {
         List<Product> productList = productMapper.findAllByType(serviceId);
         log.info("findAllByType find serviceId -> " + productList.toString());
@@ -82,6 +88,7 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
+    @Cacheable(value = "product")
     public List<Product> findAll() {
         return productMapper.findAll();
     }
@@ -94,6 +101,7 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
+    @Cacheable(value = "product")
     public List<Product> findAllByTypeAndCategory(long serviceId, long categoryId) {
         return productMapper.findAllByTypeAndCategory(serviceId, categoryId);
     }
@@ -107,6 +115,7 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
+    @Cacheable(value = "Category",key = "#serviceId")
     public Map<Long, String> findAllCategory(long serviceId) {
         return findAllCategory(serviceId);
     }

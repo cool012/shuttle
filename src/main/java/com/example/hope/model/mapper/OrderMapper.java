@@ -37,7 +37,7 @@ public interface OrderMapper {
     List<OrderDetail> findByType(long sid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
 
     @SelectProvider(type = OrderProvider.class,method = "choose")
-    OrderDetail findById(long id,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
+    OrderDetail findById(long id,@Param("idName") String idName);
 
     @Update("update orders set complete = 1 where id = #{id}")
     int receive(long id);
@@ -47,8 +47,8 @@ public interface OrderMapper {
         String sql = "select " +
                 "c.id,cid,uid,pid," +
                 "e.id as sid," +
-                "a.username as user," +
-                "b.username as waiter," +
+                "a.email as user," +
+                "b.email as waiter," +
                 "d.product_name as product," +
                 "e.service_name as type," +
                 "create_time,c.address,note,file_url,complete " +

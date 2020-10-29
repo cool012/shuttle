@@ -1,9 +1,7 @@
 package com.example.hope.service.serviceIpm;
 
 import cn.hutool.core.lang.Validator;
-import com.example.hope.common.utils.Encoder;
-import com.example.hope.common.utils.JwtUtils;
-import com.example.hope.common.utils.MailUtils;
+import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
@@ -42,14 +40,8 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transient
     public void register(User user) {
-        if (!Validator.isEmail(user.getEmail())){
-            throw new IllegalArgumentException("邮箱格式不正确");
-        }
-        if (user.getType().equals("2")){
-            throw new IllegalArgumentException("不能注册为管理员");
-        }else if(!user.getType().equals("0") && !user.getType().equals("1")){
-            throw new IllegalArgumentException("type参数错误");
-        }
+        // 检查输入合法
+        Checker.check_user(user);
         // 用户密码加密
         user.setPassword(Encoder.encode(user.getPassword()));
         int res = userMapper.insert(user);
@@ -207,8 +199,8 @@ public class UserServiceIpm implements UserService {
         return userMapper.findUserById(id);
     }
 
-    //TODO 缓存
 
+    // TODO 缓存
     /**
      * 查询全部用户
      *

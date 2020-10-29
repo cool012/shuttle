@@ -1,10 +1,9 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
-import com.example.hope.annotation.UserLoginToken;
+import com.example.hope.annotation.User;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
-import com.example.hope.model.entity.User;
 import com.example.hope.service.UserService;
 import com.example.hope.service.serviceIpm.UserServiceIpm;
 import io.swagger.annotations.Api;
@@ -38,7 +37,7 @@ public class UserController {
 
     @ApiOperation("用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ReturnMessage<Object> register(User user) {
+    public ReturnMessage<Object> register(com.example.hope.model.entity.User user) {
         userService.register(user);
         return ReturnMessageUtil.sucess();
     }
@@ -65,10 +64,10 @@ public class UserController {
         return ReturnMessageUtil.sucess();
     }
 
-    @UserLoginToken
+    @User
     @ApiOperation("用户更新")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ReturnMessage<Object> update(User user) {
+    public ReturnMessage<Object> update(com.example.hope.model.entity.User user) {
         userService.update(user);
         return ReturnMessageUtil.sucess();
     }

@@ -2,7 +2,7 @@ package com.example.hope.config.interceptor;
 
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.PassToken;
-import com.example.hope.annotation.UserLoginToken;
+import com.example.hope.annotation.User;
 import com.example.hope.common.utils.JwtUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -30,7 +30,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if(method.isAnnotationPresent(UserLoginToken.class)){
+        if(method.isAnnotationPresent(User.class)){
 
             if(token == null){
                 throw new RuntimeException("无token,请重新登陆");

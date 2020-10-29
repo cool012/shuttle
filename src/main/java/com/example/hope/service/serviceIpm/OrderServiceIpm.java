@@ -8,6 +8,7 @@ import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
@@ -31,7 +32,7 @@ public class OrderServiceIpm implements OrderService {
     private ProductServiceIpm productService;
 
     @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService){
+    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService) {
         this.orderMapper = orderMapper;
         this.userService = userService;
         this.productService = productService;
@@ -39,60 +40,64 @@ public class OrderServiceIpm implements OrderService {
 
     /**
      * 添加订单
+     *
      * @param order
      */
     @Override
     @Transient
-    public void insert(Order order){
+    public void insert(Order order) {
         int res = orderMapper.insert(order);
         log.info("order insert -> " + order.toString() + " -> res -> " + res);
-        BusinessException.check(res,"添加失败");
+        BusinessException.check(res, "添加失败");
     }
 
     /**
      * 删除订单
+     *
      * @param id
      */
     @Override
     @Transient
-    public void delete(long id){
+    public void delete(long id) {
         int res = orderMapper.delete(id);
         log.info("order delete id -> " + id + " -> res -> " + res);
-        BusinessException.check(res,"删除失败");
+        BusinessException.check(res, "删除失败");
     }
 
     /**
      * 更新订单
+     *
      * @param order
      */
     @Override
     @Transient
-    public void update(Order order){
+    public void update(Order order) {
         int res = orderMapper.update(order);
         log.info("order update -> " + order.toString() + " -> res -> " + res);
-        BusinessException.check(res,"更新失败");
+        BusinessException.check(res, "更新失败");
     }
 
 
     /**
      * 接单（完成订单）
+     *
      * @param id
      * @return
      */
     @Override
     @Transient
-    public void receive(long id){
+    public void receive(long id) {
         userService.reduceScore(id);
-        // TODO 增加销量
-        productService.addSales(findById(id,Utils.check_map(new HashMap<>())).getId(),1);
+        productService.addSales(findById(id).getId(), 1);
         int res = orderMapper.receive(id);
         log.info("order receiveOrder -> " + id + " -> res -> " + res);
-        BusinessException.check(res,"接单失败");
+        BusinessException.check(res, "接单失败");
     }
-
+    // TODO 日志持久化
 
     /**
      * 查询全部订单
+     *
      * @param option [sort,order,completed]
      *               - sort 排序 values["create_time"] default:create_time
      *               - order 排序方式 values["0","1"] default:0
@@ -101,59 +106,68 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    public List<OrderDetail> findAll(Map<String,String> option){
+    @Cacheable(value = "findAll",key = "#option.toString()")
+    public List<OrderDetail> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        List<OrderDetail> list = orderMapper.findAll("all",option.get("sort"),option.get("order"), option.get("completed"));
+        List<OrderDetail> list = orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed"));
         return list;
     }
 
     /**
      * 根据产品id查询订单
+     *
      * @param pid
      * @return
      */
+    // value代表缓存名称 key代表键 在redis中以 value::key 的形式表示redis的key
     @Override
-    public List<OrderDetail> findByPid(long pid,Map<String,String> option){
+    @Cacheable(value = "findByPid",key = "#option.toString()")
+    public List<OrderDetail> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
-        return orderMapper.findByPid(pid,"pid",option.get("sort"),option.get("order"), option.get("completed"));
+        return orderMapper.findByPid(pid, "pid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
     /**
      * 根据消费者id查询订单
+     *
      * @param cid
      * @return
      */
     @Override
-    public List<OrderDetail> findByCid(long cid,Map<String,String> option){
+    @Cacheable(value = "findByCid",key = "#option.toString()")
+    public List<OrderDetail> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
-        return orderMapper.findByCid(cid,"cid",option.get("sort"),option.get("order"), option.get("completed"));
+        return orderMapper.findByCid(cid, "cid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
     /**
      * 根据生产者id查询订单
+     *
      * @param uid
      * @return
      */
     @Override
-    public List<OrderDetail> findByUid(long uid,Map<String,String> option){
+    @Cacheable(value = "findByUid",key = "#option.toString()")
+    public List<OrderDetail> findByUid(long uid, Map<String, String> option) {
         Utils.check_map(option);
-        return orderMapper.findByUid(uid,"uid",option.get("sort"),option.get("order"), option.get("completed"));
+        return orderMapper.findByUid(uid, "uid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
     /**
      * 按服务类型查询订单
+     *
      * @param id
      * @return
      */
     @Override
-    public List<OrderDetail> findByType(long id, Map<String,String> option) {
+    @Cacheable(value = "findByType",key = "#option.toString()")
+    public List<OrderDetail> findByType(long id, Map<String, String> option) {
         Utils.check_map(option);
-        return orderMapper.findByType(id,"sid",option.get("sort"),option.get("order"), option.get("completed"));
+        return orderMapper.findByType(id, "sid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
     @Override
-    public OrderDetail findById(long id, Map<String, String> option) {
-        Utils.check_map(option);
-        return orderMapper.findById(id,"id",option.get("sort"),option.get("order"), option.get("completed"));
+    public OrderDetail findById(long id) {
+        return orderMapper.findById(id, "id");
     }
 }

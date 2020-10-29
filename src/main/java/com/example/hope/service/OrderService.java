@@ -28,5 +28,5 @@ public interface OrderService {
 
     List<OrderDetail> findByType(long id, Map<String,String> option);
 
-    OrderDetail findById(long id, Map<String,String> option);
+    OrderDetail findById(long id);
 }

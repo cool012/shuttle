@@ -1,7 +1,7 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
-import com.example.hope.annotation.UserLoginToken;
+import com.example.hope.annotation.User;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.service.ServiceService;
@@ -42,7 +42,7 @@ public class ServiceController {
         return ReturnMessageUtil.sucess();
     }
 
-    @UserLoginToken
+    @User
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll",method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(){

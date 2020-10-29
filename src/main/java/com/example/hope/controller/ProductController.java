@@ -1,7 +1,7 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
-import com.example.hope.annotation.UserLoginToken;
+import com.example.hope.annotation.User;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.Product;
 import com.example.hope.config.exception.ReturnMessage;
@@ -24,7 +24,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @Admin
+//    @Admin
     @ApiOperation("添加产品")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     public ReturnMessage<Object> insert(Product product){
@@ -48,33 +48,31 @@ public class ProductController {
         return ReturnMessageUtil.sucess();
     }
 
-    @UserLoginToken
+    @User
     @ApiOperation("按类型查找全部产品")
     @RequestMapping(value = "/findAllByType/{serviceId}",method = RequestMethod.GET)
     public ReturnMessage<Object> findAllByType(@PathVariable("serviceId") long serviceId){
         return ReturnMessageUtil.sucess(productService.findAllByType(serviceId));
     }
 
-    @UserLoginToken
+    @User
     @ApiOperation("查找全部产品")
     @RequestMapping(value = "/findAll",method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(){
         return ReturnMessageUtil.sucess(productService.findAll());
     }
 
-    @UserLoginToken
+    @User
     @ApiOperation("按类型、分类查找全部产品")
     @RequestMapping(value = "/findAllByTypeAndCategory/{serviceId}/{categoryId}",method = RequestMethod.GET)
     public ReturnMessage<Object> findAllByTypeAndCategory(@PathVariable long serviceId,@PathVariable long categoryId){
-        productService.findAllByTypeAndCategory(serviceId,categoryId);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.sucess(productService.findAllByTypeAndCategory(serviceId,categoryId));
     }
 
-    @UserLoginToken
+    @User
     @ApiOperation("按服务查找所有分类")
     @RequestMapping(value = "/findAllCategory/{serviceId}",method = RequestMethod.GET)
     public ReturnMessage<Object> findAllCategory(@PathVariable long serviceId){
-        productService.findAllCategory(serviceId);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.sucess(productService.findAllCategory(serviceId));
     }
 }

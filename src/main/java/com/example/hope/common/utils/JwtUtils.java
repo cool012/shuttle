@@ -25,17 +25,16 @@ public class JwtUtils {
             long nowMillis = System.currentTimeMillis();
             Date now = new Date(nowMillis);
             //生成签名密钥
-            // TODO key
             byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("QC%*gHZH8#");
             Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
             // 添加构成JWT的参数
             JwtBuilder jwtBuilder = Jwts.builder().setHeaderParam("typ", "JWT")
                     .claim("userId",user.getId())
-                    .claim("userName",user.getUsername())
-                    .claim("admin",user.isAdmin())
-                    .setSubject(user.getUsername())// 代表这个JWT的主体，即它的所有人
-                    .setAudience(user.getUsername())// 代表这个JWT的接收对象；
+                    .claim("email",user.getEmail())
+                    .claim("type",user.getType())
+                    .setSubject(user.getEmail())// 代表这个JWT的主体，即它的所有人
+                    .setAudience(user.getEmail())// 代表这个JWT的接收对象；
                     .setIssuedAt(now)// 是一个时间戳，代表这个JWT的签发时间；
                     .signWith(signatureAlgorithm, signingKey);
 
@@ -64,8 +63,11 @@ public class JwtUtils {
     }
 
     public static boolean is_admin(String token){
-        boolean admin = parseJWT(token).get("admin", Boolean.class);
-        return admin;
+        String type = parseJWT(token).get("type", String.class);
+        if(type.equals("2")){
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -17,4 +17,6 @@ public class Product implements Serializable {
     private String image;
     private int service_type;
     private int quantity;
+    private long category_id;
+    private int sales;
 }

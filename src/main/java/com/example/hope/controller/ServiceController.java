@@ -5,6 +5,7 @@ import com.example.hope.annotation.UserLoginToken;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.service.ServiceService;
+import com.example.hope.service.serviceIpm.ServiceServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class ServiceController {
     private ServiceService serviceService;
 
     @Autowired
-    public ServiceController(ServiceService serviceService){
+    public ServiceController(ServiceServiceIpm serviceService){
         this.serviceService = serviceService;
     }
 

@@ -10,13 +10,13 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Insert("insert into user(username,password,email,address,type,admin,score) values(#{username},#{password},#{email},#{address},#{type},#{admin},#{score})")
+    @Insert("insert into user(password,email,address,type,score) values(#{password},#{email},#{address},#{type},#{score})")
     int insert(User user);
 
     @Delete("delete from user where id = #{id}")
     int delete(long id);
 
-    @Update("update user set email = #{email},address = #{address} where id = #{id}")
+    @Update("update user set address = #{address} where id = #{id}")
     int update(User user);
 
     @Update("update user set password = #{password} where id = #{id}")
@@ -28,19 +28,16 @@ public interface UserMapper {
     @Update("update user set score = score - 1 where id = #{id}")
     int reduceScore(long id);
 
-    @Select("select id,username,email,address,type,admin,score from user where id = #{id}")
+    @Select("select id,email,address,type,score from user where id = #{id}")
     User findUserById(long id);
 
-    @Select("select id,username,email,address,type,admin,score from user")
+    @Select("select id,email,address,type,score from user")
     List<User> findAll();
 
-    @Select("select id,username,admin from user where username = #{username} and password = #{encryption_password}")
-    User login(String username,String encryption_password);
+    @Select("select id,type from user where email = #{email} and password = #{encryption_password}")
+    User login(String email,String encryption_password);
 
-    @Select("select id,username,email,address,type,admin,score from user where username = #{name}")
-    User findByName(String name);
-
-    @Select("select id,username,email,address,type,admin,score from user where email = #{email}")
+    @Select("select id,address,type,score from user where email = #{email}")
     User findByEmail(String email);
 
     @Select("select score from user where id = #{id}")

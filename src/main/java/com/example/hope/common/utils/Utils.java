@@ -30,24 +30,11 @@ public class Utils {
         }
 
         if (!option.containsKey("completed")) {
-            option.put("completed", " ");
+            option.put("completed", "-1");
         } else {
             String completed = option.get("completed");
-            if (!completed.equals("0") && !completed.equals("1") && !completed.equals(" ")) {
+            if (!completed.equals("0") && !completed.equals("1") && !completed.equals("-1")) {
                 throw new IllegalArgumentException("completed参数错误");
-            }else if(!option.containsKey("received")){
-                if(option.get("received").equals("0") && option.get("completed").equals("1")){
-                    throw new IllegalArgumentException("未接单与已完成冲突");
-                }
-            }
-        }
-
-        if (!option.containsKey("received")) {
-            option.put("received", " ");
-        } else {
-            String received = option.get("received");
-            if (!received.equals("0") && !received.equals("1") && !received.equals(" ")) {
-                throw new IllegalArgumentException("received参数错误");
             }
         }
         return option;

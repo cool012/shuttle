@@ -18,8 +18,6 @@ public interface OrderService {
 
     void receive(long id);
 
-    void completed(long id);
-
     List<OrderDetail> findAll(Map<String,String> option);
 
     List<OrderDetail> findByPid(long pid, Map<String,String> option);
@@ -29,4 +27,6 @@ public interface OrderService {
     List<OrderDetail> findByUid(long uid, Map<String,String> option);
 
     List<OrderDetail> findByType(long id, Map<String,String> option);
+
+    OrderDetail findById(long id, Map<String,String> option);
 }

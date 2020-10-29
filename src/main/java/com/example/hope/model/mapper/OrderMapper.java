@@ -12,7 +12,7 @@ import java.util.Map;
 @Mapper
 public interface OrderMapper {
 
-    @Insert("insert into orders(cid,uid,pid,create_time,address,note,file_url,complete,order_status) values(#{cid},#{uid},#{pid},#{create_time},#{address},#{note},#{file_url},#{complete},#{order_status})")
+    @Insert("insert into orders(cid,uid,pid,create_time,address,note,file_url,complete) values(#{cid},#{uid},#{pid},#{create_time},#{address},#{note},#{file_url},#{complete})")
     int insert(Order order);
 
     @Delete("delete from orders where id = #{id}")
@@ -22,25 +22,25 @@ public interface OrderMapper {
     int update(Order order);
 
     @SelectProvider(type = OrderProvider.class,method = "choose")
-    List<OrderDetail> findAll(@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
+    List<OrderDetail> findAll(@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
 
     @SelectProvider(type = OrderProvider.class,method = "choose")
-    List<OrderDetail> findByPid(long pid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
+    List<OrderDetail> findByPid(long pid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
 
     @SelectProvider(type = OrderProvider.class,method = "choose")
-    List<OrderDetail> findByCid(long cid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
+    List<OrderDetail> findByCid(long cid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
 
     @SelectProvider(type = OrderProvider.class,method = "choose")
-    List<OrderDetail> findByUid(long uid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
+    List<OrderDetail> findByUid(long uid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
 
     @SelectProvider(type = OrderProvider.class,method = "choose")
-    List<OrderDetail> findByType(long sid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed,@Param("received") String received);
+    List<OrderDetail> findByType(long sid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
 
-    @Update("update orders set order_status = 1 where id = #{id}")
+    @SelectProvider(type = OrderProvider.class,method = "choose")
+    OrderDetail findById(long id,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
+
+    @Update("update orders set complete = 1 where id = #{id}")
     int receive(long id);
-
-    @Update("update orders set completed = 1 where id = #{id}")
-    int completed(long id);
 
     class OrderProvider{
 
@@ -51,7 +51,7 @@ public interface OrderMapper {
                 "b.username as waiter," +
                 "d.product_name as product," +
                 "e.service_name as type," +
-                "create_time,c.address,note,file_url,complete,order_status " +
+                "create_time,c.address,note,file_url,complete " +
                 "from user as a,user as b,orders as c,product as d,service as e " +
                 "where c.cid = a.id " +
                 "and c.uid = b.id " +
@@ -60,11 +60,9 @@ public interface OrderMapper {
 
         String completed_sql = " and complete = 1";
 
-        String notCompleted_sql = " and complete = 0";
+        String notCompleted_sql = " and complete = -1";
 
-        String received_sql = " and order_status = 1";
-
-        String notReceived_sql = " and order_status = 0";
+        String received = " and complete = 0";
 
         String pid = " and c.pid = #{pid}";
 
@@ -73,6 +71,8 @@ public interface OrderMapper {
         String uid = " and c.uid = #{uid}";
 
         String sid = " and c.sid = #{sid}";
+
+        String id = " and id = #{id}";
 
         String create_time = " order by create_time ";
 
@@ -90,24 +90,11 @@ public interface OrderMapper {
                         sql = sql + completed_sql;
                         break;
                     case "0":
+                        sql = sql + received;
+                        break;
+                    case "-1":
                         sql = sql + notCompleted_sql;
                         break;
-                    case " ":
-                        break;
-                }
-            }
-
-            if(para.get("received") != null){
-                switch (para.get("received").toString()){
-                    case "1":
-                        sql = sql + received_sql;
-                        break;
-                    case "0":
-                        sql = sql + notReceived_sql;
-                        break;
-                    case " ":
-                        break;
-
                 }
             }
 
@@ -125,6 +112,8 @@ public interface OrderMapper {
                     case "sid":
                         sql = sql + sid;
                         break;
+                    case "id":
+                        sql = sql + id;
                 }
             }
 

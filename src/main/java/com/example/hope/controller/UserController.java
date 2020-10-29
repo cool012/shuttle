@@ -6,6 +6,7 @@ import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.model.entity.User;
 import com.example.hope.service.UserService;
+import com.example.hope.service.serviceIpm.UserServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserServiceIpm userService) {
         this.userService = userService;
     }
 
@@ -86,10 +87,10 @@ public class UserController {
         return ReturnMessageUtil.sucess(userService.findAll());
     }
 
-    @ApiOperation("根据名字查询用户")
-    @RequestMapping(value = "/findByName", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByName(String username) {
-        return ReturnMessageUtil.sucess(userService.findByName(username));
+    @ApiOperation("根据邮箱查询用户")
+    @RequestMapping(value = "/findByEmail", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByEmail(String Email) {
+        return ReturnMessageUtil.sucess(userService.findByEmail(Email));
     }
 
     @RequestMapping(value = "/reduceScore/{id}", method = RequestMethod.GET)

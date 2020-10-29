@@ -18,12 +18,10 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private long id;
-    private String username;
     private String password;
     private String email;
     private String address;
-    private boolean type;
-    private boolean admin;
+    private String type;
     private int score;
 
     public User(long id, String password) {

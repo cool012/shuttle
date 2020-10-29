@@ -16,6 +16,7 @@ public class ExceptionHandle {
         if(exception instanceof BusinessException){
             return ReturnMessageUtil.error(-1, exception.getMessage());
         }
+        // 唯一性约束
         if(exception instanceof DuplicateKeyException){
             return ReturnMessageUtil.error(-1, "用户已经存在");
         }

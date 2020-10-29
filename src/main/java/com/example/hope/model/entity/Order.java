@@ -30,6 +30,5 @@ public class Order implements Serializable {
     private String address;
     private String note;
     private String file_url;
-    private boolean complete;
-    private boolean order_status;
+    private int complete;
 }

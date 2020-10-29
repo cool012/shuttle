@@ -59,16 +59,8 @@ public class OrderController {
     @UserLoginToken
     @ApiOperation("服务员接单")
     @RequestMapping(value = "/receive/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> receiveOrder(@PathVariable long id) {
+    public ReturnMessage<Object> receive(@PathVariable long id) {
         orderService.receive(id);
-        return ReturnMessageUtil.sucess();
-    }
-
-    @UserLoginToken
-    @ApiOperation("完成订单")
-    @RequestMapping(value = "/completed/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> insert(@PathVariable long id) {
-        orderService.completed(id);
         return ReturnMessageUtil.sucess();
     }
 
@@ -104,5 +96,12 @@ public class OrderController {
     @RequestMapping(value = "/findByType/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByType(@PathVariable long id, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByType(id, option));
+    }
+
+    @UserLoginToken
+    @ApiOperation("按订单id查询订单")
+    @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findById(@PathVariable long id,@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findById(id,option));
     }
 }

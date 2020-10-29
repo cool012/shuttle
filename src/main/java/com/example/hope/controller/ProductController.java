@@ -6,6 +6,7 @@ import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.Product;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.service.ProductService;
+import com.example.hope.service.serviceIpm.ProductServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService){
+    public ProductController(ProductServiceIpm productService){
         this.productService = productService;
     }
 
@@ -59,5 +60,21 @@ public class ProductController {
     @RequestMapping(value = "/findAll",method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(){
         return ReturnMessageUtil.sucess(productService.findAll());
+    }
+
+    @UserLoginToken
+    @ApiOperation("按类型、分类查找全部产品")
+    @RequestMapping(value = "/findAllByTypeAndCategory/{serviceId}/{categoryId}",method = RequestMethod.GET)
+    public ReturnMessage<Object> findAllByTypeAndCategory(@PathVariable long serviceId,@PathVariable long categoryId){
+        productService.findAllByTypeAndCategory(serviceId,categoryId);
+        return ReturnMessageUtil.sucess();
+    }
+
+    @UserLoginToken
+    @ApiOperation("按服务查找所有分类")
+    @RequestMapping(value = "/findAllCategory/{serviceId}",method = RequestMethod.GET)
+    public ReturnMessage<Object> findAllCategory(@PathVariable long serviceId){
+        productService.findAllCategory(serviceId);
+        return ReturnMessageUtil.sucess();
     }
 }

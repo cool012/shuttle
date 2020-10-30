@@ -1,13 +1,17 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.OrderDetail;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +49,7 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "order",allEntries = true)
     public void insert(Order order) {
         int res = orderMapper.insert(order);
         log.info("order insert -> " + order.toString() + " -> res -> " + res);
@@ -58,6 +63,7 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "order",allEntries = true)
     public void delete(long id) {
         int res = orderMapper.delete(id);
         log.info("order delete id -> " + id + " -> res -> " + res);
@@ -71,6 +77,7 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "order",allEntries = true)
     public void update(Order order) {
         int res = orderMapper.update(order);
         log.info("order update -> " + order.toString() + " -> res -> " + res);
@@ -86,14 +93,16 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Transient
-    public void receive(long id) {
+    @CacheEvict(value = "order",allEntries = true)
+    public void receive(long id,String token) {
+        // 减少点数
         userService.reduceScore(id);
+        // 增加销量
         productService.addSales(findById(id).getId(), 1);
-        int res = orderMapper.receive(id);
-        log.info("order receiveOrder -> " + id + " -> res -> " + res);
+        // 更新订单状态
+        int res = orderMapper.receive(id, JwtUtils.getUserId(token));
         BusinessException.check(res, "接单失败");
     }
-    // TODO 日志持久化
 
     /**
      * 查询全部订单
@@ -106,11 +115,12 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "findAll",key = "#option.toString()")
+    @Cacheable(value = "order",key = "methodName + #option.toString()")
     public List<OrderDetail> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        List<OrderDetail> list = orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed"));
-        return list;
+        System.out.println(Integer.valueOf(option.get("pageNo")) + " " +Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        return orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
     /**
@@ -121,9 +131,10 @@ public class OrderServiceIpm implements OrderService {
      */
     // value代表缓存名称 key代表键 在redis中以 value::key 的形式表示redis的key
     @Override
-    @Cacheable(value = "findByPid",key = "#option.toString()")
+    @Cacheable(value = "order",key = "methodName + #option.toString()")
     public List<OrderDetail> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByPid(pid, "pid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
@@ -134,9 +145,10 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "findByCid",key = "#option.toString()")
+    @Cacheable(value = "order",key = "methodName + #option.toString()")
     public List<OrderDetail> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByCid(cid, "cid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
@@ -147,9 +159,10 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "findByUid",key = "#option.toString()")
+    @Cacheable(value = "order",key = "methodName + #option.toString()")
     public List<OrderDetail> findByUid(long uid, Map<String, String> option) {
         Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByUid(uid, "uid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
@@ -160,14 +173,16 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "findByType",key = "#option.toString()")
+    @Cacheable(value = "order",key = "methodName + #option.toString()")
     public List<OrderDetail> findByType(long id, Map<String, String> option) {
         Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByType(id, "sid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
     @Override
+    @Cacheable(value = "order",key = "methodName + #id")
     public OrderDetail findById(long id) {
-        return orderMapper.findById(id, "id");
+        return orderMapper.findById(id);
     }
 }

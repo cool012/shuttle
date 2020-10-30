@@ -6,6 +6,8 @@ import com.example.hope.service.ServiceService;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
@@ -28,6 +30,7 @@ public class ServiceServiceIpm implements ServiceService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "service",allEntries = true)
     public void insert(String serviceName){
         int res = serviceMapper.insert(serviceName);
         log.info("service insert serviceName -> " + serviceName + " -> res -> " + res);
@@ -36,10 +39,12 @@ public class ServiceServiceIpm implements ServiceService {
 
     /**
      * 删除服务
+     *
      * @param id
      */
     @Override
     @Transient
+    @CacheEvict(value = "service",allEntries = true)
     public void delete(Long id) {
         int res = serviceMapper.delete(id);
         log.info("service delete id -> " + id + " -> res -> " + res);
@@ -51,9 +56,8 @@ public class ServiceServiceIpm implements ServiceService {
      * @return
      */
     @Override
+    @Cacheable(value = "service",key = "methodName")
     public List<com.example.hope.model.entity.Service> findAll(){
-        List<com.example.hope.model.entity.Service> list = serviceMapper.findAll();
-        log.info("findAll service -> " + list.toString());
-        return list;
+        return serviceMapper.findAll();
     }
 }

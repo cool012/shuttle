@@ -1,23 +1,28 @@
 package com.example.hope.service.serviceIpm;
 
-import cn.hutool.core.lang.Validator;
 import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
+import com.example.hope.service.MailService;
 import com.example.hope.service.UserService;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description: 用户相关服务
  * @author: DHY
  * @created: 2020/10/23 19:56
  */
+
 @Log4j2
 @Service
 public class UserServiceIpm implements UserService {
@@ -25,7 +30,7 @@ public class UserServiceIpm implements UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private MailUtils mailUtils;
+    private MailService mailService;
 
     @Autowired
     UserServiceIpm(UserMapper userMapper) {
@@ -39,11 +44,12 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "user",allEntries = true)
     public void register(User user) {
         // 检查输入合法
-        Checker.check_user(user);
+        Utils.check_user(user);
         // 用户密码加密
-        user.setPassword(Encoder.encode(user.getPassword()));
+        user.setPassword(Utils.encode(user.getPassword()));
         int res = userMapper.insert(user);
         log.info("user register -> " + user.toString() + " -> res -> " + res);
         BusinessException.check(res, "注册失败");
@@ -59,7 +65,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     public String login(String email, String password, int expired) {
-        String encryption_password = Encoder.encode(password);
+        String encryption_password = Utils.encode(password);
         User user = userMapper.login(email, encryption_password);
         BusinessException.check(user != null ? 1 : 0, "登录失败，用户名或密码错误");
         return JwtUtils.createToken(user, expired);
@@ -72,6 +78,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "user",allEntries = true)
     public void delete(long id) {
         int res = userMapper.delete(id);
         log.info("user delete -> " + id + " -> res -> " + res);
@@ -85,6 +92,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "user",allEntries = true)
     public void update(User user) {
         int res = userMapper.update(user);
         log.info("user update -> " + user.toString() + " -> res -> " + res);
@@ -97,8 +105,9 @@ public class UserServiceIpm implements UserService {
      * @param user
      */
     @Transient
+    @CacheEvict(value = "user",allEntries = true)
     public void updatePassword(User user) {
-        user.setPassword(Encoder.encode(user.getPassword()));
+        user.setPassword(Utils.encode(user.getPassword()));
         int res = userMapper.updatePassword(user);
         log.info("user update password -> " + user.toString() + " -> res -> " + res);
         BusinessException.check(res, "修改密码失败");
@@ -112,6 +121,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "user",allEntries = true)
     public void addScore(long id, int quantity) {
         int res = userMapper.addScore(id, quantity);
         log.info("user addScore -> " + id + " -> res -> " + res);
@@ -125,6 +135,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "user",allEntries = true)
     public void reduceScore(long id) {
 
         if (findByScore(id) == 0) {
@@ -142,6 +153,7 @@ public class UserServiceIpm implements UserService {
      * @param password
      */
     @Override
+    @CacheEvict(value = "user",allEntries = true)
     public void resetPassword(String token, String password) {
         // 检查token是否有效
         long id = checkReset(token);
@@ -162,7 +174,7 @@ public class UserServiceIpm implements UserService {
         // 加密生成邮箱token
         String token = JwtUtils.createToken(user, 60);
         // 发送邮箱
-        mailUtils.sendTokenMail(email, token);
+        mailService.sendTokenMail(email, token);
     }
 
     /**
@@ -184,6 +196,7 @@ public class UserServiceIpm implements UserService {
      * @param email
      */
     @Override
+    @Cacheable(value = "user",key = "methodName + #email")
     public User findByEmail(String email) {
         return userMapper.findByEmail(email);
     }
@@ -195,19 +208,21 @@ public class UserServiceIpm implements UserService {
      * @return
      */
     @Override
+    @Cacheable(value = "user",key = "methodName + #id")
     public User findUserById(long id) {
         return userMapper.findUserById(id);
     }
 
-
-    // TODO 缓存
     /**
      * 查询全部用户
      *
      * @return
      */
     @Override
-    public List<User> findAll() {
+    @Cacheable(value = "user",key = "methodName")
+    public List<User> findAll(Map<String,String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return userMapper.findAll();
     }
 
@@ -219,6 +234,7 @@ public class UserServiceIpm implements UserService {
      * @return
      */
     @Override
+    @Cacheable(value = "user",key = "methodName + #id")
     public int findByScore(long id) {
         return userMapper.findByScore(id);
     }

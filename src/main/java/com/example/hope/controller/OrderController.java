@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -58,18 +59,19 @@ public class OrderController {
     @User
     @ApiOperation("服务员接单")
     @RequestMapping(value = "/receive/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> receive(@PathVariable long id) {
-        orderService.receive(id);
+    public ReturnMessage<Object> receive(HttpServletRequest request,@PathVariable long id) {
+        orderService.receive(id,request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 
+    @Admin
     @ApiOperation("查询全部订单")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findAll(option));
     }
 
-//    @Admin
+    @Admin
     @ApiOperation("根据产品id查询订单")
     @RequestMapping(value = "/findByPid/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByPid(@PathVariable long id, @RequestParam Map<String, String> option) {

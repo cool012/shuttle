@@ -2,6 +2,7 @@ package com.example.hope.service;
 
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.OrderDetail;
+import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,7 +17,7 @@ public interface OrderService {
 
     void update(Order order);
 
-    void receive(long id);
+    void receive(long id,String token);
 
     List<OrderDetail> findAll(Map<String,String> option);
 

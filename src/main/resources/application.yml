@@ -70,3 +70,13 @@ spring:
       filter:
         stat:
           log-slow-sql: true
+
+logging:
+  level:
+    com.example.hope.model.mapper.OrderMapper: debug
+
+pagehelper:
+  helperDialect: mysql
+  params: count=countSql
+  reasonable: true
+  supportMethodsArguments: true

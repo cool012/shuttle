@@ -36,11 +36,23 @@ public interface OrderMapper {
     @SelectProvider(type = OrderProvider.class,method = "choose")
     List<OrderDetail> findByType(long sid,@Param("idName") String idName,@Param("sort") String sort,@Param("order") String order,@Param("completed") String completed);
 
-    @SelectProvider(type = OrderProvider.class,method = "choose")
-    OrderDetail findById(long id,@Param("idName") String idName);
+    @Select("select " +
+            "c.id,cid,uid,pid," +
+            "e.id as sid," +
+            "a.email as user," +
+            "b.email as waiter," +
+            "d.product_name as product," +
+            "e.service_name as type," +
+            "create_time,c.address,note,file_url,complete " +
+            "from user as a,user as b,orders as c,product as d,service as e " +
+            "where c.cid = a.id " +
+            "and c.uid = b.id " +
+            "and c.pid = d.id " +
+            "and d.service_type = e.id and c.id = #{id}")
+    OrderDetail findById(long id);
 
-    @Update("update orders set complete = 1 where id = #{id}")
-    int receive(long id);
+    @Update("update orders set complete = 1,uid = #{uid} where id = #{id}")
+    int receive(long id,long uid);
 
     class OrderProvider{
 
@@ -72,7 +84,7 @@ public interface OrderMapper {
 
         String sid = " and c.sid = #{sid}";
 
-        String id = " and id = #{id}";
+        String id = " and c.id = #{id}";
 
         String create_time = " order by create_time ";
 
@@ -114,6 +126,7 @@ public interface OrderMapper {
                         break;
                     case "id":
                         sql = sql + id;
+                        break;
                 }
             }
 

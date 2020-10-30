@@ -1,4 +1,4 @@
-package com.example.hope.config.interceptor;
+package com.example.hope.common.interceptor;
 
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.PassToken;

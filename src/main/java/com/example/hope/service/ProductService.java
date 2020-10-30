@@ -1,6 +1,5 @@
 package com.example.hope.service;
 
-import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.Product;
 
 import java.util.List;
@@ -14,11 +13,9 @@ public interface ProductService {
 
     void update(Product product);
 
-    List<Product> findAll();
+    List<Product> findAll(Map<String,String> option);
 
-    List<Product> findAllByType(long serviceId);
+    List<Product> findAllByType(long serviceId,Map<String,String> option);
 
-    List<Product> findAllByTypeAndCategory(long serviceId, long categoryId);
-
-    Map<Long, String> findAllCategory(long serviceId);
+    List<Product> findAllByTypeAndCategory(long serviceId, long categoryId,Map<String,String> option);
 }

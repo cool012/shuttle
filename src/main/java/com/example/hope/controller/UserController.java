@@ -11,6 +11,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 /**
  * @description: 用户相关路由
  * @author: DHY
@@ -51,8 +54,8 @@ public class UserController {
 
     @ApiOperation("重置密码")
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-    public ReturnMessage<Object> resetPassword(String token,String password) {
-        userService.resetPassword(token,password);
+    public ReturnMessage<Object> resetPassword(String token, String password) {
+        userService.resetPassword(token, password);
         return ReturnMessageUtil.sucess();
     }
 
@@ -82,8 +85,8 @@ public class UserController {
     @Admin
     @ApiOperation("查询全部用户")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll() {
-        return ReturnMessageUtil.sucess(userService.findAll());
+    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(userService.findAll(option));
     }
 
     @ApiOperation("根据邮箱查询用户")
@@ -92,16 +95,10 @@ public class UserController {
         return ReturnMessageUtil.sucess(userService.findByEmail(Email));
     }
 
-    @RequestMapping(value = "/reduceScore/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> reduceScore(@PathVariable long id) {
-        userService.reduceScore(id);
-        return ReturnMessageUtil.sucess();
-    }
-
-
-    @RequestMapping(value = "/addScore/{id}/{quantity}", method = RequestMethod.GET)
-    public ReturnMessage<Object> addScore(@PathVariable long id,@PathVariable int quantity) {
-        userService.addScore(id,quantity);
+    @ApiOperation("增加点数")
+    @RequestMapping(value = "/addScore", method = RequestMethod.POST)
+    public ReturnMessage<Object> addScore(long id, int quantity) {
+        userService.addScore(id, quantity);
         return ReturnMessageUtil.sucess();
     }
 

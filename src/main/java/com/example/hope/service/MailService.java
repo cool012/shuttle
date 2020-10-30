@@ -1,4 +1,4 @@
-package com.example.hope.common.utils;
+package com.example.hope.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,7 +13,7 @@ import javax.annotation.Resource;
  */
 
 @Service
-public class MailUtils {
+public class MailService {
 
     @Resource
     private JavaMailSender javaMailSender;

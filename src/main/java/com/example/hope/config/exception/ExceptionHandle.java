@@ -1,12 +1,14 @@
 package com.example.hope.config.exception;
 
 import com.example.hope.common.utils.ReturnMessageUtil;
+import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.builder.BuilderException;
 import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Log4j2
 @RestControllerAdvice
 public class ExceptionHandle {
 
@@ -14,6 +16,7 @@ public class ExceptionHandle {
     public ReturnMessage<Object> handle(Exception exception){
         // 业务异常 code:-1
         if(exception instanceof BusinessException){
+            log.error(exception.getMessage());
             return ReturnMessageUtil.error(-1, exception.getMessage());
         }
         // 唯一性约束
@@ -21,7 +24,8 @@ public class ExceptionHandle {
             return ReturnMessageUtil.error(-1, "用户已经存在");
         }
 
+        log.error(exception.getMessage());
         // 系统异常 code:-2
-        return ReturnMessageUtil.error(-2, exception.getMessage());
+        return ReturnMessageUtil.error(-2, "系统异常");
     }
 }

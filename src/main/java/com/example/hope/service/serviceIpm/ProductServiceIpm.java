@@ -1,9 +1,11 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
 import com.example.hope.service.ProductService;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,11 +77,11 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
-    @Cacheable(value = "product",key = "#serviceId")
-    public List<Product> findAllByType(long serviceId) {
-        List<Product> productList = productMapper.findAllByType(serviceId);
-        log.info("findAllByType find serviceId -> " + productList.toString());
-        return productList;
+    @Cacheable(value = "product",key = "methodName + #serviceId")
+    public List<Product> findAllByType(long serviceId,Map<String,String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        return productMapper.findAllByType(serviceId);
     }
 
     /**
@@ -88,8 +90,10 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
-    @Cacheable(value = "product")
-    public List<Product> findAll() {
+    @Cacheable(value = "product",key = "methodName")
+    public List<Product> findAll(Map<String,String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return productMapper.findAll();
     }
 
@@ -101,23 +105,11 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
-    @Cacheable(value = "product")
-    public List<Product> findAllByTypeAndCategory(long serviceId, long categoryId) {
+    @Cacheable(value = "product",key = "methodName + #serviceId + #categoryId")
+    public List<Product> findAllByTypeAndCategory(long serviceId, long categoryId,Map<String,String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return productMapper.findAllByTypeAndCategory(serviceId, categoryId);
-    }
-
-    ;
-
-    /**
-     * 根据服务查询全部分类
-     *
-     * @param serviceId
-     * @return
-     */
-    @Override
-    @Cacheable(value = "Category",key = "#serviceId")
-    public Map<Long, String> findAllCategory(long serviceId) {
-        return findAllCategory(serviceId);
     }
 
     /**
@@ -132,6 +124,4 @@ public class ProductServiceIpm implements ProductService {
         log.info("product addSales -> " + id + " for -> " + sales + " -> res" + res);
         BusinessException.check(res, "更新销量失败");
     }
-
-    ;
 }

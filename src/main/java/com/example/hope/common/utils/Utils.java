@@ -1,7 +1,9 @@
 package com.example.hope.common.utils;
 
 import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.ReUtil;
 import com.example.hope.model.entity.User;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Map;
 
@@ -40,6 +42,30 @@ public class Utils {
                 throw new IllegalArgumentException("completed参数错误");
             }
         }
+
+        if(!option.containsKey("pageNo")){
+            option.put("pageNo","1");
+        }
+
+        if(!option.containsKey("pageSize")){
+            option.put("pageSize","10");
+        }
+
         return option;
+    }
+
+    public static void check_user(User user){
+        if (!Validator.isEmail(user.getEmail())){
+            throw new IllegalArgumentException("邮箱格式不正确");
+        }
+        if (user.getType().equals("2")){
+            throw new IllegalArgumentException("不能注册为管理员");
+        }else if(!user.getType().equals("0") && !user.getType().equals("1")){
+            throw new IllegalArgumentException("type参数错误");
+        }
+    }
+
+    public static String encode(String password) {
+        return DigestUtils.md5Hex(password);
     }
 }

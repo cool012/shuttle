@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@Api(tags = "测试")
+@Api(tags = "测试相关接口")
 public class HelloController {
 
     @GetMapping("/hello")

@@ -1,6 +1,6 @@
 package com.example.hope.config;
 
-import com.example.hope.config.interceptor.AuthenticationInterceptor;
+import com.example.hope.common.interceptor.AuthenticationInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

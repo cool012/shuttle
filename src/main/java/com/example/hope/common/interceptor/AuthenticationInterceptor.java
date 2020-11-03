@@ -2,8 +2,9 @@ package com.example.hope.common.interceptor;
 
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.PassToken;
-import com.example.hope.annotation.User;
+import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.JwtUtils;
+import com.example.hope.config.exception.BusinessException;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,21 +20,21 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
 
         // 如果不是映射到方法直接通过
-        if(!(handler instanceof HandlerMethod)){
+        if (!(handler instanceof HandlerMethod)) {
             return true;
         }
 
-        HandlerMethod handlerMethod = (HandlerMethod)handler;
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
 
-        if(method.isAnnotationPresent(PassToken.class)){
+        if (method.isAnnotationPresent(PassToken.class)) {
             return true;
         }
 
-        if(method.isAnnotationPresent(User.class)){
+        if (method.isAnnotationPresent(LoginUser.class)) {
 
-            if(token == null){
-                throw new RuntimeException("无token,请重新登陆");
+            if (token == null) {
+                throw new BusinessException(0, "无token,请重新登陆");
             }
 
             JwtUtils.parseJWT(token);
@@ -41,14 +42,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if(method.isAnnotationPresent(Admin.class)){
+        if (method.isAnnotationPresent(Admin.class)) {
 
-            if(token == null){
-                throw new RuntimeException("无token,请重新登陆");
+            if (token == null) {
+                throw new BusinessException(0, "无token,请重新登陆");
             }
 
-            if(!JwtUtils.is_admin(token)){
-                throw new RuntimeException("权限不够");
+            if (!JwtUtils.is_admin(token)) {
+                throw new BusinessException(0, "权限不够");
             }
 
             JwtUtils.parseJWT(token);

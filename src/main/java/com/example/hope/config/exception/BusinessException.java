@@ -15,7 +15,7 @@ public class BusinessException extends RuntimeException {
 
     public static void check(int res,String message){
         if(res < 1){
-            throw new BusinessException(-1,message);
+            throw new BusinessException(0,message);
         }
     }
 }

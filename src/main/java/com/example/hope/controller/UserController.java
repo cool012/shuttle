@@ -1,9 +1,10 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
-import com.example.hope.annotation.User;
+import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
+import com.example.hope.model.entity.User;
 import com.example.hope.service.UserService;
 import com.example.hope.service.serviceIpm.UserServiceIpm;
 import io.swagger.annotations.Api;
@@ -11,7 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -33,14 +33,13 @@ public class UserController {
 
     @ApiOperation("用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ReturnMessage<Object> login(String username, String password, int expired) {
-        String token = userService.login(username, password, expired);
-        return ReturnMessageUtil.sucess(token);
+    public ReturnMessage<Object> login(String email, String password,int expired) {
+        return ReturnMessageUtil.sucess(userService.login(email, password, expired));
     }
 
     @ApiOperation("用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ReturnMessage<Object> register(com.example.hope.model.entity.User user) {
+    public ReturnMessage<Object> register(User user) {
         userService.register(user);
         return ReturnMessageUtil.sucess();
     }
@@ -61,13 +60,13 @@ public class UserController {
 
     @Admin
     @ApiOperation("用户删除")
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ReturnMessage<Object> login(@PathVariable("id") long id) {
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ReturnMessage<Object> login(long id) {
         userService.delete(id);
         return ReturnMessageUtil.sucess();
     }
 
-    @User
+    @LoginUser
     @ApiOperation("用户更新")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(com.example.hope.model.entity.User user) {

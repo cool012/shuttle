@@ -1,7 +1,7 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
-import com.example.hope.annotation.User;
+import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.Product;
 import com.example.hope.config.exception.ReturnMessage;
@@ -26,7 +26,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-//    @Admin
+    @Admin
     @ApiOperation("添加产品")
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     public ReturnMessage<Object> insert(Product product){
@@ -50,21 +50,21 @@ public class ProductController {
         return ReturnMessageUtil.sucess();
     }
 
-    @User
+    @LoginUser
     @ApiOperation("按类型查找全部产品")
     @RequestMapping(value = "/findAllByType/{serviceId}",method = RequestMethod.GET)
     public ReturnMessage<Object> findAllByType(@PathVariable("serviceId") long serviceId,@RequestParam Map<String, String> option){
         return ReturnMessageUtil.sucess(productService.findAllByType(serviceId,option));
     }
 
-    @User
+    @LoginUser
     @ApiOperation("查找全部产品")
     @RequestMapping(value = "/findAll",method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option){
         return ReturnMessageUtil.sucess(productService.findAll(option));
     }
 
-    @User
+    @LoginUser
     @ApiOperation("按类型、分类查找全部产品")
     @RequestMapping(value = "/findAllByTypeAndCategory/{serviceId}/{categoryId}",method = RequestMethod.GET)
     public ReturnMessage<Object> findAllByTypeAndCategory(@PathVariable long serviceId,@PathVariable long categoryId,@RequestParam Map<String, String> option){

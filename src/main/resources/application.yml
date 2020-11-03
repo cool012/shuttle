@@ -3,14 +3,26 @@ mybatis:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+#    ${dbPasswd}
     password: dhy627
-    url: jdbc:mysql://localhost:3306/hope?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+#    ${dbHost}
+    url: jdbc:mysql://127.0.0.1:3306/hope?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+#    ${dbUser}
     username: root
   mail:
     host: smtp.163.com #SMTP服务器地址
     username: touwaerioe #登陆账号
     password: OUWBDRKFVWGKLQUT #登陆密码（或授权码）
     from: touwaerioe@163.com #邮件发信人（即真实邮箱）
+#    port: 465
+#    properties:
+#      mail:
+#        smtp:
+#          ssl:
+#            enable: true
+#          socketFactory:
+#            port: 465
+#            class: javax.net.ssl.SSLSocketFactory
 
     cache:
       type: REDIS
@@ -32,28 +44,27 @@ spring:
           max-idle: 8
           # 连接池中的最小空闲连接 默认 0
           min-idle: 0
-
-    druid:
-      type: com.alibaba.druid.pool.DruidDataSource
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/hope?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
-      username: root
-      password: dhy627
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 30000
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: select '1' from dual
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      pool-prepared-statements: true
-      max-open-prepared-statements: 20
-      max-pool-prepared-statement-per-connection-size: 20
-      filters: stat,wall
-      aop-patterns: com.springboot.servie.*
+#    druid:
+#      type: com.alibaba.druid.pool.DruidDataSource
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://localhost:3306/hope?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+#      username: root
+#      password: dhy627
+#      initial-size: 5
+#      min-idle: 5
+#      max-active: 20
+#      max-wait: 30000
+#      time-between-eviction-runs-millis: 60000
+#      min-evictable-idle-time-millis: 300000
+#      validation-query: select '1' from dual
+#      test-while-idle: true
+#      test-on-borrow: false
+#      test-on-return: false
+#      pool-prepared-statements: true
+#      max-open-prepared-statements: 20
+#      max-pool-prepared-statement-per-connection-size: 20
+#      filters: stat,wall
+#      aop-patterns: com.springboot.servie.*
 
       web-stat-filter:
         enabled: true
@@ -80,3 +91,5 @@ pagehelper:
   params: count=countSql
   reasonable: true
   supportMethodsArguments: true
+server:
+  port: 8081

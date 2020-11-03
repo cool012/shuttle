@@ -5,6 +5,7 @@ import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.OrderDetail;
+import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
@@ -50,7 +51,10 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transient
     @CacheEvict(value = "order",allEntries = true)
-    public void insert(Order order) {
+    public void insert(Order order,String token) {
+        User user = JwtUtils.getUser(token);
+        order.setCid(user.getId());
+        order.setAddress(user.getAddress());
         int res = orderMapper.insert(order);
         log.info("order insert -> " + order.toString() + " -> res -> " + res);
         BusinessException.check(res, "添加失败");

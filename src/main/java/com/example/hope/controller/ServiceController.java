@@ -1,9 +1,10 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
-import com.example.hope.annotation.User;
+import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
+import com.example.hope.model.entity.Service;
 import com.example.hope.service.ServiceService;
 import com.example.hope.service.serviceIpm.ServiceServiceIpm;
 import io.swagger.annotations.Api;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/service")
@@ -36,13 +39,13 @@ public class ServiceController {
 
     @Admin
     @ApiOperation("删除服务")
-    @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(@PathVariable long id){
+    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
+    public ReturnMessage<Object> delete(long id){
         serviceService.delete(id);
         return ReturnMessageUtil.sucess();
     }
 
-    @User
+    @LoginUser
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll",method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(){

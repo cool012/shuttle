@@ -8,24 +8,27 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @Log4j2
 @RestControllerAdvice
 public class ExceptionHandle {
 
     @ExceptionHandler(value = Exception.class)
-    public ReturnMessage<Object> handle(Exception exception){
+    public ReturnMessage<Object> handle(Exception exception) {
         // 业务异常 code:-1
-        if(exception instanceof BusinessException){
+        if (exception instanceof BusinessException) {
             log.error(exception.getMessage());
-            return ReturnMessageUtil.error(-1, exception.getMessage());
+            return ReturnMessageUtil.error(0, exception.getMessage());
         }
         // 唯一性约束
-        if(exception instanceof DuplicateKeyException){
-            return ReturnMessageUtil.error(-1, "用户已经存在");
+        if (exception instanceof DuplicateKeyException) {
+            return ReturnMessageUtil.error(0, "用户已经存在");
         }
-
+//        exception.printStackTrace();
         log.error(exception.getMessage());
         // 系统异常 code:-2
-        return ReturnMessageUtil.error(-2, "系统异常");
+        return ReturnMessageUtil.error(-1, "系统异常");
     }
 }

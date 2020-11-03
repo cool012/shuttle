@@ -2,6 +2,7 @@ package com.example.hope.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,12 +28,18 @@ public class MailService {
         javaMailSender.send(message);
     }
 
+    @Async("taskExecutor")
     public void sendTokenMail(String to, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("touwaerioe@163.com");
-        message.setTo(to);
-        message.setSubject("重置密码密钥");
-        message.setText(text);
-        javaMailSender.send(message);
+        try {
+            Thread.sleep(1000);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("touwaerioe@163.com");
+            message.setTo(to);
+            message.setSubject("重置密码密钥");
+            message.setText(text);
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,7 +1,8 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
-import com.example.hope.annotation.User;
+import com.example.hope.annotation.LoginUser;
+import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.model.entity.Order;
@@ -32,11 +33,11 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @User
+    @LoginUser
     @ApiOperation("添加订单")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(Order order) {
-        orderService.insert(order);
+    public ReturnMessage<Object> insert(HttpServletRequest request,Order order) {
+        orderService.insert(order,request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 
@@ -48,7 +49,7 @@ public class OrderController {
         return ReturnMessageUtil.sucess();
     }
 
-    @User
+    @LoginUser
     @ApiOperation("修改订单")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(Order order) {
@@ -56,7 +57,7 @@ public class OrderController {
         return ReturnMessageUtil.sucess();
     }
 
-    @User
+    @LoginUser
     @ApiOperation("服务员接单")
     @RequestMapping(value = "/receive/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> receive(HttpServletRequest request,@PathVariable long id) {
@@ -78,28 +79,28 @@ public class OrderController {
         return ReturnMessageUtil.sucess(orderService.findByPid(id, option));
     }
 
-    @User
+    @LoginUser
     @ApiOperation("根据消费者id查询订单")
     @RequestMapping(value = "/findByCid/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByCid(@PathVariable long id, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByCid(id, option));
     }
 
-    @User
+    @LoginUser
     @ApiOperation("根据生产者id查询订单")
     @RequestMapping(value = "/findByUid/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByUid(@PathVariable long id, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByUid(id, option));
     }
 
-    @User
+    @LoginUser
     @ApiOperation("按服务类型查询订单")
     @RequestMapping(value = "/findByType/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByType(@PathVariable long id, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByType(id, option));
     }
 
-    @User
+    @LoginUser
     @ApiOperation("按订单id查询订单")
     @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findById(@PathVariable long id) {

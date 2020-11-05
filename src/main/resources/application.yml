@@ -3,26 +3,23 @@ mybatis:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    ${dbPasswd}
-    password:
-#    ${dbHost}
-    url: jdbc:mysql://127.0.0.1:3306/hope?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
-#    ${dbUser}
-    username: root
+    password: ${dbPasswd}
+    url: jdbc:mysql://${dbHost}:3306/hope-service?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    username: ${dbUser}
   mail:
     host: smtp.163.com #SMTP服务器地址
     username: touwaerioe #登陆账号
     password: OUWBDRKFVWGKLQUT #登陆密码（或授权码）
     from: touwaerioe@163.com #邮件发信人（即真实邮箱）
-#    port: 465
-#    properties:
-#      mail:
-#        smtp:
-#          ssl:
-#            enable: true
-#          socketFactory:
-#            port: 465
-#            class: javax.net.ssl.SSLSocketFactory
+    port: 465
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
 
     cache:
       type: REDIS

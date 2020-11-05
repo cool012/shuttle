@@ -24,6 +24,6 @@ public interface CategoryMapper {
     @Select("select id,name,service_id from category")
     List<Category> findAll();
 
-    @Select("select id,name from category where service_id = #{serviceId}")
+    @Select("select id,name,service_id from category where service_id = #{serviceId}")
     List<Category> findAllByServiceId(long serviceId);
 }

@@ -40,8 +40,8 @@ public class CategoryController {
 
     @Admin
     @ApiOperation("删除类别")
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(@PathVariable long id) {
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ReturnMessage<Object> delete(long id) {
         categoryService.delete(id);
         return ReturnMessageUtil.sucess();
     }

@@ -36,8 +36,8 @@ public class ProductController {
 
     @Admin
     @ApiOperation("删除产品")
-    @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(@PathVariable("id") long id){
+    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
+    public ReturnMessage<Object> delete(long id){
         productService.delete(id);
         return ReturnMessageUtil.sucess();
     }

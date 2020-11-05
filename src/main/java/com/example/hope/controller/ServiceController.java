@@ -31,8 +31,8 @@ public class ServiceController {
 
     @Admin
     @ApiOperation("添加服务")
-    @RequestMapping(value = "/insert/{name}",method = RequestMethod.GET)
-    public ReturnMessage<Object> insert(@PathVariable String name){
+    @RequestMapping(value = "/insert",method = RequestMethod.POST)
+    public ReturnMessage<Object> insert(String name){
         serviceService.insert(name);
         return ReturnMessageUtil.sucess();
     }

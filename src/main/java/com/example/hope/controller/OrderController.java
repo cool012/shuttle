@@ -44,7 +44,7 @@ public class OrderController {
     @Admin
     @ApiOperation("删除订单")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(@RequestParam("id") long id) {
+    public ReturnMessage<Object> delete(long id) {
         orderService.delete(id);
         return ReturnMessageUtil.sucess();
     }

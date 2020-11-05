@@ -21,15 +21,15 @@ public interface ProductMapper {
     int update(Product product);
 
     //查询所有产品，按服务id查询
-    @Select("select id,product_name,price,image,service_type,category_id,sales from product where service_type = #{serviceId}")
+    @Select("select id,product_name,price,image,service_type,category_id,quantity,sales from product where service_type = #{serviceId}")
     List<Product> findAllByType(long serviceId);
 
     //查询所有产品
-    @Select("select id,product_name,price,image,service_type,category_id,sales from product")
+    @Select("select id,product_name,price,image,service_type,category_id,quantity,sales from product")
     List<Product> findAll();
 
     //查询所有产品，按服务id、分类查询
-    @Select("select id,product_name,price,image,service_type,category_id,sales from product where service_type = #{serviceId} and category_id = #{category_id}")
+    @Select("select id,product_name,price,image,service_type,category_id,quantity,sales from product where service_type = #{serviceId} and category_id = #{category_id}")
     List<Product> findAllByTypeAndCategory(long serviceId,long category_id);
 
     @Select("select id,name from category where service_id = #{serviceId}")

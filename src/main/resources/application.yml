@@ -4,7 +4,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: ${dbPasswd}
-    url: jdbc:mysql://${dbHost}:3306/hope-service?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    url: jdbc:mysql://${dbHost}:3306/${dbName}?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: ${dbUser}
   mail:
     host: smtp.163.com #SMTP服务器地址

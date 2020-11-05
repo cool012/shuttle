@@ -22,39 +22,39 @@ public class CategoryServiceImp implements CategoryService {
     private CategoryMapper categoryMapper;
 
     @Autowired
-    public CategoryServiceImp(CategoryMapper categoryMapper){
+    public CategoryServiceImp(CategoryMapper categoryMapper) {
         this.categoryMapper = categoryMapper;
     }
 
     @Override
     @Transient
-    @CacheEvict(value = "category")
+    @CacheEvict(value = "category", allEntries = true)
     public int insert(Category category) {
         return categoryMapper.insert(category);
     }
 
     @Override
     @Transient
-    @CacheEvict(value = "category")
+    @CacheEvict(value = "category", allEntries = true)
     public int delete(long id) {
         return categoryMapper.delete(id);
     }
 
     @Override
     @Transient
-    @CacheEvict(value = "category")
+    @CacheEvict(value = "category", allEntries = true)
     public int update(Category category) {
         return categoryMapper.update(category);
     }
 
     @Override
-    @Cacheable(value = "category",key = "methodName")
+    @Cacheable(value = "category", key = "methodName")
     public List<Category> findAll() {
         return categoryMapper.findAll();
     }
 
     @Override
-    @Cacheable(value = "category",key = "methodName + #serviceId")
+    @Cacheable(value = "category", key = "methodName + #serviceId")
     public List<Category> findAllByServiceId(long serviceId) {
         return categoryMapper.findAllByServiceId(serviceId);
     }

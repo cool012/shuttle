@@ -36,8 +36,8 @@ public class OrderController {
     @LoginUser
     @ApiOperation("添加订单")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(HttpServletRequest request,Order order) {
-        orderService.insert(order,request.getHeader("Authorization"));
+    public ReturnMessage<Object> insert(Order order) {
+        orderService.insert(order);
         return ReturnMessageUtil.sucess();
     }
 

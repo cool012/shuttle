@@ -4,14 +4,22 @@ import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 
+@Component
 public class JwtUtils {
 
+    private static String key;
+
+    @Value("${jwt.key}")
+    public void setKey(String jwtKey){
+        key = jwtKey;
+    }
     /**
      * 获取Token
      *
@@ -27,7 +35,7 @@ public class JwtUtils {
             long nowMillis = System.currentTimeMillis();
             Date now = new Date(nowMillis);
             //生成签名密钥
-            byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("QC%*gHZH8#");
+            byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
             Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
             // 添加构成JWT的参数
@@ -93,7 +101,7 @@ public class JwtUtils {
     public static Claims parseJWT(String token) {
         try {
             Claims claims = Jwts.parser()
-                    .setSigningKey(DatatypeConverter.parseBase64Binary("QC%*gHZH8#"))
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(key))
                     .parseClaimsJws(token).getBody();
             return claims;
         } catch (ExpiredJwtException eje) {

@@ -34,7 +34,7 @@ public interface UserMapper {
     @Select("select id,email,address,type,score from user")
     List<User> findAll();
 
-    @Select("select id,type from user where email = #{email} and password = #{encryption_password}")
+    @Select("select id,email,address,type,score from user where email = #{email} and password = #{encryption_password}")
     User login(String email,String encryption_password);
 
     @Select("select id,address,type,score from user where email = #{email}")

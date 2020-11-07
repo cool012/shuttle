@@ -38,7 +38,7 @@ public class Utils {
             option.put("completed", "-1");
         } else {
             String completed = option.get("completed");
-            if (!completed.equals("0") && !completed.equals("1") && !completed.equals("-1")) {
+            if (!completed.equals("0") && !completed.equals("1") && !completed.equals("-1") ) {
                 throw new IllegalArgumentException("completed参数错误");
             }
         }

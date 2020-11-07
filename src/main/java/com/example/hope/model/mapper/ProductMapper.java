@@ -1,6 +1,7 @@
 package com.example.hope.model.mapper;
 
 import com.example.hope.model.entity.Product;
+import com.example.hope.model.entity.detail.ProductDetail;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +22,16 @@ public interface ProductMapper {
     int update(Product product);
 
     //查询所有产品，按服务id查询
-    @Select("select id,product_name,price,image,service_type,category_id,quantity,sales from product where service_type = #{serviceId}")
-    List<Product> findAllByType(long serviceId);
+    @Select("select product.id,product_name,price,image,service_type,category_id,quantity,sales,service.service_name,category.name as category_name from product,service,category where service.id = product.service_type and category.id = product.category_id and product.service_type = #{serviceId}")
+    List<ProductDetail> findAllByType(long serviceId);
 
     //查询所有产品
-    @Select("select id,product_name,price,image,service_type,category_id,quantity,sales from product")
-    List<Product> findAll();
+    @Select("select product.id,product_name,price,image,service_type,category_id,quantity,sales,service.service_name,category.name as category_name from product,service,category where service.id = product.service_type and category.id = product.category_id;")
+    List<ProductDetail> findAll();
 
     //查询所有产品，按服务id、分类查询
-    @Select("select id,product_name,price,image,service_type,category_id,quantity,sales from product where service_type = #{serviceId} and category_id = #{category_id}")
-    List<Product> findAllByTypeAndCategory(long serviceId,long category_id);
+    @Select("select product.id,product_name,price,image,service_type,category_id,quantity,sales,service.service_name,category.name as category_name from product,service,category where service.id = #{serviceId} and category.id = #{category_id}")
+    List<ProductDetail> findAllByTypeAndCategory(long serviceId, long category_id);
 
     @Select("select id,name from category where service_id = #{serviceId}")
     Map<Long,String> findAllCategory(long serviceId);

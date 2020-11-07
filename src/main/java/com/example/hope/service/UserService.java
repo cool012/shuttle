@@ -9,7 +9,7 @@ public interface UserService {
 
     void register(User user);
 
-    String login(String email, String password, int expired);
+    Map<String,Object> login(String email, String password, int expired);
 
     void resetPassword(String token, String password);
 

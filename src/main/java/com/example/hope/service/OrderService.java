@@ -1,17 +1,14 @@
 package com.example.hope.service;
 
 import com.example.hope.model.entity.Order;
-import com.example.hope.model.entity.OrderDetail;
-import com.github.pagehelper.PageInfo;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.example.hope.model.entity.detail.OrderDetail;
 
 import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
 
-    void insert(Order order,String token);
+    void insert(Order order);
 
     void delete(long id);
 

@@ -1,7 +1,7 @@
 package com.example.hope.model.mapper;
 
 import com.example.hope.model.entity.Order;
-import com.example.hope.model.entity.OrderDetail;
+import com.example.hope.model.entity.detail.OrderDetail;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -72,7 +72,7 @@ public interface OrderMapper {
 
         String completed_sql = " and complete = 1";
 
-        String notCompleted_sql = " and complete = -1";
+//        String notCompleted_sql = " and complete = -1";
 
         String received = " and complete = 0";
 
@@ -104,9 +104,9 @@ public interface OrderMapper {
                     case "0":
                         sql = sql + received;
                         break;
-                    case "-1":
-                        sql = sql + notCompleted_sql;
-                        break;
+//                    case "-1":
+//                        sql = sql + notCompleted_sql;
+//                        break;
                 }
             }
 

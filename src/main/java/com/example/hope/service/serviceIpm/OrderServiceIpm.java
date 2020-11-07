@@ -4,12 +4,10 @@ import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Order;
-import com.example.hope.model.entity.OrderDetail;
-import com.example.hope.model.entity.User;
+import com.example.hope.model.entity.detail.OrderDetail;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,7 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -51,10 +49,11 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transient
     @CacheEvict(value = "order",allEntries = true)
-    public void insert(Order order,String token) {
-        User user = JwtUtils.getUser(token);
-        order.setCid(user.getId());
-        order.setAddress(user.getAddress());
+    public void insert(Order order) {
+//        User user = JwtUtils.getUser(token);
+//        order.setCid(user.getId());
+//        order.setAddress(user.getAddress());
+        order.setCreate_time(new Date());
         int res = orderMapper.insert(order);
         log.info("order insert -> " + order.toString() + " -> res -> " + res);
         BusinessException.check(res, "添加失败");
@@ -122,7 +121,6 @@ public class OrderServiceIpm implements OrderService {
     @Cacheable(value = "order",key = "methodName + #option.toString()")
     public List<OrderDetail> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        System.out.println(Integer.valueOf(option.get("pageNo")) + " " +Integer.valueOf(option.get("pageSize")));
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed"));
     }

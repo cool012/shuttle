@@ -50,10 +50,9 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order",allEntries = true)
     public void insert(Order order) {
-//        User user = JwtUtils.getUser(token);
-//        order.setCid(user.getId());
-//        order.setAddress(user.getAddress());
         order.setCreate_time(new Date());
+        // 代替为空的用户
+        order.setUid(2);
         int res = orderMapper.insert(order);
         log.info("order insert -> " + order.toString() + " -> res -> " + res);
         BusinessException.check(res, "添加失败");

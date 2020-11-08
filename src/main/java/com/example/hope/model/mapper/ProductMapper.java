@@ -30,7 +30,7 @@ public interface ProductMapper {
     List<ProductDetail> findAll();
 
     //查询所有产品，按服务id、分类查询
-    @Select("select product.id,product_name,price,image,service_type,category_id,quantity,sales,service.service_name,category.name as category_name from product,service,category where service.id = #{serviceId} and category.id = #{category_id}")
+    @Select("select product.id,product_name,price,image,service_type,category_id,quantity,sales,service.service_name,category.name as category_name from product,service,category where service.id = product.service_type and category.id = product.category_id and product.service_type = #{serviceId} and product.category_id = #{category_id}")
     List<ProductDetail> findAllByTypeAndCategory(long serviceId, long category_id);
 
     @Select("select id,name from category where service_id = #{serviceId}")

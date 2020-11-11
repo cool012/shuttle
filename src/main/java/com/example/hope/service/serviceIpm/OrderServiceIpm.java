@@ -97,12 +97,13 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order",allEntries = true)
     public void receive(long id,String token) {
+        long userId = JwtUtils.getUserId(token);
         // 减少点数
-        userService.reduceScore(id);
+        userService.reduceScore(userId);
         // 增加销量
-        productService.addSales(findById(id).getId(), 1);
+        productService.addSales(findById(id).getPid(), 1);
         // 更新订单状态
-        int res = orderMapper.receive(id, JwtUtils.getUserId(token));
+        int res = orderMapper.receive(id, userId);
         BusinessException.check(res, "接单失败");
     }
 

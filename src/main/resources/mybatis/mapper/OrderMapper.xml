@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.hope.model.mapper.OrderMapper">
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into orders(cid,uid,pid,create_time,address,note,file_url,complete)
+        values
+        <foreach collection="list" item="order" separator=",">
+            (#{order.cid},#{order.uid},#{order.pid},#{order.create_time},#{order.address},#{order.note},#{order.file_url},#{order.complete})
+        </foreach>
+    </insert>
+</mapper>

@@ -13,6 +13,9 @@ import java.util.Map;
 @Mapper
 public interface OrderMapper {
 
+    // 批量添加订单
+    int insertBatch(List<Order> orderList);
+
     @Insert("insert into orders(cid,uid,pid,create_time,address,note,file_url,complete) values(#{cid},#{uid},#{pid},#{create_time},#{address},#{note},#{file_url},#{complete})")
     int insert(Order order);
 

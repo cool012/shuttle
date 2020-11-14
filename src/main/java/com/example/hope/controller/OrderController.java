@@ -1,5 +1,6 @@
 package com.example.hope.controller;
 
+import cn.hutool.json.JSON;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.JwtUtils;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,8 +38,8 @@ public class OrderController {
     @LoginUser
     @ApiOperation("添加订单")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(Order order) {
-        orderService.insert(order);
+    public ReturnMessage<Object> insert(@RequestBody List<Order> orderList) {
+        orderService.insert(orderList);
         return ReturnMessageUtil.sucess();
     }
 

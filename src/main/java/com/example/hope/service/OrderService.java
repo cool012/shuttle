@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface OrderService {
 
-    void insert(Order order);
+    void insert(List<Order> orderList);
 
     void delete(long id);
 

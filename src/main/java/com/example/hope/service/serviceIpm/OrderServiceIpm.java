@@ -45,17 +45,24 @@ public class OrderServiceIpm implements OrderService {
     /**
      * 添加订单
      *
-     * @param order
+     * @param orderList
      */
     @Override
     @Transient
-    @CacheEvict(value = "order",allEntries = true)
-    public void insert(Order order) {
-        order.setCreate_time(new Date());
-        // 代替为空的用户
-        order.setUid(2);
-        int res = orderMapper.insert(order);
-        log.info("order insert -> " + order.toString() + " -> res -> " + res);
+    @CacheEvict(value = "order", allEntries = true)
+    public void insert(List<Order> orderList) {
+        for (Order order : orderList) {
+            order.setCreate_time(new Date());
+            // 代替为空的用户
+            order.setUid(2);
+        }
+        int res = 0;
+        if (orderList.size() == 1) {
+            res = orderMapper.insert(orderList.get(0));
+        } else if (orderList.size() > 1) {
+            res = orderMapper.insertBatch(orderList);
+        }
+        log.info("order insert -> " + orderList.toString() + " -> res -> " + res);
         BusinessException.check(res, "添加失败");
     }
 
@@ -66,7 +73,7 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "order",allEntries = true)
+    @CacheEvict(value = "order", allEntries = true)
     public void delete(long id) {
         int res = orderMapper.delete(id);
         log.info("order delete id -> " + id + " -> res -> " + res);
@@ -80,7 +87,7 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "order",allEntries = true)
+    @CacheEvict(value = "order", allEntries = true)
     public void update(Order order) {
         int res = orderMapper.update(order);
         log.info("order update -> " + order.toString() + " -> res -> " + res);
@@ -96,8 +103,8 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "order",allEntries = true)
-    public void receive(long id,String token) {
+    @CacheEvict(value = "order", allEntries = true)
+    public void receive(long id, String token) {
         long userId = JwtUtils.getUserId(token);
         // 减少点数
         userService.reduceScore(userId);
@@ -119,10 +126,10 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "order",key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
     public List<WaiterOrder> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
@@ -134,10 +141,10 @@ public class OrderServiceIpm implements OrderService {
      */
     // value代表缓存名称 key代表键 在redis中以 value::key 的形式表示redis的key
     @Override
-    @Cacheable(value = "order",key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
     public List<OrderDetail> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByPid(pid, "pid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
@@ -148,10 +155,10 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "order",key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
     public List<OrderDetail> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByCid(cid, "cid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
@@ -162,10 +169,10 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "order",key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
     public List<OrderDetail> findByUid(long uid, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByUid(uid, "uid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
@@ -176,15 +183,15 @@ public class OrderServiceIpm implements OrderService {
      * @return
      */
     @Override
-    @Cacheable(value = "order",key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
     public List<OrderDetail> findByType(long id, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return orderMapper.findByType(id, "sid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
     @Override
-    @Cacheable(value = "order",key = "methodName + #id")
+    @Cacheable(value = "order", key = "methodName + #id")
     public OrderDetail findById(long id) {
         return orderMapper.findById(id);
     }

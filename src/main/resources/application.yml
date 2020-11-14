@@ -1,5 +1,6 @@
 mybatis:
   type-aliases-package: com.example.hope.model
+  mapper-locations: classpath:mybatis/mapper/*.xml
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

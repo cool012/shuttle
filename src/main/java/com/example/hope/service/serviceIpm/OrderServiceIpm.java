@@ -40,7 +40,7 @@ public class OrderServiceIpm implements OrderService {
     private RedisUtil redisUtil;
 
     @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService,RedisUtil redisUtil) {
+    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService, RedisUtil redisUtil) {
         this.orderMapper = orderMapper;
         this.userService = userService;
         this.productService = productService;
@@ -55,7 +55,7 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transient
     @CacheEvict(value = "order", allEntries = true)
-    public void insert(List<Order> orderList,Boolean isExpired) {
+    public void insert(List<Order> orderList, Boolean isExpired) {
         for (Order order : orderList) {
             order.setCreate_time(new Date());
             // 代替为空的用户
@@ -65,15 +65,15 @@ public class OrderServiceIpm implements OrderService {
         if (orderList.size() == 1) {
             res = orderMapper.insert(orderList.get(0));
             // 设置过期时间
-            if(Boolean.valueOf(isExpired)) {
-                redisUtil.ins(String.valueOf(orderList.get(0).getId()), "expired", 1, TimeUnit.MINUTES);
+            if (Boolean.valueOf(isExpired)) {
+                redisUtil.ins("order_" + orderList.get(0).getId(), "expired", 1, TimeUnit.MINUTES);
             }
         } else if (orderList.size() > 1) {
             res = orderMapper.insertBatch(orderList);
             // 批量设置过期时间
-            if(Boolean.valueOf(isExpired)) {
+            if (Boolean.valueOf(isExpired)) {
                 for (Order order : orderList) {
-                    redisUtil.ins(String.valueOf(order.getId()), "expired", 1, TimeUnit.MINUTES);
+                    redisUtil.ins("order_" + order.getId(), "expired", 1, TimeUnit.MINUTES);
                 }
             }
         }
@@ -127,6 +127,7 @@ public class OrderServiceIpm implements OrderService {
         productService.addSales(findById(id).getPid(), 1);
         // 更新订单状态
         int res = orderMapper.receive(id, userId);
+        redisUtil.ins("completed_" + id, "expired", 1, TimeUnit.HOURS);
         BusinessException.check(res, "接单失败");
     }
 
@@ -205,9 +206,29 @@ public class OrderServiceIpm implements OrderService {
         return orderMapper.findByType(id, "sid", option.get("sort"), option.get("order"), option.get("completed"));
     }
 
+    /**
+     * 按订单id查询订单
+     *
+     * @param id
+     * @return
+     */
     @Override
     @Cacheable(value = "order", key = "methodName + #id")
     public OrderDetail findById(long id) {
         return orderMapper.findById(id);
+    }
+
+    /**
+     * 更新订单状态为完成
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @CacheEvict(value = "order", allEntries = true)
+    public int completed(long id) {
+        int res = orderMapper.completed(id);
+        BusinessException.check(res, "完成订单失败");
+        return res;
     }
 }

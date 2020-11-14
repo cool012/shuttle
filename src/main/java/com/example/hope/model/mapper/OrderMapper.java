@@ -65,6 +65,9 @@ public interface OrderMapper {
     @Update("update orders set complete = 1,uid = #{uid} where id = #{id}")
     int receive(long id, long uid);
 
+    @Update("update orders set complete = 2 where id = #{id}")
+    int completed(long id);
+
     class OrderProvider {
 
         String sql = "select " +

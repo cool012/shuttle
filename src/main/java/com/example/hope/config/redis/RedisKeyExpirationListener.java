@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
  * @created: 2020/11/14 20:48
  */
 @Component
-public class RedisKeyExpirationListener extends KeyExpirationEventMessageListener{
+public class RedisKeyExpirationListener extends KeyExpirationEventMessageListener {
 
     private OrderService orderService;
 
     @Autowired
-    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer,OrderService orderService){
+    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer, OrderService orderService) {
         super(listenerContainer);
         this.orderService = orderService;
     }
@@ -29,6 +29,12 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String key = message.toString();
-        orderService.delete(Integer.valueOf(key));
+        int id = Integer.parseInt(key.substring(key.indexOf("_") + 1));
+        if (key.contains("order")) {
+            orderService.delete(id);
+        }
+        if(key.contains("completed")){
+            orderService.completed(id);
+        }
     }
 }

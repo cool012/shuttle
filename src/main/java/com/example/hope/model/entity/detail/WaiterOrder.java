@@ -20,4 +20,5 @@ public class WaiterOrder implements Serializable {
     private long sid;
     private String product;
     private String category;
+    private String shop;
 }

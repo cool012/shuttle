@@ -45,13 +45,17 @@ public interface OrderMapper {
             "d.product_name as product," +
             "d.image as image," +
             "d.price as price," +
+            "d.shop as shop," +
             "e.service_name as type," +
+            "f.name as category," +
             "create_time,c.address,note,file_url,complete " +
-            "from user as a,user as b,orders as c,product as d,service as e " +
+            "from user as a,user as b,orders as c,product as d,service as e,category as f  " +
             "where c.cid = a.id " +
             "and c.uid = b.id " +
             "and c.pid = d.id " +
-            "and d.service_type = e.id and c.id = #{id}")
+            "and d.service_type = e.id " +
+            "and c.id = #{id} " +
+            "and f.id = d.category_id")
     OrderDetail findById(long id);
 
     @Update("update orders set complete = 1,uid = #{uid} where id = #{id}")
@@ -67,6 +71,7 @@ public interface OrderMapper {
                 "d.product_name as product," +
                 "d.image as image," +
                 "d.price as price," +
+                "d.shop as shop," +
                 "e.service_name as type," +
                 "f.name as category," +
                 "create_time,c.address,note,file_url,complete " +

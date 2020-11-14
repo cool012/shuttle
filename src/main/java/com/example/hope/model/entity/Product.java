@@ -19,4 +19,6 @@ public class Product implements Serializable {
     private int quantity;
     private long category_id;
     private int sales;
+    private String shop;
+    private int rate;
 }

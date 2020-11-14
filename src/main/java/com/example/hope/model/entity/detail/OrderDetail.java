@@ -24,4 +24,5 @@ public class OrderDetail extends Order implements Serializable {
     private long sid;
     private String image;
     private int price;
+    private String category;
 }

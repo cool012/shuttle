@@ -27,7 +27,7 @@ public class ExceptionHandle {
             return ReturnMessageUtil.error(0, "用户已经存在");
         }
 //        exception.printStackTrace();
-        log.error(exception.getMessage());
+        log.error(exception.getStackTrace());
         // 系统异常 code:-2
         return ReturnMessageUtil.error(-1, "系统异常");
     }

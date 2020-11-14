@@ -37,6 +37,13 @@ public class UserController {
         return ReturnMessageUtil.sucess(userService.login(email, password, expired));
     }
 
+    @LoginUser
+    @ApiOperation("检查token")
+    @RequestMapping(value = "/check",method = RequestMethod.GET)
+    public ReturnMessage<Object> check(){
+        return ReturnMessageUtil.sucess();
+    }
+
     @ApiOperation("用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ReturnMessage<Object> register(User user) {

@@ -43,7 +43,7 @@ public interface OrderMapper {
             "b.email as waiter," +
             "d.product_name as product," +
             "d.image as image," +
-            "d.price as price" +
+            "d.price as price," +
             "e.service_name as type," +
             "create_time,c.address,note,file_url,complete " +
             "from user as a,user as b,orders as c,product as d,service as e " +
@@ -65,7 +65,7 @@ public interface OrderMapper {
                 "b.email as waiter," +
                 "d.product_name as product," +
                 "d.image as image," +
-                "d.price as price" +
+                "d.price as price," +
                 "e.service_name as type," +
                 "create_time,c.address,note,file_url,complete " +
                 "from user as a,user as b,orders as c,product as d,service as e " +

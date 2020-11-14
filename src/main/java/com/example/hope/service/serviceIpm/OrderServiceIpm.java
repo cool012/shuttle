@@ -5,6 +5,7 @@ import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.detail.OrderDetail;
+import com.example.hope.model.entity.detail.WaiterOrder;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
@@ -119,7 +120,7 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order",key = "methodName + #option.toString()")
-    public List<OrderDetail> findAll(Map<String, String> option) {
+    public List<WaiterOrder> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
         return orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed"));

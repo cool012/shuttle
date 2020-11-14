@@ -2,6 +2,7 @@ package com.example.hope.model.mapper;
 
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.detail.OrderDetail;
+import com.example.hope.model.entity.detail.WaiterOrder;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ public interface OrderMapper {
     int update(Order order);
 
     @SelectProvider(type = OrderProvider.class, method = "choose")
-    List<OrderDetail> findAll(@Param("idName") String idName, @Param("sort") String sort, @Param("order") String order, @Param("completed") String completed);
+    List<WaiterOrder> findAll(@Param("idName") String idName, @Param("sort") String sort, @Param("order") String order, @Param("completed") String completed);
 
     @SelectProvider(type = OrderProvider.class, method = "choose")
     List<OrderDetail> findByPid(long pid, @Param("idName") String idName, @Param("sort") String sort, @Param("order") String order, @Param("completed") String completed);
@@ -69,11 +70,11 @@ public interface OrderMapper {
                 "e.service_name as type," +
                 "f.name as category," +
                 "create_time,c.address,note,file_url,complete " +
-                "from user as a,user as b,orders as c,product as d,service as e,category as f" +
+                "from user as a,user as b,orders as c,product as d,service as e,category as f " +
                 "where c.cid = a.id " +
                 "and c.uid = b.id " +
                 "and c.pid = d.id " +
-                "and d.service_type = e.id" +
+                "and d.service_type = e.id " +
                 "and f.id = d.category_id";
 
         String completed_sql = " and complete = 1";

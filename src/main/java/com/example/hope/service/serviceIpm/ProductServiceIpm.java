@@ -7,6 +7,7 @@ import com.example.hope.model.entity.detail.ProductDetail;
 import com.example.hope.model.mapper.ProductMapper;
 import com.example.hope.service.ProductService;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
-import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -79,10 +79,10 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Cacheable(value = "product",key = "methodName + #serviceId")
-    public List<ProductDetail> findAllByType(long serviceId,Map<String,String> option) {
+    public PageInfo<ProductDetail> findAllByType(long serviceId, Map<String,String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
-        return productMapper.findAllByType(serviceId);
+        return PageInfo.of(productMapper.findAllByType(serviceId));
     }
 
     /**
@@ -92,10 +92,10 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Cacheable(value = "product",key = "methodName")
-    public List<ProductDetail> findAll(Map<String,String> option) {
+    public PageInfo<ProductDetail> findAll(Map<String,String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
-        return productMapper.findAll();
+        return PageInfo.of(productMapper.findAll());
     }
 
     /**
@@ -107,10 +107,10 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Cacheable(value = "product",key = "methodName + #serviceId + #categoryId")
-    public List<ProductDetail> findAllByTypeAndCategory(long serviceId, long categoryId, Map<String,String> option) {
+    public PageInfo<ProductDetail> findAllByTypeAndCategory(long serviceId, long categoryId, Map<String,String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
-        return productMapper.findAllByTypeAndCategory(serviceId, categoryId);
+        return PageInfo.of(productMapper.findAllByTypeAndCategory(serviceId, categoryId));
     }
 
     /**

@@ -10,6 +10,7 @@ import com.example.hope.model.entity.detail.WaiterOrder;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -59,7 +60,7 @@ public class OrderServiceIpm implements OrderService {
         for (Order order : orderList) {
             order.setCreate_time(new Date());
             // 代替为空的用户
-            order.setUid(20);
+            order.setUid(2);
         }
         int res = 0;
         if (orderList.size() == 1) {
@@ -143,10 +144,10 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public List<WaiterOrder> findAll(Map<String, String> option) {
+    public PageInfo<WaiterOrder> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed"));
+        return PageInfo.of(orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed")));
     }
 
     /**
@@ -158,10 +159,10 @@ public class OrderServiceIpm implements OrderService {
     // value代表缓存名称 key代表键 在redis中以 value::key 的形式表示redis的key
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public List<OrderDetail> findByPid(long pid, Map<String, String> option) {
+    public PageInfo<OrderDetail> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return orderMapper.findByPid(pid, "pid", option.get("sort"), option.get("order"), option.get("completed"));
+        return PageInfo.of(orderMapper.findByPid(pid, "pid", option.get("sort"), option.get("order"), option.get("completed")));
     }
 
     /**
@@ -172,10 +173,10 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public List<OrderDetail> findByCid(long cid, Map<String, String> option) {
+    public PageInfo<OrderDetail> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return orderMapper.findByCid(cid, "cid", option.get("sort"), option.get("order"), option.get("completed"));
+        return PageInfo.of(orderMapper.findByCid(cid, "cid", option.get("sort"), option.get("order"), option.get("completed")));
     }
 
     /**
@@ -186,10 +187,10 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public List<OrderDetail> findByUid(long uid, Map<String, String> option) {
+    public PageInfo<OrderDetail> findByUid(long uid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return orderMapper.findByUid(uid, "uid", option.get("sort"), option.get("order"), option.get("completed"));
+        return PageInfo.of(orderMapper.findByUid(uid, "uid", option.get("sort"), option.get("order"), option.get("completed")));
     }
 
     /**
@@ -200,10 +201,10 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public List<OrderDetail> findByType(long id, Map<String, String> option) {
+    public PageInfo<OrderDetail> findByType(long id, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return orderMapper.findByType(id, "sid", option.get("sort"), option.get("order"), option.get("completed"));
+        return PageInfo.of(orderMapper.findByType(id, "sid", option.get("sort"), option.get("order"), option.get("completed")));
     }
 
     /**

@@ -3,6 +3,7 @@ package com.example.hope.service.serviceIpm;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
+import com.example.hope.config.redis.RedisUtil;
 import com.example.hope.model.entity.Order;
 import com.example.hope.model.entity.detail.OrderDetail;
 import com.example.hope.model.entity.detail.WaiterOrder;
@@ -19,6 +20,7 @@ import java.beans.Transient;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @description: 订单服务类
@@ -35,11 +37,14 @@ public class OrderServiceIpm implements OrderService {
 
     private ProductServiceIpm productService;
 
+    private RedisUtil redisUtil;
+
     @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService) {
+    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService,RedisUtil redisUtil) {
         this.orderMapper = orderMapper;
         this.userService = userService;
         this.productService = productService;
+        this.redisUtil = redisUtil;
     }
 
     /**
@@ -50,17 +55,27 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transient
     @CacheEvict(value = "order", allEntries = true)
-    public void insert(List<Order> orderList) {
+    public void insert(List<Order> orderList,Boolean isExpired) {
         for (Order order : orderList) {
             order.setCreate_time(new Date());
             // 代替为空的用户
-            order.setUid(2);
+            order.setUid(20);
         }
         int res = 0;
         if (orderList.size() == 1) {
             res = orderMapper.insert(orderList.get(0));
+            // 设置过期时间
+            if(Boolean.valueOf(isExpired)) {
+                redisUtil.ins(String.valueOf(orderList.get(0).getId()), "expired", 1, TimeUnit.MINUTES);
+            }
         } else if (orderList.size() > 1) {
             res = orderMapper.insertBatch(orderList);
+            // 批量设置过期时间
+            if(Boolean.valueOf(isExpired)) {
+                for (Order order : orderList) {
+                    redisUtil.ins(String.valueOf(order.getId()), "expired", 1, TimeUnit.MINUTES);
+                }
+            }
         }
         log.info("order insert -> " + orderList.toString() + " -> res -> " + res);
         BusinessException.check(res, "添加失败");

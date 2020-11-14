@@ -17,6 +17,7 @@ public interface OrderMapper {
     int insertBatch(List<Order> orderList);
 
     @Insert("insert into orders(cid,uid,pid,create_time,address,note,file_url,complete) values(#{cid},#{uid},#{pid},#{create_time},#{address},#{note},#{file_url},#{complete})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Order order);
 
     @Delete("delete from orders where id = #{id}")

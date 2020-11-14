@@ -9,23 +9,23 @@ import java.util.Map;
 
 public interface OrderService {
 
-    void insert(List<Order> orderList);
+    void insert(List<Order> orderList, Boolean isExpired);
 
     void delete(long id);
 
     void update(Order order);
 
-    void receive(long id,String token);
+    void receive(long id, String token);
 
-    List<WaiterOrder> findAll(Map<String,String> option);
+    List<WaiterOrder> findAll(Map<String, String> option);
 
-    List<OrderDetail> findByPid(long pid, Map<String,String> option);
+    List<OrderDetail> findByPid(long pid, Map<String, String> option);
 
-    List<OrderDetail> findByCid(long cid, Map<String,String> option);
+    List<OrderDetail> findByCid(long cid, Map<String, String> option);
 
-    List<OrderDetail> findByUid(long uid, Map<String,String> option);
+    List<OrderDetail> findByUid(long uid, Map<String, String> option);
 
-    List<OrderDetail> findByType(long id, Map<String,String> option);
+    List<OrderDetail> findByType(long id, Map<String, String> option);
 
     OrderDetail findById(long id);
 }

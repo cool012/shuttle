@@ -1,4 +1,4 @@
-package com.example.hope.config;
+package com.example.hope.config.redis;
 
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;

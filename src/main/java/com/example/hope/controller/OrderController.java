@@ -38,8 +38,8 @@ public class OrderController {
     @LoginUser
     @ApiOperation("添加订单")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(@RequestBody List<Order> orderList) {
-        orderService.insert(orderList);
+    public ReturnMessage<Object> insert(@RequestBody List<Order> orderList, @RequestParam(defaultValue = "false") boolean isExpired) {
+        orderService.insert(orderList, isExpired);
         return ReturnMessageUtil.sucess();
     }
 
@@ -62,8 +62,8 @@ public class OrderController {
     @LoginUser
     @ApiOperation("服务员接单")
     @RequestMapping(value = "/receive/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> receive(HttpServletRequest request,@PathVariable long id) {
-        orderService.receive(id,request.getHeader("Authorization"));
+    public ReturnMessage<Object> receive(HttpServletRequest request, @PathVariable long id) {
+        orderService.receive(id, request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 

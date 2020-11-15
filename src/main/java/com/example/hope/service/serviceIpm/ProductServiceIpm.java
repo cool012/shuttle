@@ -36,7 +36,7 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "product",allEntries = true)
+    @CacheEvict(value = "product", allEntries = true)
     public void insert(Product product) {
         int res = productMapper.insert(product);
         log.info("product insert -> " + product.toString() + " -> res -> " + res);
@@ -50,7 +50,7 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "product",allEntries = true)
+    @CacheEvict(value = "product", allEntries = true)
     public void delete(long id) {
         int res = productMapper.delete(id);
         log.info("product delete id -> " + id + " -> res -> " + res);
@@ -64,7 +64,7 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "product",allEntries = true)
+    @CacheEvict(value = "product", allEntries = true)
     public void update(Product product) {
         int res = productMapper.update(product);
         log.info("product update -> " + product.toString() + " -> res -> " + res);
@@ -78,10 +78,10 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
-    @Cacheable(value = "product",key = "methodName + #serviceId")
-    public PageInfo<ProductDetail> findAllByType(long serviceId, Map<String,String> option) {
+    @Cacheable(value = "product", key = "methodName + #serviceId")
+    public PageInfo<ProductDetail> findAllByType(long serviceId, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return PageInfo.of(productMapper.findAllByType(serviceId));
     }
 
@@ -91,10 +91,10 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
-    @Cacheable(value = "product",key = "methodName")
-    public PageInfo<ProductDetail> findAll(Map<String,String> option) {
+    @Cacheable(value = "product", key = "methodName")
+    public PageInfo<ProductDetail> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return PageInfo.of(productMapper.findAll());
     }
 
@@ -106,10 +106,10 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
-    @Cacheable(value = "product",key = "methodName + #serviceId + #categoryId")
-    public PageInfo<ProductDetail> findAllByTypeAndCategory(long serviceId, long categoryId, Map<String,String> option) {
+    @Cacheable(value = "product", key = "methodName + #serviceId + #categoryId")
+    public PageInfo<ProductDetail> findAllByTypeAndCategory(long serviceId, long categoryId, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return PageInfo.of(productMapper.findAllByTypeAndCategory(serviceId, categoryId));
     }
 
@@ -124,5 +124,17 @@ public class ProductServiceIpm implements ProductService {
         int res = productMapper.addSales(id, sales);
         log.info("product addSales -> " + id + " for -> " + sales + " -> res" + res);
         BusinessException.check(res, "更新销量失败");
+    }
+
+    /**
+     * 更新产品评分
+     *
+     * @param id
+     * @param rate
+     */
+    @Override
+    public void review(long id, int rate) {
+        int res = productMapper.review(id, rate);
+        BusinessException.check(res, "更新评分失败");
     }
 }

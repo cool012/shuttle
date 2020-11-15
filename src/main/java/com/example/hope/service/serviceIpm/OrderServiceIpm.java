@@ -147,7 +147,9 @@ public class OrderServiceIpm implements OrderService {
     public PageInfo<WaiterOrder> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed")));
+        PageInfo<WaiterOrder> pageInfo = PageInfo.of(orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed")));
+        log.info(pageInfo.toString());
+        return pageInfo;
     }
 
     /**

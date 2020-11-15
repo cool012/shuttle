@@ -62,6 +62,7 @@ spring:
 logging:
   level:
     com.example.hope.model.mapper.OrderMapper: debug
+  config: classpath:log4j2.xml
 
 pagehelper:
   helperDialect: mysql

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <!--<Configuration status="WARN" monitorInterval="30"> -->
+    <properties>
+        <property name="LOG_HOME">/logs</property>
+    </properties>
+    <Appenders>
+        <!--*********************控制台日志***********************-->
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <!--设置日志格式及颜色-->
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{bright,Magenta} %highlight{%-5level} [%style{%t}{bright,blue}] %style{%C{}}{bright,yellow}: %msg%n%style{%throwable}{red}"
+                    disableAnsi="false" noConsoleNoAnsi="false"/>
+        </Console>
+
+        <!--*********************文件日志***********************-->
+
+        <!--info级别日志-->
+        <RollingFile name="infoFileAppender"
+                     fileName="${LOG_HOME}/info.log"
+                     filePattern="${LOG_HOME}/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log.gz">
+            <Filters>
+                <!--过滤掉warn及更高级别日志-->
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <!--设置日志格式-->
+            <PatternLayout>
+                <pattern>%d %p %C{} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+            <!--设置日志基础文件大小，超过该大小就触发日志文件滚动更新-->
+            <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            设置日志的文件个数上限，不设置默认为7个，超过大小后会被覆盖；依赖于filePattern中的%i
+            <DefaultRolloverStrategy max="100"/>
+        </RollingFile>
+
+        <!--error及更高级别日志-->
+        <RollingFile name="errorFileAppender"
+                     fileName="${LOG_HOME}/error.log"
+                     filePattern="${LOG_HOME}/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log.gz">
+            <!--设置日志格式-->
+            <PatternLayout>
+                <pattern>%d %p %C{} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!--设置日志基础文件大小，超过该大小就触发日志文件滚动更新-->
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+            <!--设置日志的文件个数上限，不设置默认为7个，超过大小后会被覆盖；依赖于filePattern中的%i-->
+            <DefaultRolloverStrategy max="100"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- 根日志设置 -->
+        <Root level="warn">
+            <AppenderRef ref="consoleAppender" level="warn"/>
+            <AppenderRef ref="infoFileAppender" level="info"/>
+            <AppenderRef ref="errorFileAppender" level="error"/>
+        </Root>
+
+        <!--druid数据源日志-->
+        <Logger name="druid.sql.Statement" level="warn"/>
+        <!-- mybatis日志 -->
+        <Logger name="com.mybatis" level="warn"/>
+    </Loggers>
+
+</Configuration>

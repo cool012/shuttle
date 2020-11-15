@@ -22,52 +22,60 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
-    public ProductController(ProductServiceIpm productService){
+    public ProductController(ProductServiceIpm productService) {
         this.productService = productService;
     }
 
     @Admin
     @ApiOperation("添加产品")
-    @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(Product product){
+    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    public ReturnMessage<Object> insert(Product product) {
         productService.insert(product);
         return ReturnMessageUtil.sucess();
     }
 
     @Admin
     @ApiOperation("删除产品")
-    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(long id){
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ReturnMessage<Object> delete(long id) {
         productService.delete(id);
         return ReturnMessageUtil.sucess();
     }
 
     @Admin
     @ApiOperation("修改产品")
-    @RequestMapping(value = "/update",method = RequestMethod.POST)
-    public ReturnMessage<Object> updateProduct(Product product){
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public ReturnMessage<Object> updateProduct(Product product) {
         productService.update(product);
         return ReturnMessageUtil.sucess();
     }
 
     @LoginUser
     @ApiOperation("按类型查找全部产品")
-    @RequestMapping(value = "/findAllByType/{serviceId}",method = RequestMethod.GET)
-    public ReturnMessage<Object> findAllByType(@PathVariable("serviceId") long serviceId,@RequestParam Map<String, String> option){
-        return ReturnMessageUtil.sucess(productService.findAllByType(serviceId,option));
+    @RequestMapping(value = "/findAllByType/{serviceId}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findAllByType(@PathVariable("serviceId") long serviceId, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(productService.findAllByType(serviceId, option));
     }
 
     @LoginUser
     @ApiOperation("查找全部产品")
-    @RequestMapping(value = "/findAll",method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option){
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(productService.findAll(option));
     }
 
     @LoginUser
     @ApiOperation("按类型、分类查找全部产品")
-    @RequestMapping(value = "/findAllByTypeAndCategory/{serviceId}/{categoryId}",method = RequestMethod.GET)
-    public ReturnMessage<Object> findAllByTypeAndCategory(@PathVariable long serviceId,@PathVariable long categoryId,@RequestParam Map<String, String> option){
-        return ReturnMessageUtil.sucess(productService.findAllByTypeAndCategory(serviceId,categoryId,option));
+    @RequestMapping(value = "/findAllByTypeAndCategory/{serviceId}/{categoryId}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findAllByTypeAndCategory(@PathVariable long serviceId, @PathVariable long categoryId, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(productService.findAllByTypeAndCategory(serviceId, categoryId, option));
+    }
+
+    @LoginUser
+    @ApiOperation("更新产品评分")
+    @RequestMapping(value = "/review", method = RequestMethod.POST)
+    public ReturnMessage<Object> review(long id, int rate) {
+        productService.review(id, rate);
+        return ReturnMessageUtil.sucess();
     }
 }

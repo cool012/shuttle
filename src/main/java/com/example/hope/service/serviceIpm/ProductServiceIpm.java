@@ -122,7 +122,7 @@ public class ProductServiceIpm implements ProductService {
     @Transient
     public void addSales(long id, int sales) {
         int res = productMapper.addSales(id, sales);
-        log.info("product addSales -> " + id + " for -> " + sales + " -> res" + res);
+        log.info("product addSales -> " + id + " for -> " + sales + " -> res " + res);
         BusinessException.check(res, "更新销量失败");
     }
 
@@ -135,6 +135,7 @@ public class ProductServiceIpm implements ProductService {
     @Override
     public void review(long id, int rate) {
         int res = productMapper.review(id, rate);
+        log.info("product review -> " + id + " for ->" + rate + " -> res " + res);
         BusinessException.check(res, "更新评分失败");
     }
 }

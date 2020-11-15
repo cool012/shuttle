@@ -38,4 +38,7 @@ public interface ProductMapper {
 
     @Update("update product set sales = sales + #{sales} where id = #{id}")
     int addSales(long id, int sales);
+
+    @Update("update product set rate = (rate + #{rate}) / 2 where id = #{id}")
+    int review(long id,int rate);
 }

@@ -24,7 +24,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     }
 
     /**
-     * 使用该方法监听 ,当key失效的时候执行改方法
+     * 使用该方法监听 ,当key失效的时候执行该方法
      */
     @Override
     public void onMessage(Message message, byte[] pattern) {

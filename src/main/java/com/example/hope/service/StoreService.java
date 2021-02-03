@@ -17,4 +17,10 @@ public interface StoreService {
     List<Store> findByServiceId(long serviceId);
 
     List<Store> findByCategoryId(long categoryId);
+
+    Store findById(long id);
+
+    List<Store> range();
+
+    void sales(long id, int quantity);
 }

@@ -68,4 +68,11 @@ public class StoreController {
     public ReturnMessage<Object> findByCategoryId(@PathVariable("categoryId") long categoryId) {
         return ReturnMessageUtil.sucess(storeService.findByCategoryId(categoryId));
     }
+
+    @ApiOperation("排行榜")
+    @RequestMapping(value = "/range", method = RequestMethod.GET)
+    public ReturnMessage<Object> sales() {
+        return ReturnMessageUtil.sucess(storeService.range());
+    }
+
 }

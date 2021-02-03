@@ -1,6 +1,7 @@
 package com.example.hope.service.serviceIpm;
 
 import com.example.hope.config.exception.BusinessException;
+import com.example.hope.config.redis.RedisUtil;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
 import com.example.hope.service.StoreService;
@@ -10,7 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @description: 商店服务实现类
@@ -22,10 +25,12 @@ import java.util.List;
 public class StoreServiceImp implements StoreService {
 
     private StoreMapper storeMapper;
+    private RedisUtil redisUtil;
 
     @Autowired
-    StoreServiceImp(StoreMapper storeMapper) {
+    StoreServiceImp(StoreMapper storeMapper, RedisUtil redisUtil) {
         this.storeMapper = storeMapper;
+        this.redisUtil = redisUtil;
     }
 
     /**
@@ -43,6 +48,7 @@ public class StoreServiceImp implements StoreService {
 
     /**
      * 删除商店
+     *
      * @param id
      */
     @Override
@@ -55,6 +61,7 @@ public class StoreServiceImp implements StoreService {
 
     /**
      * 更新商店
+     *
      * @param store
      */
     @Override
@@ -71,30 +78,59 @@ public class StoreServiceImp implements StoreService {
      * @return
      */
     @Override
-    @Cacheable(value = "user", key = "methodName")
+    @Cacheable(value = "store", key = "methodName")
     public List<Store> findAll() {
         return storeMapper.findAll();
     }
 
     /**
      * 根据serviceId查询商店
+     *
      * @param serviceId
      * @return
      */
     @Override
-    @Cacheable(value = "user", key = "methodName + #serviceId")
+    @Cacheable(value = "store", key = "methodName + #serviceId")
     public List<Store> findByServiceId(long serviceId) {
         return storeMapper.findByServiceId(serviceId, "serviceId");
     }
 
     /**
      * 根据categoryId查询商店
+     *
      * @param categoryId
      * @return
      */
     @Override
-    @Cacheable(value = "user", key = "methodName + #categoryId")
+    @Cacheable(value = "store", key = "methodName + #categoryId")
     public List<Store> findByCategoryId(long categoryId) {
-        return storeMapper.findByCategoryId(categoryId,"categoryId");
+        return storeMapper.findByCategoryId(categoryId, "categoryId");
+    }
+
+    @Override
+    @Cacheable(value = "store", key = "methodName + #id")
+    public Store findById(long id) {
+        return storeMapper.findById(id, "id");
+    }
+
+    @Override
+    public List<Store> range() {
+        Set<String> range = redisUtil.range("rank", 0, -1);
+        List<Store> stores = new ArrayList<>();
+        for (String id : range) {
+            stores.add(findById(Long.valueOf(id)));
+        }
+        return stores;
+    }
+
+    /**
+     * 增加商店销量
+     * @param id
+     * @param quantity
+     */
+    @Override
+    public void sales(long id, int quantity) {
+        storeMapper.sales(id, quantity);
+        redisUtil.incrScore("rank", String.valueOf(id), Double.valueOf(quantity));
     }
 }

@@ -17,7 +17,7 @@ public class ExceptionHandle {
 
     @ExceptionHandler(value = Exception.class)
     public ReturnMessage<Object> handle(Exception exception) {
-        // 业务异常 code:-1
+        // 业务异常 code:0
         if (exception instanceof BusinessException) {
             log.error(exception.getMessage());
             return ReturnMessageUtil.error(0, exception.getMessage());
@@ -27,8 +27,10 @@ public class ExceptionHandle {
             return ReturnMessageUtil.error(0, "用户已经存在");
         }
 
-        log.error(exception.getStackTrace());
-        // 系统异常 code:-2
+        exception.printStackTrace();
+//        log.error(exception.printStackTrace());
+
+        // 系统异常 code:-1
         return ReturnMessageUtil.error(-1, "系统异常");
     }
 }

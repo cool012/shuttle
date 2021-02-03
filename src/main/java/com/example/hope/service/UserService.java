@@ -9,15 +9,13 @@ public interface UserService {
 
     void register(User user);
 
-    Map<String,Object> login(String email, String password, int expired);
-
-    void resetPassword(String token, String password);
-
-    void sendEmail(String email);
+    Map<String, Object> login(String phone, String password, int expired);
 
     void delete(long id);
 
     void update(User user);
+
+    void updatePassword(long id,String password);
 
     void addScore(long id, int quantity);
 
@@ -25,9 +23,9 @@ public interface UserService {
 
     int findByScore(long id);
 
-    User findByEmail(String email);
+    User findByPhone(String phone);
 
     User findUserById(long id);
 
-    List<User> findAll(Map<String,String> option);
+    List<User> findAll(Map<String, String> option);
 }

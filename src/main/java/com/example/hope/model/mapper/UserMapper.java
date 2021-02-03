@@ -10,35 +10,35 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Insert("insert into user(password,email,address,type) values(#{password},#{email},#{address},#{type})")
+    @Insert("insert into user(password,phone,address,name) values(#{password},#{phone},#{address},#{name})")
     int insert(User user);
 
     @Delete("delete from user where id = #{id}")
     int delete(long id);
 
-    @Update("update user set address = #{address} where id = #{id}")
+    @Update("update user set address = #{address},name = #{name},phone = #{phone} where id = #{id}")
     int update(User user);
 
     @Update("update user set password = #{password} where id = #{id}")
-    int updatePassword(User user);
+    int updatePassword(long id, String password);
 
     @Update("update user set score = score + #{quantity} where id = #{id}")
-    int addScore(long id,int quantity);
+    int addScore(long id, int quantity);
 
     @Update("update user set score = score - 1 where id = #{id}")
     int reduceScore(long id);
 
-    @Select("select id,email,address,type,score from user where id = #{id}")
+    @Select("select id,phone,address,admin,score,name from user where id = #{id}")
     User findUserById(long id);
 
-    @Select("select id,email,address,type,score from user")
+    @Select("select id,phone,address,admin,score,name from user")
     List<User> findAll();
 
-    @Select("select id,email,address,type from user where email = #{email} and password = #{encryption_password}")
-    User login(String email,String encryption_password);
+    @Select("select id,phone,address,score,name,admin from user where phone = #{phone} and password = #{encryption_password}")
+    User login(String phone, String encryption_password);
 
-    @Select("select id,address,type,score from user where email = #{email}")
-    User findByEmail(String email);
+    @Select("select id,phone,address,admin,score,name from user where phone = #{phone}")
+    User findByPhone(String phone);
 
     @Select("select score from user where id = #{id}")
     int findByScore(long id);

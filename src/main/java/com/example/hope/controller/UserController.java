@@ -9,6 +9,7 @@ import com.example.hope.service.UserService;
 import com.example.hope.service.serviceIpm.UserServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,14 +34,14 @@ public class UserController {
 
     @ApiOperation("用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ReturnMessage<Object> login(String email, String password,int expired) {
-        return ReturnMessageUtil.sucess(userService.login(email, password, expired));
+    public ReturnMessage<Object> login(String phone, String password, int expired) {
+        return ReturnMessageUtil.sucess(userService.login(phone, password, expired));
     }
 
     @LoginUser
     @ApiOperation("检查token")
-    @RequestMapping(value = "/check",method = RequestMethod.GET)
-    public ReturnMessage<Object> check(){
+    @RequestMapping(value = "/check", method = RequestMethod.GET)
+    public ReturnMessage<Object> check() {
         return ReturnMessageUtil.sucess();
     }
 
@@ -51,17 +52,11 @@ public class UserController {
         return ReturnMessageUtil.sucess();
     }
 
-    @ApiOperation("发送邮件")
-    @RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
-    public ReturnMessage<Object> sendEmail(String email) {
-        userService.sendEmail(email);
-        return ReturnMessageUtil.sucess();
-    }
-
+    @LoginUser
     @ApiOperation("重置密码")
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-    public ReturnMessage<Object> resetPassword(String token, String password) {
-        userService.resetPassword(token, password);
+    public ReturnMessage<Object> resetPassword(long id, String password) {
+        userService.updatePassword(id, password);
         return ReturnMessageUtil.sucess();
     }
 
@@ -95,17 +90,27 @@ public class UserController {
         return ReturnMessageUtil.sucess(userService.findAll(option));
     }
 
-    @ApiOperation("根据邮箱查询用户")
-    @RequestMapping(value = "/findByEmail", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByEmail(String Email) {
-        return ReturnMessageUtil.sucess(userService.findByEmail(Email));
+    @Admin
+    @ApiOperation("根据手机号查询用户")
+    @RequestMapping(value = "/findByPhone/{phone}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByPhone(@PathVariable("phone") String phone) {
+        return ReturnMessageUtil.sucess(userService.findByPhone(phone));
     }
 
+    @LoginUser
     @ApiOperation("增加点数")
-    @RequestMapping(value = "/addScore", method = RequestMethod.POST)
+    @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     public ReturnMessage<Object> addScore(long id, int quantity) {
         userService.addScore(id, quantity);
         return ReturnMessageUtil.sucess();
+    }
+
+    @LoginUser
+    @ApiOperation("查询点数")
+    @RequestMapping(value = "/findSore/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findScore(@PathVariable("id") long id){
+        int score = userService.findByScore(id);
+        return ReturnMessageUtil.sucess(score);
     }
 
 }

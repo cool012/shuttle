@@ -31,9 +31,6 @@ public class UserServiceIpm implements UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private MailService mailService;
-
-    @Autowired
     UserServiceIpm(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
@@ -45,7 +42,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "user",allEntries = true)
+    @CacheEvict(value = "user", allEntries = true)
     public void register(User user) {
         // 检查输入合法
         Utils.check_user(user);
@@ -59,19 +56,19 @@ public class UserServiceIpm implements UserService {
     /**
      * 用户登录
      *
-     * @param email
+     * @param phone
      * @param password
      * @param expired  token过期时间，单位：分钟
      * @return
      */
     @Override
-    public Map<String,Object> login(String email, String password, int expired) {
+    public Map<String, Object> login(String phone, String password, int expired) {
         String encryption_password = Utils.encode(password);
-        User user = userMapper.login(email, encryption_password);
+        User user = userMapper.login(phone, encryption_password);
         BusinessException.check(user != null ? 1 : 0, "登录失败，用户名或密码错误");
-        Map<String,Object> map = new HashMap<>();
-        map.put("token",JwtUtils.createToken(user, expired));
-        map.put("user",user);
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", JwtUtils.createToken(user, expired));
+        map.put("user", user);
         return map;
     }
 
@@ -82,7 +79,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "user",allEntries = true)
+    @CacheEvict(value = "user", allEntries = true)
     public void delete(long id) {
         int res = userMapper.delete(id);
         log.info("user delete -> " + id + " -> res -> " + res);
@@ -96,7 +93,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "user",allEntries = true)
+    @CacheEvict(value = "user", allEntries = true)
     public void update(User user) {
         int res = userMapper.update(user);
         log.info("user update -> " + user.toString() + " -> res -> " + res);
@@ -106,14 +103,14 @@ public class UserServiceIpm implements UserService {
     /**
      * 用户修改密码
      *
-     * @param user
+     * @param id
+     * @param password
      */
     @Transient
-    @CacheEvict(value = "user",allEntries = true)
-    public void updatePassword(User user) {
-        user.setPassword(Utils.encode(user.getPassword()));
-        int res = userMapper.updatePassword(user);
-        log.info("user update password -> " + user.toString() + " -> res -> " + res);
+    @CacheEvict(value = "user", allEntries = true)
+    public void updatePassword(long id, String password) {
+        int res = userMapper.updatePassword(id, password);
+        log.info("user update password ->" + id, password + " -> res -> " + res);
         BusinessException.check(res, "修改密码失败");
     }
 
@@ -125,7 +122,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "user",allEntries = true)
+    @CacheEvict(value = "user", allEntries = true)
     public void addScore(long id, int quantity) {
         int res = userMapper.addScore(id, quantity);
         log.info("user addScore -> " + id + " -> res -> " + res);
@@ -139,9 +136,8 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Transient
-    @CacheEvict(value = "user",allEntries = true)
+    @CacheEvict(value = "user", allEntries = true)
     public void reduceScore(long id) {
-
         if (findByScore(id) == 0) {
             throw new BusinessException(-1, "用户点数为0");
         }
@@ -151,58 +147,14 @@ public class UserServiceIpm implements UserService {
     }
 
     /**
-     * 重置密码 -> 输入邮箱，点击发送邮件 -> 根据user加密生成token -> 邮箱发送成功，跳转到（前端）重置密码界面 ->
-     * 用户获取邮箱中的token，提交新密码 -> 重置密码（输入新密码） -> /user/restPassword
+     * 根据手机号查询用户
      *
-     * @param password
+     * @param phone
      */
     @Override
-    @CacheEvict(value = "user",allEntries = true)
-    public void resetPassword(String token, String password) {
-        // 检查token是否有效
-        long id = checkReset(token);
-        // 重置密码
-        updatePassword(new User(id, password));
-    }
-
-    /**
-     * 发送邮箱
-     *
-     * @param email
-     */
-    @Override
-    public void sendEmail(String email) {
-        User user = findByEmail(email);
-        // 检查邮箱存不存在
-        BusinessException.check(user == null ? 0 : 1, "用户不存在");
-        // 加密生成邮箱token
-        String token = JwtUtils.createToken(user, 60);
-        // 发送邮箱
-        mailService.sendTokenMail(email, token);
-    }
-
-    /**
-     * 检查能不能重置
-     *
-     * @param token
-     * @return
-     */
-    public long checkReset(String token) {
-        long id = JwtUtils.getUserId(token);
-        User user = findUserById(id);
-        BusinessException.check(user == null ? 0 : 1, "用户不存在");
-        return id;
-    }
-
-    /**
-     * 根据邮箱查询用户
-     *
-     * @param email
-     */
-    @Override
-    @Cacheable(value = "user",key = "methodName + #email")
-    public User findByEmail(String email) {
-        return userMapper.findByEmail(email);
+    @Cacheable(value = "user", key = "methodName + #phone")
+    public User findByPhone(String phone) {
+        return userMapper.findByPhone(phone);
     }
 
     /**
@@ -212,7 +164,7 @@ public class UserServiceIpm implements UserService {
      * @return
      */
     @Override
-    @Cacheable(value = "user",key = "methodName + #id")
+    @Cacheable(value = "user", key = "methodName + #id")
     public User findUserById(long id) {
         return userMapper.findUserById(id);
     }
@@ -223,10 +175,10 @@ public class UserServiceIpm implements UserService {
      * @return
      */
     @Override
-    @Cacheable(value = "user",key = "methodName")
-    public List<User> findAll(Map<String,String> option) {
+    @Cacheable(value = "user", key = "methodName")
+    public List<User> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")),Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return userMapper.findAll();
     }
 
@@ -238,7 +190,7 @@ public class UserServiceIpm implements UserService {
      * @return
      */
     @Override
-    @Cacheable(value = "user",key = "methodName + #id")
+    @Cacheable(value = "user", key = "methodName + #id")
     public int findByScore(long id) {
         return userMapper.findByScore(id);
     }

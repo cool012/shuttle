@@ -2,7 +2,7 @@
 <Configuration>
     <!--<Configuration status="WARN" monitorInterval="30"> -->
     <properties>
-        <property name="LOG_HOME">/logs</property>
+        <property name="LOG_HOME">/home/ubuntu/app/logs</property>
     </properties>
     <Appenders>
         <!--*********************控制台日志***********************-->

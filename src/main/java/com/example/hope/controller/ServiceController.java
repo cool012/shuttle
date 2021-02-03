@@ -54,6 +54,5 @@ public class ServiceController {
     @RequestMapping(value = "/findAll",method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(){
         return ReturnMessageUtil.sucess(serviceService.findAll());
-//        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.HOURS)).body(serviceService.findAll());
     }
 }

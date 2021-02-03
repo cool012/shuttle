@@ -17,9 +17,10 @@ public class JwtUtils {
     private static String key;
 
     @Value("${jwt.key}")
-    public void setKey(String jwtKey){
+    public void setKey(String jwtKey) {
         key = jwtKey;
     }
+
     /**
      * 获取Token
      *
@@ -41,12 +42,13 @@ public class JwtUtils {
             // 添加构成JWT的参数
             JwtBuilder jwtBuilder = Jwts.builder().setHeaderParam("type", "JWT")
                     .claim("userId", user.getId())
-                    .claim("email", user.getEmail())
+                    .claim("phone", user.getPhone())
                     .claim("address", user.getAddress())
-                    .claim("type", user.getType())
+                    .claim("admin", user.isAdmin())
                     .claim("score", user.getScore())
-                    .setSubject(user.getEmail())// 代表这个JWT的主体，即它的所有人
-                    .setAudience(user.getEmail())// 代表这个JWT的接收对象；
+                    .claim("name", user.getName())
+                    .setSubject(user.getPhone())// 代表这个JWT的主体，即它的所有人
+                    .setAudience(user.getPhone())// 代表这个JWT的接收对象；
                     .setIssuedAt(now)// 是一个时间戳，代表这个JWT的签发时间；
                     .signWith(signatureAlgorithm, signingKey);
 
@@ -76,20 +78,18 @@ public class JwtUtils {
     }
 
     public static boolean is_admin(String token) {
-        String type = parseJWT(token).get("type", String.class);
-        if (type.equals("2")) {
-            return true;
-        }
-        return false;
+        boolean admin = parseJWT(token).get("admin", Boolean.class);
+        return admin;
     }
 
     public static User getUser(String token) {
         long id = parseJWT(token).get("userId", Integer.class);
-        String email = parseJWT(token).get("email", String.class);
+        String phone = parseJWT(token).get("phone", String.class);
         String address = parseJWT(token).get("address", String.class);
         int score = parseJWT(token).get("score", Integer.class);
-        String type = parseJWT(token).get("type", String.class);
-        return new User(id, null, email, address, token, score);
+        boolean admin = parseJWT(token).get("admin", Boolean.class);
+        String name = parseJWT(token).get("name", String.class);
+        return new User(null, phone, address, score, admin, name);
     }
 
     /**

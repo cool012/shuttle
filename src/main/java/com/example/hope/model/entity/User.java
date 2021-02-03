@@ -1,5 +1,6 @@
 package com.example.hope.model.entity;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,25 +16,28 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel("用户")
 public class User implements Serializable {
 
     private long id;
     private String password;
-    private String email;
+    private String phone;
     private String address;
-    private String type;
     private int score;
+    private boolean admin;
+    private String name;
 
     public User(long id, String password) {
         this.id = id;
         this.password = password;
     }
 
-    public User(String password, String email, String address, String type, int score) {
+    public User(String password, String phone, String address, int score, boolean admin, String name) {
         this.password = password;
-        this.email = email;
+        this.phone = phone;
         this.address = address;
-        this.type = type;
         this.score = score;
+        this.admin = admin;
+        this.name = name;
     }
 }

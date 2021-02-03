@@ -67,14 +67,14 @@ public class OrderServiceIpm implements OrderService {
             res = orderMapper.insert(orderList.get(0));
             // 设置过期时间
             if (Boolean.valueOf(isExpired)) {
-                redisUtil.ins("order_" + orderList.get(0).getId(), "expired", 1, TimeUnit.MINUTES);
+                redisUtil.ins("order_" + orderList.get(0).getId(), "expired", 10, TimeUnit.MINUTES);
             }
         } else if (orderList.size() > 1) {
             res = orderMapper.insertBatch(orderList);
             // 批量设置过期时间
             if (Boolean.valueOf(isExpired)) {
                 for (Order order : orderList) {
-                    redisUtil.ins("order_" + order.getId(), "expired", 1, TimeUnit.MINUTES);
+                    redisUtil.ins("order_" + order.getId(), "expired", 10, TimeUnit.MINUTES);
                 }
             }
         }

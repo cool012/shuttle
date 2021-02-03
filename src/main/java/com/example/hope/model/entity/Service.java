@@ -1,6 +1,8 @@
 package com.example.hope.model.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -8,10 +10,8 @@ import java.io.Serializable;
 public class Service implements Serializable {
 
     private long id;
+    private String name;
+    private String color;
+    private String icon;
 
-    private String service_name;
-
-    public Service(String service_name) {
-        this.service_name = service_name;
-    }
 }

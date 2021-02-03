@@ -26,14 +26,14 @@ public class ServiceServiceIpm implements ServiceService {
 
     /**
      * 添加服务
-     * @param serviceName
+     * @param service
      */
     @Override
     @Transient
     @CacheEvict(value = "service",allEntries = true)
-    public void insert(String serviceName){
-        int res = serviceMapper.insert(serviceName);
-        log.info("service insert serviceName -> " + serviceName + " -> res -> " + res);
+    public void insert(com.example.hope.model.entity.Service service){
+        int res = serviceMapper.insert(service);
+        log.info("service insert service -> " + service.toString() + " -> res -> " + res);
         BusinessException.check(res,"添加失败");
     }
 
@@ -49,6 +49,19 @@ public class ServiceServiceIpm implements ServiceService {
         int res = serviceMapper.delete(id);
         log.info("service delete id -> " + id + " -> res -> " + res);
         BusinessException.check(res,"删除失败");
+    }
+
+    /**
+     * 修改服务
+     * @param service
+     */
+    @Override
+    @Transient
+    @CacheEvict(value = "service",allEntries = true)
+    public void update(com.example.hope.model.entity.Service service){
+        int res = serviceMapper.update(service);
+        log.info("service update service -> " + service.toString() + " -> res -> " + res);
+        BusinessException.check(res,"修改失败");
     }
 
     /**

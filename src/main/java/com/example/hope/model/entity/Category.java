@@ -18,5 +18,5 @@ public class Category implements Serializable {
 
     private long id;
     private String name;
-    private long service_id;
+    private long serviceId;
 }

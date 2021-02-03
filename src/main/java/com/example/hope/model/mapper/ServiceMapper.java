@@ -1,10 +1,8 @@
 package com.example.hope.model.mapper;
 
 import com.example.hope.model.entity.Service;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import com.example.hope.model.entity.User;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,12 +11,15 @@ import java.util.List;
 @Mapper
 public interface ServiceMapper {
 
-    @Insert("insert into service(service_name) values(#{serviceName})")
-    int insert(String serviceName);
+    @Insert("insert into service(name,color,icon) values(#{name},#{color},#{icon})")
+    int insert(Service service);
 
     @Delete("delete from service where id = #{id}")
     int delete(long id);
 
-    @Select("select id,service_name from service")
+    @Update("update service set name = #{name},color = #{color},icon = #{icon} where id = #{id}")
+    int update(Service service);
+
+    @Select("select id,name,color,icon from service")
     List<Service> findAll();
 }

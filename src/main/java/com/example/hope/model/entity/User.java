@@ -16,7 +16,6 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("用户")
 public class User implements Serializable {
 
     private long id;

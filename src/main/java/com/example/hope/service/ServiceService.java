@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface ServiceService {
 
-    void insert(String serviceName);
+    void insert(Service service);
 
     void delete(Long id);
+
+    void update(Service service);
 
     List<Service> findAll();
 }

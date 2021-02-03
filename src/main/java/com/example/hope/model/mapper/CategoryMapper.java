@@ -12,18 +12,18 @@ import java.util.Map;
 @Mapper
 public interface CategoryMapper {
 
-    @Insert("insert into category(name,service_id) values(#{name},#{service_id})")
+    @Insert("insert into category(name,serviceId) values(#{name},#{serviceId})")
     int insert(Category category);
 
     @Delete("delete from category where id = #{id}")
     int delete(long id);
 
-    @Update("update category set name = #{name},service_id = #{service_id} where id = #{id}")
+    @Update("update category set name = #{name},serviceId = #{serviceId} where id = #{id}")
     int update(Category category);
 
-    @Select("select id,name,service_id from category")
+    @Select("select id,name,serviceId from category")
     List<Category> findAll();
 
-    @Select("select id,name,service_id from category where service_id = #{serviceId}")
+    @Select("select id,name,serviceId from category where serviceId = #{serviceId}")
     List<Category> findAllByServiceId(long serviceId);
 }

@@ -7,6 +7,7 @@ import com.example.hope.model.mapper.StoreMapper;
 import com.example.hope.service.StoreService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,7 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "store", allEntries = true)
     public void insert(Store store) {
         int res = storeMapper.insert(store);
         log.info("store insert -> " + store.toString() + " -> res -> " + res);
@@ -53,6 +55,7 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "store", allEntries = true)
     public void delete(long id) {
         int res = storeMapper.delete(id);
         log.info("store delete -> " + id + " -> res -> " + res);
@@ -66,6 +69,7 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     @Transient
+    @CacheEvict(value = "store", allEntries = true)
     public void update(Store store) {
         int res = storeMapper.update(store);
         log.info("store update -> " + store.toString() + " -> res -> " + res);
@@ -107,15 +111,26 @@ public class StoreServiceImp implements StoreService {
         return storeMapper.findByCategoryId(categoryId, "categoryId");
     }
 
+    /**
+     * 根据id查询商店
+     *
+     * @param id
+     * @return
+     */
     @Override
     @Cacheable(value = "store", key = "methodName + #id")
     public Store findById(long id) {
         return storeMapper.findById(id, "id");
     }
 
+    /**
+     * 排行榜
+     *
+     * @return
+     */
     @Override
-    public List<Store> range() {
-        Set<String> range = redisUtil.range("rank", 0, -1);
+    public List<Store> rank() {
+        Set<String> range = redisUtil.range("rank", 0, 9);
         List<Store> stores = new ArrayList<>();
         for (String id : range) {
             stores.add(findById(Long.valueOf(id)));
@@ -125,11 +140,11 @@ public class StoreServiceImp implements StoreService {
 
     /**
      * 增加商店销量
+     *
      * @param id
      * @param quantity
      */
-    @Override
-    public void sales(long id, int quantity) {
+    private void sales(long id, int quantity) {
         storeMapper.sales(id, quantity);
         redisUtil.incrScore("rank", String.valueOf(id), Double.valueOf(quantity));
     }

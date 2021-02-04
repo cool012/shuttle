@@ -1,5 +1,7 @@
 package com.example.hope.controller;
 
+import com.example.hope.annotation.Admin;
+import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.model.entity.Store;
@@ -30,6 +32,7 @@ public class StoreController {
         this.storeService = storeService;
     }
 
+    @Admin
     @ApiOperation("添加商店")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public ReturnMessage<Object> insert(Store store) {
@@ -37,6 +40,7 @@ public class StoreController {
         return ReturnMessageUtil.sucess();
     }
 
+    @Admin
     @ApiOperation("删除商店")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ReturnMessage<Object> delete(long id) {
@@ -44,6 +48,7 @@ public class StoreController {
         return ReturnMessageUtil.sucess();
     }
 
+    @Admin
     @ApiOperation("更新商店")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(Store store) {
@@ -51,28 +56,38 @@ public class StoreController {
         return ReturnMessageUtil.sucess();
     }
 
+    @LoginUser
     @ApiOperation("查询所有商店")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll() {
         return ReturnMessageUtil.sucess(storeService.findAll());
     }
 
+    @LoginUser
     @ApiOperation("根据serviceId查询商店")
     @RequestMapping(value = "/findByServiceId/{serviceId}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByServiceId(@PathVariable("serviceId") long serviceId) {
         return ReturnMessageUtil.sucess(storeService.findByServiceId(serviceId));
     }
 
+    @LoginUser
     @ApiOperation("根据categoryId查询商店")
     @RequestMapping(value = "/findByCategoryId/{categoryId}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByCategoryId(@PathVariable("categoryId") long categoryId) {
         return ReturnMessageUtil.sucess(storeService.findByCategoryId(categoryId));
     }
 
-    @ApiOperation("排行榜")
-    @RequestMapping(value = "/range", method = RequestMethod.GET)
-    public ReturnMessage<Object> sales() {
-        return ReturnMessageUtil.sucess(storeService.range());
+    @LoginUser
+    @ApiOperation("根据id查询商店")
+    @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findById(@PathVariable("id") long id) {
+        return ReturnMessageUtil.sucess(storeService.findById(id));
     }
 
+    @LoginUser
+    @ApiOperation("排行榜")
+    @RequestMapping(value = "/rank", method = RequestMethod.GET)
+    public ReturnMessage<Object> rank() {
+        return ReturnMessageUtil.sucess(storeService.rank());
+    }
 }

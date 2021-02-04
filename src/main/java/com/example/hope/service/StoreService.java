@@ -20,7 +20,5 @@ public interface StoreService {
 
     Store findById(long id);
 
-    List<Store> range();
-
-    void sales(long id, int quantity);
+    List<Store> rank();
 }

@@ -12,13 +12,12 @@ import java.io.Serializable;
 public class Product implements Serializable {
 
     private long id;
-    private String product_name;
+    private String name;
     private int price;
     private String image;
-    private int service_type;
     private int quantity;
-    private long category_id;
     private int sales;
-    private String shop;
     private int rate;
+    private long storeId;
+    private Store store;
 }

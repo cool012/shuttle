@@ -50,14 +50,7 @@ public class ProductController {
         return ReturnMessageUtil.sucess();
     }
 
-    @LoginUser
-    @ApiOperation("按类型查找全部产品")
-    @RequestMapping(value = "/findAllByType/{serviceId}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAllByType(@PathVariable("serviceId") long serviceId, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(productService.findAllByType(serviceId, option));
-    }
-
-    @LoginUser
+    @Admin
     @ApiOperation("查找全部产品")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
@@ -65,10 +58,17 @@ public class ProductController {
     }
 
     @LoginUser
-    @ApiOperation("按类型、分类查找全部产品")
-    @RequestMapping(value = "/findAllByTypeAndCategory/{serviceId}/{categoryId}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAllByTypeAndCategory(@PathVariable long serviceId, @PathVariable long categoryId, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(productService.findAllByTypeAndCategory(serviceId, categoryId, option));
+    @ApiOperation("根据storeId查找产品")
+    @RequestMapping(value = "/findByStoreId/{storeId}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByStoreId(@PathVariable("storeId") long storeId) {
+        return ReturnMessageUtil.sucess(productService.findByStoreId(storeId));
+    }
+
+    @Admin
+    @ApiOperation("根据id查找产品")
+    @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findById(@PathVariable("id") long id) {
+        return ReturnMessageUtil.sucess(productService.findById(id));
     }
 
     @LoginUser

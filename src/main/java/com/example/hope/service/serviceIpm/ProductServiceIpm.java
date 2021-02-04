@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -72,45 +73,40 @@ public class ProductServiceIpm implements ProductService {
     }
 
     /**
-     * 根据类型查询产品
-     *
-     * @param serviceId
-     * @return
-     */
-    @Override
-    @Cacheable(value = "product", key = "methodName + #serviceId + #option.toString()")
-    public PageInfo<ProductDetail> findAllByType(long serviceId, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(productMapper.findAllByType(serviceId));
-    }
-
-    /**
      * 查询全部产品
      *
      * @return
      */
     @Override
     @Cacheable(value = "product", key = "methodName + #option.toString()")
-    public PageInfo<ProductDetail> findAll(Map<String, String> option) {
+    public PageInfo<Product> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")),"product.id desc");
         return PageInfo.of(productMapper.findAll());
     }
 
     /**
-     * 根据类型、分类查询产品
+     * 根据storeId查询产品
      *
-     * @param serviceId
-     * @param categoryId
+     * @param storeId
      * @return
      */
     @Override
-    @Cacheable(value = "product", key = "methodName + #serviceId + #categoryId + #option.toString()")
-    public PageInfo<ProductDetail> findAllByTypeAndCategory(long serviceId, long categoryId, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(productMapper.findAllByTypeAndCategory(serviceId, categoryId));
+    @Cacheable(value = "product", key = "methodName + #storeId")
+    public List<Product> findByStoreId(long storeId) {
+        return productMapper.findByStoreId(storeId);
+    }
+
+    /**
+     * 根据id查询产品
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Cacheable(value = "product", key = "methodName + #id")
+    public Product findById(long id) {
+        return productMapper.findById(id);
     }
 
     /**

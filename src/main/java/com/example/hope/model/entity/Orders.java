@@ -15,20 +15,19 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order implements Serializable {
+public class Orders implements Serializable {
 
     private long id;
-
-    // 消费者id
     private long cid;
-    // 生产者id
-    private long uid;
-    // 产品id
+    private long sid;
     private long pid;
-
-    private Date create_time;
+    private Date date;
     private String address;
     private String note;
-    private String file_url;
-    private int complete;
+    private String file;
+    private int status;
+    private User client;
+    private User service;
+    private Product product;
+    private String storeName;
 }

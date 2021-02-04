@@ -3,7 +3,6 @@ package com.example.hope.service.serviceIpm;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Product;
-import com.example.hope.model.entity.detail.ProductDetail;
 import com.example.hope.model.mapper.ProductMapper;
 import com.example.hope.service.ProductService;
 import com.github.pagehelper.PageHelper;

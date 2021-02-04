@@ -1,7 +1,6 @@
 package com.example.hope.model.mapper;
 
 import com.example.hope.model.entity.Product;
-import com.example.hope.model.entity.detail.ProductDetail;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 

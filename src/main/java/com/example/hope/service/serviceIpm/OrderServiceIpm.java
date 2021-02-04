@@ -1,12 +1,9 @@
 package com.example.hope.service.serviceIpm;
 
-import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
-import com.example.hope.model.entity.Order;
-import com.example.hope.model.entity.detail.OrderDetail;
-import com.example.hope.model.entity.detail.WaiterOrder;
+import com.example.hope.model.entity.Orders;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
@@ -56,26 +53,15 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transient
     @CacheEvict(value = "order", allEntries = true)
-    public void insert(List<Order> orderList, Boolean isExpired) {
-        for (Order order : orderList) {
-            order.setCreate_time(new Date());
-            // 代替为空的用户
-            order.setUid(2);
+    public void insert(List<Orders> orderList, Boolean isExpired) {
+        for (Orders order : orderList) {
+            order.setDate(new Date());
         }
-        int res = 0;
-        if (orderList.size() == 1) {
-            res = orderMapper.insert(orderList.get(0));
-            // 设置过期时间
-            if (Boolean.valueOf(isExpired)) {
-                redisUtil.ins("order_" + orderList.get(0).getId(), "expired", 10, TimeUnit.MINUTES);
-            }
-        } else if (orderList.size() > 1) {
-            res = orderMapper.insertBatch(orderList);
-            // 批量设置过期时间
-            if (Boolean.valueOf(isExpired)) {
-                for (Order order : orderList) {
-                    redisUtil.ins("order_" + order.getId(), "expired", 10, TimeUnit.MINUTES);
-                }
+        int res = orderMapper.insertBatch(orderList);
+        // 批量设置过期时间
+        if (Boolean.valueOf(isExpired)) {
+            for (Orders order : orderList) {
+                redisUtil.ins("order_" + order.getId(), "expired", 10, TimeUnit.MINUTES);
             }
         }
         log.info("order insert -> " + orderList.toString() + " -> res -> " + res);
@@ -104,7 +90,7 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transient
     @CacheEvict(value = "order", allEntries = true)
-    public void update(Order order) {
+    public void update(Orders order) {
         int res = orderMapper.update(order);
         log.info("order update -> " + order.toString() + " -> res -> " + res);
         BusinessException.check(res, "更新失败");
@@ -112,7 +98,7 @@ public class OrderServiceIpm implements OrderService {
 
 
     /**
-     * 接单（完成订单）
+     * 接单
      *
      * @param id
      * @return
@@ -120,8 +106,7 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transient
     @CacheEvict(value = "order", allEntries = true)
-    public void receive(long id, String token) {
-        long userId = JwtUtils.getUserId(token);
+    public void receive(long id, long userId) {
         // 减少点数
         userService.reduceScore(userId);
         // 增加销量
@@ -135,21 +120,14 @@ public class OrderServiceIpm implements OrderService {
     /**
      * 查询全部订单
      *
-     * @param option [sort,order,completed]
-     *               - sort 排序 values["create_time"] default:create_time
-     *               - order 排序方式 values["0","1"] default:0
-     *               - complete 完成 values["0","1","-1"] default:"-1"
-     *               0：就绪（已下单，未接单状态） 1：已完成 -1：未完成
      * @return
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<WaiterOrder> findAll(Map<String, String> option) {
+    public PageInfo<Orders> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        PageInfo<WaiterOrder> pageInfo = PageInfo.of(orderMapper.findAll("all", option.get("sort"), option.get("order"), option.get("completed")));
-        log.info(pageInfo.toString());
-        return pageInfo;
+        return PageInfo.of(orderMapper.findAll());
     }
 
     /**
@@ -161,52 +139,38 @@ public class OrderServiceIpm implements OrderService {
     // value代表缓存名称 key代表键 在redis中以 value::key 的形式表示redis的key
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<OrderDetail> findByPid(long pid, Map<String, String> option) {
+    public PageInfo<Orders> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findByPid(pid, "pid", option.get("sort"), option.get("order"), option.get("completed")));
+        return PageInfo.of(orderMapper.findByKey(pid, "pid"));
     }
 
     /**
-     * 根据消费者id查询订单
+     * 根据cid查询订单
      *
      * @param cid
      * @return
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<OrderDetail> findByCid(long cid, Map<String, String> option) {
+    public PageInfo<Orders> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findByCid(cid, "cid", option.get("sort"), option.get("order"), option.get("completed")));
+        return PageInfo.of(orderMapper.findByKey(cid, "cid"));
     }
 
     /**
-     * 根据生产者id查询订单
+     * 根据sid查询订单
      *
-     * @param uid
+     * @param sid
      * @return
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<OrderDetail> findByUid(long uid, Map<String, String> option) {
+    public PageInfo<Orders> findBySid(long sid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findByUid(uid, "uid", option.get("sort"), option.get("order"), option.get("completed")));
-    }
-
-    /**
-     * 按服务类型查询订单
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<OrderDetail> findByType(long id, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findByType(id, "sid", option.get("sort"), option.get("order"), option.get("completed")));
+        return PageInfo.of(orderMapper.findByKey(sid, "sid"));
     }
 
     /**
@@ -217,8 +181,8 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #id")
-    public OrderDetail findById(long id) {
-        return orderMapper.findById(id);
+    public Orders findById(long id) {
+        return orderMapper.findByKey(id, "id").get(0);
     }
 
     /**
@@ -229,9 +193,8 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @CacheEvict(value = "order", allEntries = true)
-    public int completed(long id) {
+    public void completed(long id) {
         int res = orderMapper.completed(id);
         BusinessException.check(res, "完成订单失败");
-        return res;
     }
 }

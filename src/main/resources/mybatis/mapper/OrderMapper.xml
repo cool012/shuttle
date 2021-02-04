@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.hope.model.mapper.OrderMapper">
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        insert into orders(cid,uid,pid,create_time,address,note,file_url,complete)
+        insert into orders(cid,sid,pid,date,address,note,file,status)
         values
         <foreach collection="list" item="order" separator=",">
-            (#{order.cid},#{order.uid},#{order.pid},#{order.create_time},#{order.address},#{order.note},#{order.file_url},#{order.complete})
+            (#{order.cid},#{order.uid},#{order.pid},#{order.date},#{order.address},#{order.note},#{order.file},#{order.status})
         </foreach>
     </insert>
 </mapper>

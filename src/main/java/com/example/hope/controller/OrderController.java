@@ -1,12 +1,10 @@
 package com.example.hope.controller;
 
-import cn.hutool.json.JSON;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
-import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
-import com.example.hope.model.entity.Order;
+import com.example.hope.model.entity.Orders;
 import com.example.hope.service.OrderService;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import io.swagger.annotations.Api;
@@ -14,7 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +35,7 @@ public class OrderController {
     @LoginUser
     @ApiOperation("添加订单")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(@RequestBody List<Order> orderList, @RequestParam(defaultValue = "false") boolean isExpired) {
+    public ReturnMessage<Object> insert(@RequestBody List<Orders> orderList, @RequestParam(defaultValue = "false") boolean isExpired) {
         orderService.insert(orderList, isExpired);
         return ReturnMessageUtil.sucess();
     }
@@ -54,16 +51,16 @@ public class OrderController {
     @LoginUser
     @ApiOperation("修改订单")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ReturnMessage<Object> update(Order order) {
+    public ReturnMessage<Object> update(Orders order) {
         orderService.update(order);
         return ReturnMessageUtil.sucess();
     }
 
     @LoginUser
     @ApiOperation("服务员接单")
-    @RequestMapping(value = "/receive/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> receive(HttpServletRequest request, @PathVariable long id) {
-        orderService.receive(id, request.getHeader("Authorization"));
+    @RequestMapping(value = "/receive", method = RequestMethod.POST)
+    public ReturnMessage<Object> receive(long id, long userId) {
+        orderService.receive(id, userId);
         return ReturnMessageUtil.sucess();
     }
 
@@ -75,31 +72,24 @@ public class OrderController {
     }
 
     @Admin
-    @ApiOperation("根据产品id查询订单")
+    @ApiOperation("根据pid查询订单")
     @RequestMapping(value = "/findByPid/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByPid(@PathVariable long id, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByPid(id, option));
     }
 
     @LoginUser
-    @ApiOperation("根据消费者id查询订单")
+    @ApiOperation("根据cid查询订单")
     @RequestMapping(value = "/findByCid/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByCid(@PathVariable long id, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByCid(id, option));
     }
 
     @LoginUser
-    @ApiOperation("根据生产者id查询订单")
-    @RequestMapping(value = "/findByUid/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByUid(@PathVariable long id, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(orderService.findByUid(id, option));
-    }
-
-    @LoginUser
-    @ApiOperation("按服务类型查询订单")
-    @RequestMapping(value = "/findByType/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByType(@PathVariable long id, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(orderService.findByType(id, option));
+    @ApiOperation("根据sid查询订单")
+    @RequestMapping(value = "/findBySid/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findBySid(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findBySid(id, option));
     }
 
     @LoginUser

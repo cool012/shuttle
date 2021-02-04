@@ -2,9 +2,12 @@ package com.example.hope.service.serviceIpm;
 
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
+import com.example.hope.config.redis.RedisUtil;
 import com.example.hope.model.entity.Product;
+import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.ProductMapper;
 import com.example.hope.service.ProductService;
+import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
@@ -15,18 +18,24 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Log4j2
 @Service
 public class ProductServiceIpm implements ProductService {
 
     private ProductMapper productMapper;
+    private StoreService storeService;
+    private RedisUtil redisUtil;
 
     @Autowired
-    public ProductServiceIpm(ProductMapper productMapper) {
+    public ProductServiceIpm(ProductMapper productMapper, StoreService storeService, RedisUtil redisUtil) {
         this.productMapper = productMapper;
+        this.storeService = storeService;
+        this.redisUtil = redisUtil;
     }
 
     /**
@@ -80,7 +89,7 @@ public class ProductServiceIpm implements ProductService {
     @Cacheable(value = "product", key = "methodName + #option.toString()")
     public PageInfo<Product> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")),"product.id desc");
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")), "product.id desc");
         return PageInfo.of(productMapper.findAll());
     }
 
@@ -119,6 +128,11 @@ public class ProductServiceIpm implements ProductService {
         int res = productMapper.addSales(id, sales);
         log.info("product addSales -> " + id + " for -> " + sales + " -> res " + res);
         BusinessException.check(res, "更新销量失败");
+        redisUtil.incrScore("product_rank", String.valueOf(id), Double.valueOf(sales));
+        // 增加商店销量
+        Store store = productMapper.findById(id).getStore();
+        storeService.sales(store.getId(), sales);
+
     }
 
     /**
@@ -133,4 +147,19 @@ public class ProductServiceIpm implements ProductService {
         log.info("product review -> " + id + " for ->" + rate + " -> res " + res);
         BusinessException.check(res, "更新评分失败");
     }
+
+    /**
+     * 排行榜
+     * @return
+     */
+    @Override
+    public List<Product> rank() {
+        Set<String> rank = redisUtil.range("product_rank", 0, 9);
+        List<Product> products = new ArrayList<>();
+        for (String id : rank) {
+            products.add(findById(Long.valueOf(id)));
+        }
+        return products;
+    }
+
 }

@@ -78,4 +78,11 @@ public class ProductController {
         productService.review(id, rate);
         return ReturnMessageUtil.sucess();
     }
+
+    @LoginUser
+    @ApiOperation("排行榜")
+    @RequestMapping(value = "/rank", method = RequestMethod.GET)
+    public ReturnMessage<Object> rank() {
+        return ReturnMessageUtil.sucess(productService.rank());
+    }
 }

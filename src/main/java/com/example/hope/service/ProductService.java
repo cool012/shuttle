@@ -21,4 +21,6 @@ public interface ProductService {
     Product findById(long id);
 
     void review(long id, int rate);
+
+    List<Product> rank();
 }

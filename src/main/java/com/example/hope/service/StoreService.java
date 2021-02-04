@@ -21,4 +21,6 @@ public interface StoreService {
     Store findById(long id);
 
     List<Store> rank();
+
+    void sales(long id, int quantity);
 }

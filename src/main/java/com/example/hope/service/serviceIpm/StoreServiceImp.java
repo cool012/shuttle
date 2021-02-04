@@ -130,7 +130,7 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     public List<Store> rank() {
-        Set<String> range = redisUtil.range("rank", 0, 9);
+        Set<String> range = redisUtil.range("store_rank", 0, 9);
         List<Store> stores = new ArrayList<>();
         for (String id : range) {
             stores.add(findById(Long.valueOf(id)));
@@ -144,8 +144,10 @@ public class StoreServiceImp implements StoreService {
      * @param id
      * @param quantity
      */
-    private void sales(long id, int quantity) {
-        storeMapper.sales(id, quantity);
-        redisUtil.incrScore("rank", String.valueOf(id), Double.valueOf(quantity));
+    @Override
+    public void sales(long id, int quantity) {
+        int res = storeMapper.sales(id, quantity);
+        BusinessException.check(res, "增加商店销量失败");
+        redisUtil.incrScore("store_rank", String.valueOf(id), Double.valueOf(quantity));
     }
 }

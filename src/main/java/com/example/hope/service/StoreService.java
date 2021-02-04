@@ -23,4 +23,6 @@ public interface StoreService {
     List<Store> rank();
 
     void sales(long id, int quantity);
+
+    List<Store> search(String keyword);
 }

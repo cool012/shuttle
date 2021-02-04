@@ -23,4 +23,6 @@ public interface ProductService {
     void review(long id, int rate);
 
     List<Product> rank();
+
+    List<Product> search(String keyword);
 }

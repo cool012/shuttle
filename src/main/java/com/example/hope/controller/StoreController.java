@@ -90,4 +90,11 @@ public class StoreController {
     public ReturnMessage<Object> rank() {
         return ReturnMessageUtil.sucess(storeService.rank());
     }
+
+    @LoginUser
+    @ApiOperation("搜索")
+    @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
+    public ReturnMessage<Object> search(@PathVariable("keyword") String keyword) {
+        return ReturnMessageUtil.sucess(storeService.search(keyword));
+    }
 }

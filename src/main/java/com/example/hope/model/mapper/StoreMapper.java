@@ -34,23 +34,7 @@ public interface StoreMapper {
             @Result(column = "serviceColor", property = "service.color"),
             @Result(column = "categoryName", property = "category.name")
     })
-    List<Store> findByServiceId(@Param("id") long serviceId, @Param("key") String key);
-
-    @SelectProvider(type = StoreSqlProvider.class, method = "selectByKey")
-    @Results(value = {
-            @Result(column = "serviceName", property = "service.name"),
-            @Result(column = "serviceColor", property = "service.color"),
-            @Result(column = "categoryName", property = "category.name")
-    })
-    List<Store> findByCategoryId(@Param("id") long categoryId, @Param("key") String key);
-
-    @SelectProvider(type = StoreSqlProvider.class, method = "selectByKey")
-    @Results(value = {
-            @Result(column = "serviceName", property = "service.name"),
-            @Result(column = "serviceColor", property = "service.color"),
-            @Result(column = "categoryName", property = "category.name")
-    })
-    Store findById(@Param("id") long id, @Param("key") String key);
+    List<Store> findByKey(@Param("id") String id, @Param("key") String key);
 
     @Update("update store set sales = sales + #{quantity} where id = #{id}")
     int sales(long id,int quantity);

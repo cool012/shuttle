@@ -96,7 +96,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #serviceId")
     public List<Store> findByServiceId(long serviceId) {
-        return storeMapper.findByServiceId(serviceId, "serviceId");
+        return storeMapper.findByKey(String.valueOf(serviceId), "serviceId");
     }
 
     /**
@@ -108,7 +108,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #categoryId")
     public List<Store> findByCategoryId(long categoryId) {
-        return storeMapper.findByCategoryId(categoryId, "categoryId");
+        return storeMapper.findByKey(String.valueOf(categoryId), "categoryId");
     }
 
     /**
@@ -120,7 +120,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #id")
     public Store findById(long id) {
-        return storeMapper.findById(id, "id");
+        return storeMapper.findByKey(String.valueOf(id), "id").get(0);
     }
 
     /**
@@ -149,5 +149,17 @@ public class StoreServiceImp implements StoreService {
         int res = storeMapper.sales(id, quantity);
         BusinessException.check(res, "增加商店销量失败");
         redisUtil.incrScore("store_rank", String.valueOf(id), Double.valueOf(quantity));
+    }
+
+    /**
+     * 搜索
+     *
+     * @param keyword
+     * @return
+     */
+    @Override
+    @Cacheable(value = "store",key = "methodName + #keyword")
+    public List<Store> search(String keyword) {
+        return storeMapper.findByKey(keyword, "search");
     }
 }

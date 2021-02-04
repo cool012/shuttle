@@ -102,7 +102,7 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Cacheable(value = "product", key = "methodName + #storeId")
     public List<Product> findByStoreId(long storeId) {
-        return productMapper.findByStoreId(storeId);
+        return productMapper.findByKey(String.valueOf(storeId), "storeId");
     }
 
     /**
@@ -114,7 +114,7 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Cacheable(value = "product", key = "methodName + #id")
     public Product findById(long id) {
-        return productMapper.findById(id);
+        return productMapper.findByKey(String.valueOf(id), "id").get(0);
     }
 
     /**
@@ -130,7 +130,7 @@ public class ProductServiceIpm implements ProductService {
         BusinessException.check(res, "更新销量失败");
         redisUtil.incrScore("product_rank", String.valueOf(id), Double.valueOf(sales));
         // 增加商店销量
-        Store store = productMapper.findById(id).getStore();
+        Store store = findById(id).getStore();
         storeService.sales(store.getId(), sales);
 
     }
@@ -150,6 +150,7 @@ public class ProductServiceIpm implements ProductService {
 
     /**
      * 排行榜
+     *
      * @return
      */
     @Override
@@ -162,4 +163,14 @@ public class ProductServiceIpm implements ProductService {
         return products;
     }
 
+    /**
+     * 搜索
+     *
+     * @return
+     */
+    @Override
+    @Cacheable(value = "product",key = "methodName + #keyword")
+    public List<Product> search(String keyword) {
+        return productMapper.findByKey(keyword, "search");
+    }
 }

@@ -85,4 +85,11 @@ public class ProductController {
     public ReturnMessage<Object> rank() {
         return ReturnMessageUtil.sucess(productService.rank());
     }
+
+    @LoginUser
+    @ApiOperation("搜索")
+    @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
+    public ReturnMessage<Object> search(@PathVariable("keyword") String keyword) {
+        return ReturnMessageUtil.sucess(productService.search(keyword));
+    }
 }

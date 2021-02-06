@@ -23,11 +23,11 @@ public class OrdersSqlProvider {
             "orders," +
             "user as client," +
             "user as service," +
-            "product" +
+            "product " +
             "left join " +
-            "store" +
-            "on" +
-            "product.storeId = store.id" +
+            "store " +
+            "on " +
+            "product.storeId = store.id " +
             "where " +
             "orders.cid = client.id and " +
             "orders.sid = service.id and " +

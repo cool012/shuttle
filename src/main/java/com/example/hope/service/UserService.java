@@ -28,4 +28,6 @@ public interface UserService {
     User findUserById(long id);
 
     PageInfo<User> findAll(Map<String, String> option);
+
+    PageInfo<User> search(String keyword,Map<String, String> option);
 }

@@ -132,4 +132,11 @@ public class UserController {
         payService.notifyCall(request);
         return ReturnMessageUtil.sucess();
     }
+
+    @Admin
+    @ApiOperation("搜索")
+    @RequestMapping(value = "/search", method = RequestMethod.POST)
+    public ReturnMessage<Object> search(String keyword, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(userService.search(keyword, option));
+    }
 }

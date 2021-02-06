@@ -42,4 +42,7 @@ public interface UserMapper {
 
     @Select("select score from user where id = #{id}")
     int findByScore(long id);
+
+    @Select("select * from user where phone like #{keyword} or name like #{keyword}")
+    List<User> search(String keyword);
 }

@@ -98,7 +98,7 @@ spring:
 
 logging:
   level:
-    com.example.hope.model.mapper.ProductMapper: debug
+    com.example.hope.model.mapper.UserMapper: debug
 
 pagehelper:
   helperDialect: mysql

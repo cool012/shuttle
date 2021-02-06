@@ -194,4 +194,19 @@ public class UserServiceIpm implements UserService {
     public int findByScore(long id) {
         return userMapper.findByScore(id);
     }
+
+    /**
+     * 搜索
+     *
+     * @param keyword
+     * @param option
+     * @return
+     */
+    @Override
+    @Cacheable(value = "user", key = "methodName + #keyword")
+    public PageInfo<User> search(String keyword, Map<String, String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        return PageInfo.of(userMapper.search("%" + keyword + "%"));
+    }
 }

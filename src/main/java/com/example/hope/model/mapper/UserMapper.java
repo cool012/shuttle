@@ -45,4 +45,7 @@ public interface UserMapper {
 
     @Select("select * from user where phone like #{keyword} or name like #{keyword}")
     List<User> search(String keyword);
+
+    @Update("update user set admin = 1 where id = #{id}")
+    int admin(long id);
 }

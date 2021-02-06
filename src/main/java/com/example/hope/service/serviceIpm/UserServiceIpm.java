@@ -22,7 +22,6 @@ import java.util.Map;
  * @author: DHY
  * @created: 2020/10/23 19:56
  */
-
 @Log4j2
 @Service
 public class UserServiceIpm implements UserService {
@@ -208,5 +207,18 @@ public class UserServiceIpm implements UserService {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
         return PageInfo.of(userMapper.search("%" + keyword + "%"));
+    }
+
+    /**
+     * 设置管理员
+     *
+     * @param userId
+     */
+    @Override
+    @CacheEvict(value = "user", allEntries = true)
+    public void admin(long userId) {
+        int res = userMapper.admin(userId);
+        log.info("user update admin -> " + userId + " -> res -> " + res);
+        BusinessException.check(res, "设置管理员失败");
     }
 }

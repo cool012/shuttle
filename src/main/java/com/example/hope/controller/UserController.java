@@ -139,4 +139,12 @@ public class UserController {
     public ReturnMessage<Object> search(String keyword, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(userService.search(keyword, option));
     }
+
+    @Admin
+    @ApiOperation("设置管理员")
+    @RequestMapping(value = "/admin", method = RequestMethod.POST)
+    public ReturnMessage<Object> admin(long userId) {
+        userService.admin(userId);
+        return ReturnMessageUtil.sucess();
+    }
 }

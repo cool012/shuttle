@@ -1,8 +1,10 @@
 package com.example.hope.service;
 
 import com.example.hope.model.entity.Store;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StoreService {
 
@@ -12,7 +14,7 @@ public interface StoreService {
 
     void update(Store store);
 
-    List<Store> findAll();
+    PageInfo<Store> findAll(Map<String, String> option);
 
     List<Store> findByServiceId(long serviceId);
 

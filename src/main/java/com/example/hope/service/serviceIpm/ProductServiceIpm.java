@@ -90,7 +90,7 @@ public class ProductServiceIpm implements ProductService {
     public PageInfo<Product> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")), "product.id desc");
-        return PageInfo.of(productMapper.findAll());
+        return PageInfo.of(productMapper.select(null, null));
     }
 
     /**
@@ -102,7 +102,7 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Cacheable(value = "product", key = "methodName + #storeId")
     public List<Product> findByStoreId(long storeId) {
-        return productMapper.findByKey(String.valueOf(storeId), "storeId");
+        return productMapper.select(String.valueOf(storeId), "storeId");
     }
 
     /**
@@ -114,7 +114,7 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Cacheable(value = "product", key = "methodName + #id")
     public Product findById(long id) {
-        return productMapper.findByKey(String.valueOf(id), "id").get(0);
+        return productMapper.select(String.valueOf(id), "id").get(0);
     }
 
     /**
@@ -169,8 +169,8 @@ public class ProductServiceIpm implements ProductService {
      * @return
      */
     @Override
-    @Cacheable(value = "product",key = "methodName + #keyword")
+    @Cacheable(value = "product", key = "methodName + #keyword")
     public List<Product> search(String keyword) {
-        return productMapper.findByKey(keyword, "search");
+        return productMapper.select(keyword, "search");
     }
 }

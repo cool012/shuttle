@@ -19,7 +19,7 @@ public class ProductSqlProvider {
     public String selectByKey(Map<String, Object> para) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(sql);
-        if (para != null) {
+        if (para.get("key") != null && para.get("id") != null) {
             if (para.get("key").equals("search"))
                 stringBuffer.append(" where product.name like %" + para.get("keyword") + "%");
             else stringBuffer.append(" where product." + para.get("key") + " = " + para.get("id"));

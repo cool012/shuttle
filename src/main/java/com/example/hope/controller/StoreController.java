@@ -10,10 +10,9 @@ import com.example.hope.service.serviceIpm.StoreServiceImp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @description: 商店相关路由
@@ -59,8 +58,8 @@ public class StoreController {
     @LoginUser
     @ApiOperation("查询所有商店")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll() {
-        return ReturnMessageUtil.sucess(storeService.findAll());
+    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(storeService.findAll(option));
     }
 
     @LoginUser

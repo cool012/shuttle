@@ -1,12 +1,11 @@
 package com.example.hope.model.mapper;
 
+import com.example.hope.common.provider.CategorySqlProvider;
 import com.example.hope.model.entity.Category;
-import com.example.hope.model.entity.Service;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Mapper
@@ -21,9 +20,11 @@ public interface CategoryMapper {
     @Update("update category set name = #{name},serviceId = #{serviceId} where id = #{id}")
     int update(Category category);
 
-    @Select("select id,name,serviceId from category")
-    List<Category> findAll();
-
-    @Select("select id,name,serviceId from category where serviceId = #{serviceId}")
-    List<Category> findAllByServiceId(long serviceId);
+    @SelectProvider(type = CategorySqlProvider.class, method = "selectByKey")
+    @Results({
+            @Result(column = "serviceName", property = "service.name"),
+            @Result(column = "serviceColor", property = "service.color"),
+            @Result(column = "serviceIcon", property = "service.icon")
+    })
+    List<Category> select(@Param("id") String id, @Param("key") String key);
 }

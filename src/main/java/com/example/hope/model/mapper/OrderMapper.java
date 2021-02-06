@@ -34,19 +34,7 @@ public interface OrderMapper {
             @Result(column = "productPrice", property = "product.price"),
             @Result(column = "productId", property = "product.id"),
     })
-    List<Orders> findAll();
-
-    @SelectProvider(type = OrdersSqlProvider.class, method = "selectByKey")
-    @Results(value = {
-            @Result(column = "clientName", property = "client.name"),
-            @Result(column = "clientPhone", property = "client.phone"),
-            @Result(column = "serviceName", property = "service.name"),
-            @Result(column = "servicePhone", property = "service.phone"),
-            @Result(column = "productName", property = "product.name"),
-            @Result(column = "productPrice", property = "product.price"),
-            @Result(column = "productId", property = "product.id"),
-    })
-    List<Orders> findByKey(@Param("id") long id, @Param("key") String key);
+    List<Orders> select(@Param("id") String id, @Param("key") String key);
 
     @Update("update orders set status = 0,sid = #{sid} where id = #{id}")
     int receive(long id, long sid);

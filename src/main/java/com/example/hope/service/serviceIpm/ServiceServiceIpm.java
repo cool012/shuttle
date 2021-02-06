@@ -1,8 +1,11 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.mapper.ServiceMapper;
 import com.example.hope.service.ServiceService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Service
@@ -69,8 +73,10 @@ public class ServiceServiceIpm implements ServiceService {
      * @return
      */
     @Override
-    @Cacheable(value = "service",key = "methodName")
-    public List<com.example.hope.model.entity.Service> findAll(){
-        return serviceMapper.findAll();
+    @Cacheable(value = "service",key = "methodName + #option.toString()")
+    public PageInfo<com.example.hope.model.entity.Service> findAll(Map<String, String> option){
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        return PageInfo.of(serviceMapper.findAll());
     }
 }

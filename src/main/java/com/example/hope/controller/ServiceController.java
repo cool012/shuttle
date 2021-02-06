@@ -12,7 +12,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 
 @RestController
@@ -54,7 +57,7 @@ public class ServiceController {
     @LoginUser
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll() {
-        return ReturnMessageUtil.sucess(serviceService.findAll());
+    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(serviceService.findAll(option));
     }
 }

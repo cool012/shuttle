@@ -127,7 +127,7 @@ public class OrderServiceIpm implements OrderService {
     public PageInfo<Orders> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findAll());
+        return PageInfo.of(orderMapper.select(null, null));
     }
 
     /**
@@ -142,7 +142,7 @@ public class OrderServiceIpm implements OrderService {
     public PageInfo<Orders> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findByKey(pid, "pid"));
+        return PageInfo.of(orderMapper.select(String.valueOf(pid), "pid"));
     }
 
     /**
@@ -156,7 +156,7 @@ public class OrderServiceIpm implements OrderService {
     public PageInfo<Orders> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findByKey(cid, "cid"));
+        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid"));
     }
 
     /**
@@ -170,7 +170,7 @@ public class OrderServiceIpm implements OrderService {
     public PageInfo<Orders> findBySid(long sid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return PageInfo.of(orderMapper.findByKey(sid, "sid"));
+        return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid"));
     }
 
     /**
@@ -182,7 +182,7 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #id")
     public Orders findById(long id) {
-        return orderMapper.findByKey(id, "id").get(0);
+        return orderMapper.select(String.valueOf(id), "id").get(0);
     }
 
     /**

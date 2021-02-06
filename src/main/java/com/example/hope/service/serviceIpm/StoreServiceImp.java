@@ -1,10 +1,13 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
 import com.example.hope.service.StoreService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -82,9 +86,11 @@ public class StoreServiceImp implements StoreService {
      * @return
      */
     @Override
-    @Cacheable(value = "store", key = "methodName")
-    public List<Store> findAll() {
-        return storeMapper.findAll();
+    @Cacheable(value = "store", key = "methodName + #option.toString()")
+    public PageInfo<Store> findAll(Map<String, String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        return PageInfo.of(storeMapper.select(null, null));
     }
 
     /**
@@ -96,7 +102,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #serviceId")
     public List<Store> findByServiceId(long serviceId) {
-        return storeMapper.findByKey(String.valueOf(serviceId), "serviceId");
+        return storeMapper.select(String.valueOf(serviceId), "serviceId");
     }
 
     /**
@@ -108,7 +114,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #categoryId")
     public List<Store> findByCategoryId(long categoryId) {
-        return storeMapper.findByKey(String.valueOf(categoryId), "categoryId");
+        return storeMapper.select(String.valueOf(categoryId), "categoryId");
     }
 
     /**
@@ -120,7 +126,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #id")
     public Store findById(long id) {
-        return storeMapper.findByKey(String.valueOf(id), "id").get(0);
+        return storeMapper.select(String.valueOf(id), "id").get(0);
     }
 
     /**
@@ -158,8 +164,8 @@ public class StoreServiceImp implements StoreService {
      * @return
      */
     @Override
-    @Cacheable(value = "store",key = "methodName + #keyword")
+    @Cacheable(value = "store", key = "methodName + #keyword")
     public List<Store> search(String keyword) {
-        return storeMapper.findByKey(keyword, "search");
+        return storeMapper.select(keyword, "search");
     }
 }

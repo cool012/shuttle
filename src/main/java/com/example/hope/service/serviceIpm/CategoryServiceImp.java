@@ -59,12 +59,12 @@ public class CategoryServiceImp implements CategoryService {
     @Override
     @Cacheable(value = "category", key = "methodName")
     public List<Category> findAll() {
-        return categoryMapper.findAll();
+        return categoryMapper.select(null,null);
     }
 
     @Override
     @Cacheable(value = "category", key = "methodName + #serviceId")
     public List<Category> findAllByServiceId(long serviceId) {
-        return categoryMapper.findAllByServiceId(serviceId);
+        return categoryMapper.select(String.valueOf(serviceId),"serviceId");
     }
 }

@@ -24,13 +24,7 @@ public interface ProductMapper {
     @Results(value = {
             @Result(column = "storeName", property = "store.name")
     })
-    List<Product> findAll();
-
-    @SelectProvider(type = ProductSqlProvider.class, method = "selectByKey")
-    @Results(value = {
-            @Result(column = "storeName", property = "store.name")
-    })
-    List<Product> findByKey(@Param("id") String storeId, @Param("key") String key);
+    List<Product> select(@Param("id") String storeId, @Param("key") String key);
 
     @Update("update product set sales = sales + #{quantity} where id = #{id}")
     int addSales(long id, int quantity);

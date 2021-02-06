@@ -1,8 +1,10 @@
 package com.example.hope.service;
 
 import com.example.hope.model.entity.Service;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ServiceService {
 
@@ -12,5 +14,5 @@ public interface ServiceService {
 
     void update(Service service);
 
-    List<Service> findAll();
+    PageInfo<Service> findAll(Map<String, String> option);
 }

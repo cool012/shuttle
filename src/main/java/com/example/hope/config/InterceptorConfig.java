@@ -17,9 +17,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         // 拦截所有请求，通过判断是否有 @LoginRequired 注解 决定是否需要登录
         registry.addInterceptor(authenticationInterceptor()).addPathPatterns("/**");
-
         WebContentInterceptor contentInterceptor = new WebContentInterceptor();
-        contentInterceptor.addCacheMapping(CacheControl.maxAge(1, TimeUnit.HOURS).noTransform().mustRevalidate(),"/service/*");
+//        contentInterceptor.addCacheMapping(CacheControl.maxAge(1, TimeUnit.HOURS).noTransform().mustRevalidate(),"/service/*");
 
         registry.addInterceptor(contentInterceptor);
     }

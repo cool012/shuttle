@@ -36,7 +36,7 @@ public class OrdersSqlProvider {
     public String selectByKey(Map<String, Object> para){
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(SQL);
-        if (para != null) stringBuffer.append(" where orders."+ para.get("key") +" = " + para.get("id"));
+        if (para != null) stringBuffer.append(" orders."+ para.get("key") +" = " + para.get("id"));
         stringBuffer.append(";");
         return stringBuffer.toString();
     }

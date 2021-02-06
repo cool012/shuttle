@@ -1,8 +1,8 @@
 package com.example.hope.service;
 
 import com.example.hope.model.entity.User;
+import com.github.pagehelper.PageInfo;
 
-import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -27,5 +27,5 @@ public interface UserService {
 
     User findUserById(long id);
 
-    List<User> findAll(Map<String, String> option);
+    PageInfo<User> findAll(Map<String, String> option);
 }

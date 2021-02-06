@@ -1,17 +1,22 @@
 package com.example.hope.controller;
 
+import com.alipay.api.AlipayApiException;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
+import com.example.hope.config.AlipayConfig;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.model.entity.User;
+import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
+import com.example.hope.service.serviceIpm.PayServiceImp;
 import com.example.hope.service.serviceIpm.UserServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -25,10 +30,14 @@ import java.util.Map;
 public class UserController {
 
     private UserService userService;
+    private PayService payService;
+    private AlipayConfig alipayConfig;
 
     @Autowired
-    public UserController(UserServiceIpm userService) {
+    public UserController(UserServiceIpm userService, PayServiceImp payServiceImp, AlipayConfig alipayConfig) {
         this.userService = userService;
+        this.payService = payServiceImp;
+        this.alipayConfig = alipayConfig;
     }
 
     @ApiOperation("用户登录")
@@ -97,19 +106,30 @@ public class UserController {
     }
 
     @LoginUser
-    @ApiOperation("增加点数")
-    @RequestMapping(value = "/recharge", method = RequestMethod.POST)
-    public ReturnMessage<Object> addScore(long id, int quantity) {
-        userService.addScore(id, quantity);
-        return ReturnMessageUtil.sucess();
-    }
-
-    @LoginUser
     @ApiOperation("查询点数")
     @RequestMapping(value = "/findSore/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findScore(@PathVariable("id") long id){
+    public ReturnMessage<Object> findScore(@PathVariable("id") long id) {
         int score = userService.findByScore(id);
         return ReturnMessageUtil.sucess(score);
     }
 
+    @ApiOperation("充值")
+    @RequestMapping(value = "/recharge", method = RequestMethod.GET)
+    public String recharge() throws AlipayApiException {
+        return payService.alipay(1, 20);
+    }
+
+    @RequestMapping("/return")
+    @ResponseBody
+    public ReturnMessage<Object> returnCall(HttpServletRequest request) throws Exception {
+        payService.returnCall(request);
+        return ReturnMessageUtil.sucess();
+    }
+
+    @RequestMapping("/notify")
+    @ResponseBody
+    public ReturnMessage<Object> notifyCall(HttpServletRequest request) throws Exception {
+        payService.notifyCall(request);
+        return ReturnMessageUtil.sucess();
+    }
 }

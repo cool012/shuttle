@@ -4,9 +4,9 @@ import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
-import com.example.hope.service.MailService;
 import com.example.hope.service.UserService;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +43,7 @@ public class UserServiceIpm implements UserService {
     @Transient
     @CacheEvict(value = "user", allEntries = true)
     public void register(User user) {
+        System.out.println(user);
         // 检查输入合法
         Utils.check_user(user);
         // 用户密码加密
@@ -125,7 +125,7 @@ public class UserServiceIpm implements UserService {
     @CacheEvict(value = "user", allEntries = true)
     public void addScore(long id, int quantity) {
         int res = userMapper.addScore(id, quantity);
-        log.info("user addScore -> " + id + " -> res -> " + res);
+        log.info("user addScore -> userId:" + id + " -> quantity:" + quantity + " -> res -> " + res);
         BusinessException.check(res, "增加点数失败");
     }
 
@@ -175,11 +175,11 @@ public class UserServiceIpm implements UserService {
      * @return
      */
     @Override
-    @Cacheable(value = "user", key = "methodName")
-    public List<User> findAll(Map<String, String> option) {
+    @Cacheable(value = "user", key = "methodName + #option.toString()")
+    public PageInfo<User> findAll(Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
-        return userMapper.findAll();
+        return PageInfo.of(userMapper.findAll());
     }
 
 

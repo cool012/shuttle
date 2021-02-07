@@ -54,9 +54,9 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void insert(List<Orders> orderList, Boolean isExpired) {
-        for (Orders order : orderList) {
-            order.setDate(new Date());
-        }
+//        for (Orders order : orderList) {
+//            order.setDate(new Date());
+//        }
         int res = orderMapper.insertBatch(orderList);
         // 批量设置过期时间
         if (Boolean.valueOf(isExpired)) {

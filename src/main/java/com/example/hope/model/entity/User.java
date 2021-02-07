@@ -25,18 +25,4 @@ public class User implements Serializable {
     private int score;
     private boolean admin;
     private String name;
-
-    public User(long id, String password) {
-        this.id = id;
-        this.password = password;
-    }
-
-    public User(String password, String phone, String address, int score, boolean admin, String name) {
-        this.password = password;
-        this.phone = phone;
-        this.address = address;
-        this.score = score;
-        this.admin = admin;
-        this.name = name;
-    }
 }

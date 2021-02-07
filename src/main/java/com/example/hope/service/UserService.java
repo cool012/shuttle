@@ -3,6 +3,7 @@ package com.example.hope.service;
 import com.example.hope.model.entity.User;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -23,9 +24,9 @@ public interface UserService {
 
     int findByScore(long id);
 
-    User findByPhone(String phone);
+    List<User> findByPhone(String phone);
 
-    User findUserById(long id);
+    List<User> findById(long id);
 
     PageInfo<User> findAll(Map<String, String> option);
 

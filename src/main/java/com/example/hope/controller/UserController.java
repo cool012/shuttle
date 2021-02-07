@@ -86,9 +86,9 @@ public class UserController {
 
     @Admin
     @ApiOperation("根据id查询用户")
-    @RequestMapping(value = "/findUserById/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findUserById(@PathVariable("id") long id) {
-        return ReturnMessageUtil.sucess(userService.findUserById(id));
+    @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findById(@PathVariable("id") long id) {
+        return ReturnMessageUtil.sucess(userService.findById(id).get(0));
     }
 
     @Admin
@@ -102,7 +102,7 @@ public class UserController {
     @ApiOperation("根据手机号查询用户")
     @RequestMapping(value = "/findByPhone/{phone}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByPhone(@PathVariable("phone") String phone) {
-        return ReturnMessageUtil.sucess(userService.findByPhone(phone));
+        return ReturnMessageUtil.sucess(userService.findByPhone(phone).get(0));
     }
 
     @LoginUser

@@ -3,6 +3,7 @@ package com.example.hope.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,7 +22,7 @@ public class Orders implements Serializable {
     private long cid;
     private long sid;
     private long pid;
-    private Date date;
+    private String date;
     private String address;
     private String note;
     private String file;

@@ -29,7 +29,7 @@ public interface UserMapper {
     int reduceScore(long id);
 
     @Select("select id,phone,address,admin,score,name from user where id = #{id}")
-    User findUserById(long id);
+    List<User> findUserById(long id);
 
     @Select("select id,phone,address,admin,score,name from user")
     List<User> findAll();
@@ -38,7 +38,7 @@ public interface UserMapper {
     User login(String phone, String encryption_password);
 
     @Select("select id,phone,address,admin,score,name from user where phone = #{phone}")
-    User findByPhone(String phone);
+    List<User> findByPhone(String phone);
 
     @Select("select score from user where id = #{id}")
     int findByScore(long id);

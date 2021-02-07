@@ -13,11 +13,14 @@ public class OrdersSqlProvider {
             "orders.*," +
             "client.name as clientName," +
             "client.phone as clientPhone," +
+            "client.address as ClientAddress," +
             "service.name as serviceName," +
             "service.phone as servicePhone," +
             "product.name as productName," +
+            "product.image as productImage," +
             "product.price as productPrice," +
-            "product.id as productId," +
+            "product.rate as productRate," +
+            "product.sales as productSales," +
             "store.name as storeName " +
             "from " +
             "orders," +

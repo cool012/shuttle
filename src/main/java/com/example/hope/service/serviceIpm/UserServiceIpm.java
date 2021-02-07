@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -152,7 +153,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #phone")
-    public User findByPhone(String phone) {
+    public List<User> findByPhone(String phone) {
         return userMapper.findByPhone(phone);
     }
 
@@ -164,7 +165,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #id")
-    public User findUserById(long id) {
+    public List<User> findById(long id) {
         return userMapper.findUserById(id);
     }
 

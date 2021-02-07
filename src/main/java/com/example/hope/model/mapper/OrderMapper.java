@@ -21,18 +21,22 @@ public interface OrderMapper {
     @Delete("delete from orders where id = #{id}")
     int delete(long id);
 
-    @Update("update orders set address = #{address},note = #{note},file = #{file} where id = #{id}")
+    @Update("update orders set address = #{address},date = #{date},note = #{note},file = #{file} where id = #{id}")
     int update(Orders order);
 
     @SelectProvider(type = OrdersSqlProvider.class, method = "selectByKey")
     @Results(value = {
             @Result(column = "clientName", property = "client.name"),
             @Result(column = "clientPhone", property = "client.phone"),
+            @Result(column = "clientAddress", property = "client.address"),
             @Result(column = "serviceName", property = "service.name"),
             @Result(column = "servicePhone", property = "service.phone"),
-            @Result(column = "productName", property = "product.name"),
-            @Result(column = "productPrice", property = "product.price"),
             @Result(column = "productId", property = "product.id"),
+            @Result(column = "productName", property = "product.name"),
+            @Result(column = "productImage", property = "product.image"),
+            @Result(column = "productPrice", property = "product.price"),
+            @Result(column = "productRate", property = "product.rate"),
+            @Result(column = "productSales", property = "product.sales")
     })
     List<Orders> select(@Param("id") String id, @Param("key") String key);
 

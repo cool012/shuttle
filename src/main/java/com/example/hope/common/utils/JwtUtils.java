@@ -82,15 +82,15 @@ public class JwtUtils {
         return admin;
     }
 
-    public static User getUser(String token) {
-        long id = parseJWT(token).get("userId", Integer.class);
-        String phone = parseJWT(token).get("phone", String.class);
-        String address = parseJWT(token).get("address", String.class);
-        int score = parseJWT(token).get("score", Integer.class);
-        boolean admin = parseJWT(token).get("admin", Boolean.class);
-        String name = parseJWT(token).get("name", String.class);
-        return new User(null, phone, address, score, admin, name);
-    }
+//    public static User getUser(String token) {
+//        long id = parseJWT(token).get("userId", Integer.class);
+//        String phone = parseJWT(token).get("phone", String.class);
+//        String address = parseJWT(token).get("address", String.class);
+//        int score = parseJWT(token).get("score", Integer.class);
+//        boolean admin = parseJWT(token).get("admin", Boolean.class);
+//        String name = parseJWT(token).get("name", String.class);
+//        return new User(null, phone, address, score, admin, name);
+//    }
 
     /**
      * 解析token

@@ -5,12 +5,15 @@ import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
 import com.example.hope.model.entity.Orders;
+import com.example.hope.service.FileService;
 import com.example.hope.service.OrderService;
+import com.example.hope.service.serviceIpm.FileServiceImp;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -26,10 +29,12 @@ import java.util.Map;
 public class OrderController {
 
     private OrderService orderService;
+    private FileService fileService;
 
     @Autowired
-    public OrderController(OrderServiceIpm orderService) {
+    public OrderController(OrderServiceIpm orderService, FileServiceImp fileService) {
         this.orderService = orderService;
+        this.fileService = fileService;
     }
 
     @LoginUser

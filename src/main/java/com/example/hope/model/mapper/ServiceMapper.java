@@ -1,7 +1,6 @@
 package com.example.hope.model.mapper;
 
-import com.example.hope.model.entity.Service;
-import com.example.hope.model.entity.User;
+import com.example.hope.model.entity.Services;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -12,14 +11,14 @@ import java.util.List;
 public interface ServiceMapper {
 
     @Insert("insert into service(name,color,icon) values(#{name},#{color},#{icon})")
-    int insert(Service service);
+    int insert(Services services);
 
     @Delete("delete from service where id = #{id}")
     int delete(long id);
 
     @Update("update service set name = #{name},color = #{color},icon = #{icon} where id = #{id}")
-    int update(Service service);
+    int update(Services services);
 
     @Select("select id,name,color,icon from service")
-    List<Service> findAll();
+    List<Services> findAll();
 }

@@ -4,7 +4,7 @@ import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.config.exception.ReturnMessage;
-import com.example.hope.model.entity.Service;
+import com.example.hope.model.entity.Services;
 import com.example.hope.service.ServiceService;
 import com.example.hope.service.serviceIpm.ServiceServiceIpm;
 import io.swagger.annotations.Api;
@@ -33,8 +33,8 @@ public class ServiceController {
     @Admin
     @ApiOperation("添加服务")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(Service service) {
-        serviceService.insert(service);
+    public ReturnMessage<Object> insert(Services services) {
+        serviceService.insert(services);
         return ReturnMessageUtil.sucess();
     }
 
@@ -49,8 +49,8 @@ public class ServiceController {
     @Admin
     @ApiOperation("修改服务")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ReturnMessage<Object> update(Service service) {
-        serviceService.update(service);
+    public ReturnMessage<Object> update(Services services) {
+        serviceService.update(services);
         return ReturnMessageUtil.sucess();
     }
 

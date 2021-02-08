@@ -23,6 +23,6 @@ public class Store implements Serializable {
     private String image;
     private int rate;
     private int sales;
-    private Service service;
+    private Services services;
     private Category category;
 }

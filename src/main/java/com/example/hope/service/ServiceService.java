@@ -1,18 +1,17 @@
 package com.example.hope.service;
 
-import com.example.hope.model.entity.Service;
+import com.example.hope.model.entity.Services;
 import com.github.pagehelper.PageInfo;
 
-import java.util.List;
 import java.util.Map;
 
 public interface ServiceService {
 
-    void insert(Service service);
+    void insert(Services services);
 
     void delete(Long id);
 
-    void update(Service service);
+    void update(Services services);
 
-    PageInfo<Service> findAll(Map<String, String> option);
+    PageInfo<Services> findAll(Map<String, String> option);
 }

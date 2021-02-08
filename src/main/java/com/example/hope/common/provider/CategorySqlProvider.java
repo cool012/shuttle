@@ -21,12 +21,7 @@ public class CategorySqlProvider {
             "on " +
             "category.serviceId = service.id";
 
-    public String selectByKey(Map<String, Object> para){
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(SQL);
-        if (para.get("id") != null && para.get("key") != null)
-            stringBuffer.append(" category."+ para.get("key") +" = " + para.get("id"));
-        stringBuffer.append(";");
-        return stringBuffer.toString();
+    public String selectByKey(Map<String, Object> para) {
+        return Provider.selectByKey(para, SQL);
     }
 }

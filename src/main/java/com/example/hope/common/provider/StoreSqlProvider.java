@@ -25,13 +25,6 @@ public class StoreSqlProvider {
             "store.categoryId = category.id";
 
     public String selectByKey(Map<String, Object> para) {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(SQL);
-        if (para.get("key") != null && para.get("id") != null) {
-            if (para.get("key").equals("search"))
-                stringBuffer.append(" where store.name like %" + para.get("keyword") + "%");
-            else stringBuffer.append(" where store." + para.get("key") + " = " + para.get("id"));
-        }
-        return stringBuffer.toString();
+        return Provider.selectByKey(para, SQL);
     }
 }

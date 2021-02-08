@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class ProductSqlProvider {
 
-    private static final String sql = "select " +
+    private static final String SQL = "select " +
             "product.*,store.name as storeName " +
             "from " +
             "product " +
@@ -17,14 +17,6 @@ public class ProductSqlProvider {
             "store on product.storeId = store.Id";
 
     public String selectByKey(Map<String, Object> para) {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(sql);
-        if (para.get("key") != null && para.get("id") != null) {
-            if (para.get("key").equals("search"))
-                stringBuffer.append(" where product.name like %" + para.get("keyword") + "%");
-            else stringBuffer.append(" where product." + para.get("key") + " = " + para.get("id"));
-        }
-        stringBuffer.append(";");
-        return stringBuffer.toString();
+        return Provider.selectByKey(para, SQL);
     }
 }

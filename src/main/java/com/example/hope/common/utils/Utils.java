@@ -5,6 +5,10 @@ import cn.hutool.core.util.ReUtil;
 import com.example.hope.model.entity.User;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -71,10 +75,26 @@ public class Utils {
     /**
      * 根据时间戳生成订单号
      */
-    public static String getOrderNo(long userId) {
+    public static String getOrderNo() {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         LocalDateTime localDateTime = Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
-        return df.format(localDateTime) + "id=" + userId;
+        return df.format(localDateTime);
+    }
+
+    public static String getKey(String fileName) throws IOException {
+        String workPath = System.getProperty("user.dir");
+        String path = workPath + File.separator + fileName;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(path));
+            return reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null)
+                reader.close();
+        }
+        return null;
     }
 
 }

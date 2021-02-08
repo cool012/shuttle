@@ -48,9 +48,8 @@ public class PayServiceImp implements PayService {
         AlipayClient client = alipayConfig.getAlipayClient();
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
         AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
-        model.setOutTradeNo(Utils.getOrderNo(userId));
-        model.setBody("模拟充值积分");
-        model.setProductCode(String.valueOf(userId));
+        model.setOutTradeNo(Utils.getOrderNo());
+        model.setBody(String.valueOf(userId));
         model.setSubject("充值");
         model.setTotalAmount(String.valueOf(total));
         request.setBizModel(model);
@@ -72,13 +71,7 @@ public class PayServiceImp implements PayService {
         Map<String, String> params = getParams(requestParams);
         boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, alipayConfig.charset,
                 alipayConfig.sign_type);
-        if (signVerified) {
-            long userId = Long.valueOf(params.get("out_trade_no").split("id=")[1]);
-            int total = Double.valueOf(params.get("total_amount")).intValue();
-            userService.addScore(userId, total);
-        } else {
-            BusinessException.check(0, "充值失败");
-        }
+        if (!signVerified) BusinessException.check(0, "验签失败");
     }
 
     /**
@@ -91,15 +84,12 @@ public class PayServiceImp implements PayService {
     public void notifyCall(HttpServletRequest request) throws Exception {
         Map<String, String[]> requestParams = request.getParameterMap();
         Map<String, String> params = getParams(requestParams);
-        String tradeStatus = params.get("trade_status");
         boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, alipayConfig.charset,
                 alipayConfig.sign_type);
         if (signVerified) {
-            if (tradeStatus.equals("TRADE_FINISHED")) {
-                System.out.println("TRADE_FINISHED");
-            } else if (tradeStatus.equals("TRADE_SUCCESS")) System.out.println("TRADE_SUCCESS");
-        } else {
-            System.out.println("notify sign failed");
+            long userId = Long.valueOf(params.get("body"));
+            int total = Double.valueOf(params.get("total_amount")).intValue();
+            userService.addScore(userId, total);
         }
     }
 

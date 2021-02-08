@@ -113,10 +113,11 @@ public class UserController {
         return ReturnMessageUtil.sucess(score);
     }
 
+    @LoginUser
     @ApiOperation("充值")
-    @RequestMapping(value = "/recharge", method = RequestMethod.GET)
-    public String recharge() throws AlipayApiException {
-        return payService.alipay(1, 20);
+    @RequestMapping(value = "/recharge", method = RequestMethod.POST)
+    public String recharge(long userId, int total) throws AlipayApiException {
+        return payService.alipay(userId, total);
     }
 
     @RequestMapping("/return")

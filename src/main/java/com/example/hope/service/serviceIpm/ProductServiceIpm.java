@@ -18,10 +18,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -156,6 +153,14 @@ public class ProductServiceIpm implements ProductService {
     @Override
     public List<Product> rank() {
         Set<String> rank = redisUtil.range("product_rank", 0, 9);
+        // 如果排行榜为空，将所有产品加入进去，分数为0
+        if (rank.size() == 0) {
+            List<Product> stores = findAll(new HashMap<>()).getList();
+            for (Product product : stores) {
+                redisUtil.incrScore("product_rank", String.valueOf(product.getId()), 0);
+            }
+            rank = redisUtil.range("product_rank", 0, 9);
+        }
         List<Product> products = new ArrayList<>();
         for (String id : rank) {
             products.add(findById(Long.valueOf(id)));

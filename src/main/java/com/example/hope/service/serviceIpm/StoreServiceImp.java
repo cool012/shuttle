@@ -15,10 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @description: 商店服务实现类
@@ -137,6 +134,14 @@ public class StoreServiceImp implements StoreService {
     @Override
     public List<Store> rank() {
         Set<String> range = redisUtil.range("store_rank", 0, 9);
+        // 如果排行榜为空，将所有商店加入进去，分数为0
+        if (range.size() == 0) {
+            List<Store> stores = findAll(new HashMap<>()).getList();
+            for (Store store : stores) {
+                redisUtil.incrScore("store_rank", String.valueOf(store.getId()), 0);
+            }
+            range = redisUtil.range("store_rank", 0, 9);
+        }
         List<Store> stores = new ArrayList<>();
         for (String id : range) {
             stores.add(findById(Long.valueOf(id)));

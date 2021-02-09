@@ -25,6 +25,6 @@ public class StoreSqlProvider {
             "store.categoryId = category.id";
 
     public String selectByKey(Map<String, Object> para) {
-        return Provider.selectByKey(para, SQL);
+        return Provider.selectByKey(para, SQL,"store");
     }
 }

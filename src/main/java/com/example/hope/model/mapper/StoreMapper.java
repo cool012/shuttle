@@ -22,8 +22,8 @@ public interface StoreMapper {
 
     @SelectProvider(type = StoreSqlProvider.class, method = "selectByKey")
     @Results(value = {
-            @Result(column = "serviceName", property = "service.name"),
-            @Result(column = "serviceColor", property = "service.color"),
+            @Result(column = "serviceName", property = "services.name"),
+            @Result(column = "serviceColor", property = "services.color"),
             @Result(column = "categoryName", property = "category.name")
     })
     List<Store> select(@Param("id") String id, @Param("key") String key);

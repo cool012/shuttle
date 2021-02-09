@@ -17,6 +17,6 @@ public class ProductSqlProvider {
             "store on product.storeId = store.Id";
 
     public String selectByKey(Map<String, Object> para) {
-        return Provider.selectByKey(para, SQL);
+        return Provider.selectByKey(para, SQL,"product");
     }
 }

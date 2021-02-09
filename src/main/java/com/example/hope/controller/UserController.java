@@ -31,13 +31,11 @@ public class UserController {
 
     private UserService userService;
     private PayService payService;
-    private AlipayConfig alipayConfig;
 
     @Autowired
-    public UserController(UserServiceIpm userService, PayServiceImp payServiceImp, AlipayConfig alipayConfig) {
+    public UserController(UserServiceIpm userService, PayServiceImp payServiceImp) {
         this.userService = userService;
         this.payService = payServiceImp;
-        this.alipayConfig = alipayConfig;
     }
 
     @ApiOperation("用户登录")
@@ -113,25 +111,10 @@ public class UserController {
         return ReturnMessageUtil.sucess(score);
     }
 
-    @LoginUser
     @ApiOperation("充值")
     @RequestMapping(value = "/recharge", method = RequestMethod.POST)
     public String recharge(long userId, int total) throws AlipayApiException {
         return payService.alipay(userId, total);
-    }
-
-    @RequestMapping("/return")
-    @ResponseBody
-    public ReturnMessage<Object> returnCall(HttpServletRequest request) throws Exception {
-        payService.returnCall(request);
-        return ReturnMessageUtil.sucess();
-    }
-
-    @RequestMapping("/notify")
-    @ResponseBody
-    public ReturnMessage<Object> notifyCall(HttpServletRequest request) throws Exception {
-        payService.notifyCall(request);
-        return ReturnMessageUtil.sucess();
     }
 
     @Admin

@@ -53,3 +53,4 @@ alipay:
   publicKey: ${publicKey}
   gateway: ${gateway}
   notifyUrl: ${notifyUrl}
+  redirectUrl: ${redirectUrl}

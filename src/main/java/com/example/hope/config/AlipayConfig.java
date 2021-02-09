@@ -27,7 +27,7 @@ public class AlipayConfig implements ApplicationRunner {
     @Value("${alipay.gateway}")
     public String gatewayUrl;
 
-    public String return_url = "http://localhost:8081/user/return";
+    public String return_url = "http://localhost:8081/payment/return";
 
     public String alipay_public_key;
 
@@ -44,7 +44,7 @@ public class AlipayConfig implements ApplicationRunner {
         this.merchant_private_key = Utils.getKey("private.txt");
         this.alipay_public_key = Utils.getKey("public.txt");
         this.client = new DefaultAlipayClient(this.gatewayUrl, this.app_id, this.merchant_private_key,
-                "json", AlipayConfig.charset, this.alipay_public_key, this.sign_type);
+                "json", AlipayConfig.charset, this.alipay_public_key, sign_type);
     }
 
     public AlipayClient getAlipayClient() {

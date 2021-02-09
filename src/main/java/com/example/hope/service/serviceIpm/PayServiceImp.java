@@ -7,10 +7,10 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.AlipayConfig;
-import com.example.hope.config.exception.BusinessException;
 import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +28,9 @@ public class PayServiceImp implements PayService {
 
     private AlipayConfig alipayConfig;
     private UserService userService;
+    // 重定向url，前端支付结果界面
+    @Value("${alipay.redirectUrl}")
+    private String redirectUrl;
 
     @Autowired
     PayServiceImp(AlipayConfig alipayConfig, UserServiceIpm userServiceIpm) {
@@ -66,12 +69,13 @@ public class PayServiceImp implements PayService {
      * @throws Exception
      */
     @Override
-    public void returnCall(HttpServletRequest request) throws Exception {
+    public String returnCall(HttpServletRequest request) throws Exception {
         Map<String, String[]> requestParams = request.getParameterMap();
         Map<String, String> params = getParams(requestParams);
         boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, alipayConfig.charset,
                 alipayConfig.sign_type);
-        if (!signVerified) BusinessException.check(0, "验签失败");
+        if (!signVerified) return redirectUrl + "0";
+        return redirectUrl + "1";
     }
 
     /**

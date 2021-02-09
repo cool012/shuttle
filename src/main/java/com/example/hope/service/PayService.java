@@ -8,7 +8,7 @@ public interface PayService {
 
     String alipay(long userId, double total) throws AlipayApiException;
 
-    void returnCall(HttpServletRequest request) throws Exception;
+    String returnCall(HttpServletRequest request) throws Exception;
 
     void notifyCall(HttpServletRequest request) throws Exception;
 }

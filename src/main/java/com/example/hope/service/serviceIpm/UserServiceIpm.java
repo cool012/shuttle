@@ -109,7 +109,7 @@ public class UserServiceIpm implements UserService {
     @Transient
     @CacheEvict(value = "user", allEntries = true)
     public void updatePassword(long id, String password) {
-        int res = userMapper.updatePassword(id, password);
+        int res = userMapper.updatePassword(id, Utils.encode(password));
         log.info("user update password ->" + id, password + " -> res -> " + res);
         BusinessException.check(res, "修改密码失败");
     }

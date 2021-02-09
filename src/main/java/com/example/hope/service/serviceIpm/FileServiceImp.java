@@ -77,4 +77,18 @@ public class FileServiceImp implements FileService {
                 .contentType(MediaType.parseMediaType("application/txt"))
                 .body(resource);
     }
+
+    /**
+     * 删除文件
+     *
+     * @param fileName 文件名
+     */
+    @Override
+    public void remove(String fileName) {
+        String workPath = System.getProperty("user.dir");
+        File file = new File( workPath + File.separator + "upload" + File.separator + fileName);
+        if (file.exists()) {
+            if (!file.delete()) BusinessException.check(-1, "文件删除失败");
+        } else BusinessException.check(-1, "文件未找到");
+    }
 }

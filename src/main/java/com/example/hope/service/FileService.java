@@ -10,4 +10,7 @@ public interface FileService {
     String upload(MultipartFile file);
 
     ResponseEntity<Object> download(String fileName) throws FileNotFoundException;
+
+
+    void remove(String fileName);
 }

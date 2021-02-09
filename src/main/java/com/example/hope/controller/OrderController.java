@@ -13,11 +13,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-
 /**
  * @description: 订单相关路由
  * @author: DHY
@@ -102,5 +101,13 @@ public class OrderController {
     @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findById(@PathVariable long id) {
         return ReturnMessageUtil.sucess(orderService.findById(id));
+    }
+
+    @LoginUser
+    @ApiOperation("完成订单")
+    @RequestMapping(value = "/completed", method = RequestMethod.POST)
+    public ReturnMessage<Object> completed(HttpServletRequest request, Orders orders) {
+        orderService.completed(orders, request.getHeader("Authorization"));
+        return ReturnMessageUtil.sucess();
     }
 }

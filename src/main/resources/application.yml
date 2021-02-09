@@ -7,7 +7,6 @@ spring:
     port: 5672
     username: ${mqUser}
     password: ${mqPasswd}
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: ${dbPasswd}
@@ -36,11 +35,9 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB # 单个文件的最大值
-
 logging:
   level:
     com.example.hope.model.mapper.UserMapper: debug
-
 pagehelper:
   helperDialect: mysql
   params: count=countSql

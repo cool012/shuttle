@@ -1,5 +1,6 @@
 package com.example.hope.config.redis;
 
+import com.example.hope.model.entity.Orders;
 import com.example.hope.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
@@ -33,8 +34,8 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         if (key.contains("order")) {
             orderService.delete(id);
         }
-        if(key.contains("completed")){
-            orderService.completed(id);
-        }
+//        if(key.contains("completed")){
+//            orderService.completed(id);
+//        }
     }
 }

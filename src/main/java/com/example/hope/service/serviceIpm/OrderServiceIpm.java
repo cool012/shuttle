@@ -1,10 +1,12 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.mapper.OrderMapper;
+import com.example.hope.service.FileService;
 import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -35,19 +37,18 @@ import java.util.concurrent.TimeUnit;
 public class OrderServiceIpm implements OrderService {
 
     private OrderMapper orderMapper;
-
     private UserServiceIpm userService;
-
     private ProductServiceIpm productService;
-
     private RedisUtil redisUtil;
+    private FileService fileService;
 
     @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService, RedisUtil redisUtil) {
+    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService, RedisUtil redisUtil, FileServiceImp fileService) {
         this.orderMapper = orderMapper;
         this.userService = userService;
         this.productService = productService;
         this.redisUtil = redisUtil;
+        this.fileService = fileService;
     }
 
     /**
@@ -193,13 +194,19 @@ public class OrderServiceIpm implements OrderService {
     /**
      * 更新订单状态为完成
      *
-     * @param id
+     * @param orders
      * @return
      */
     @Override
     @CacheEvict(value = "order", allEntries = true)
-    public void completed(long id) {
-        int res = orderMapper.completed(id);
+    public void completed(Orders orders, String token) {
+        long userId = JwtUtils.getUserId(token);
+        // 只允许订单服务者或管理员修改订单为完成状态
+        if (userId != orders.getSid() || !JwtUtils.is_admin(token))
+            BusinessException.check(0,"非订单用户或管理员操作");
+        // 如果存在文件，完成订单时删除文件
+        if (orders.getFile() != null) fileService.remove(orders.getFile());
+        int res = orderMapper.completed(orders.getId());
         BusinessException.check(res, "完成订单失败");
     }
 }

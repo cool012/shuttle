@@ -31,4 +31,5 @@ public class Orders implements Serializable {
     private User service;
     private Product product;
     private String storeName;
+    private long serviceId;
 }

@@ -21,7 +21,8 @@ public class OrdersSqlProvider {
             "product.price as productPrice," +
             "product.rate as productRate," +
             "product.sales as productSales," +
-            "store.name as storeName " +
+            "store.name as storeName," +
+            "store.serviceId as serviceId " +
             "from " +
             "orders," +
             "user as client," +

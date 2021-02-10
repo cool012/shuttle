@@ -10,12 +10,18 @@ import java.util.Map;
 public class Provider {
 
     public static String selectByKey(Map<String, Object> para, String sql, String table) {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append(sql);
         if (para.get("key") != null && para.get("id") != null) {
             if (para.get("key").equals("search"))
-                stringBuffer.append(" where " + table + ".name like %" + para.get("keyword") + "%");
-            else stringBuffer.append(" where " + table + "." + para.get("key") + " = " + para.get("id"));
+                stringBuffer.append(" where ").append(table).append(".name like %").append(para.get("keyword"))
+                        .append("%");
+            else if (table.equals("orders"))
+                stringBuffer.append(" and ").append(table).append(".").append(para.get("key")).append(" = ")
+                        .append(para.get("id"));
+            else
+                stringBuffer.append(" where ").append(table).append(".").append(para.get("key")).append(" = ")
+                        .append(para.get("id"));
         }
         return stringBuffer.toString();
     }

@@ -122,8 +122,8 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #id")
-    public Store findById(long id) {
-        return storeMapper.select(String.valueOf(id), "id").get(0);
+    public List<Store> findById(long id) {
+        return storeMapper.select(String.valueOf(id), "id");
     }
 
     /**
@@ -144,7 +144,7 @@ public class StoreServiceImp implements StoreService {
         }
         List<Store> stores = new ArrayList<>();
         for (String id : range) {
-            stores.add(findById(Long.valueOf(id)));
+            stores.add(findById(Long.valueOf(id)).get(0));
         }
         return stores;
     }

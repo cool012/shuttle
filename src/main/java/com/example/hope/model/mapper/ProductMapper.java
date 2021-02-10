@@ -22,7 +22,8 @@ public interface ProductMapper {
 
     @SelectProvider(type = ProductSqlProvider.class, method = "selectByKey")
     @Results(value = {
-            @Result(column = "storeName", property = "store.name")
+            @Result(column = "storeName", property = "store.name"),
+            @Result(column = "serviceId", property = "store.serviceId")
     })
     List<Product> select(@Param("id") String storeId, @Param("key") String key);
 

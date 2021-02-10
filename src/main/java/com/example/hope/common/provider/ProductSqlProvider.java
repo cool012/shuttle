@@ -10,7 +10,7 @@ import java.util.Map;
 public class ProductSqlProvider {
 
     private static final String SQL = "select " +
-            "product.*,store.name as storeName " +
+            "product.*,store.name as storeName,store.serviceId as serviceId " +
             "from " +
             "product " +
             "left join " +

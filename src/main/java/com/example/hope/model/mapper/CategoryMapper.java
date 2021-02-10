@@ -22,9 +22,9 @@ public interface CategoryMapper {
 
     @SelectProvider(type = CategorySqlProvider.class, method = "selectByKey")
     @Results({
-            @Result(column = "serviceName", property = "service.name"),
-            @Result(column = "serviceColor", property = "service.color"),
-            @Result(column = "serviceIcon", property = "service.icon")
+            @Result(column = "serviceName", property = "services.name"),
+            @Result(column = "serviceColor", property = "services.color"),
+            @Result(column = "serviceIcon", property = "services.icon")
     })
     List<Category> select(@Param("id") String id, @Param("key") String key);
 }

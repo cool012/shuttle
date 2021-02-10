@@ -20,7 +20,7 @@ public interface StoreService {
 
     List<Store> findByCategoryId(long categoryId);
 
-    Store findById(long id);
+    List<Store> findById(long id);
 
     List<Store> rank();
 

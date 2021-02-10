@@ -11,20 +11,14 @@ import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.beans.Transient;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -74,9 +68,28 @@ public class OrderServiceIpm implements OrderService {
     /**
      * 删除订单
      *
-     * @param id
+     * @param orders
      */
     @Override
+    @Transient
+    @CacheEvict(value = "order", allEntries = true)
+    public void delete(Orders orders, String token) {
+        long userId = JwtUtils.getUserId(token);
+        long orderId = orders.getId();
+        int res = 0;
+        // 只允许下单用户或管理员在订单为未接单的状态下删除订单
+        if ((orders.getCid() == userId || JwtUtils.is_admin(token)) && orders.getStatus() == -1)
+            res = orderMapper.delete(orderId);
+        log.info("order delete id -> " + orderId + " -> res -> " + res);
+        BusinessException.check(res, "删除失败");
+    }
+
+
+    /**
+     * 删除订单
+     *
+     * @param id
+     */
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void delete(long id) {
@@ -200,7 +213,7 @@ public class OrderServiceIpm implements OrderService {
         long userId = JwtUtils.getUserId(token);
         // 只允许订单服务者或管理员修改订单为完成状态
         if (userId != orders.getSid() || !JwtUtils.is_admin(token))
-            BusinessException.check(0,"非订单用户或管理员操作");
+            BusinessException.check(0, "非订单用户或管理员操作");
         // 如果存在文件，完成订单时删除文件
         if (orders.getFile() != null) fileService.remove(orders.getFile());
         int res = orderMapper.completed(orders.getId());

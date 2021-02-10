@@ -13,7 +13,7 @@ spring:
     url: jdbc:mysql://${dbHost}:3306/${dbName}?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: ${dbUser}
   cache:
-    type: REDIS
+    type: redis
   redis:
     host: ${redisHost}
     port: 6379

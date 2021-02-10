@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+
 /**
  * @description: 订单相关路由
  * @author: DHY
@@ -44,11 +45,11 @@ public class OrderController {
         return ReturnMessageUtil.sucess();
     }
 
-    @Admin
+    @LoginUser
     @ApiOperation("删除订单")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(long id) {
-        orderService.delete(id);
+    public ReturnMessage<Object> delete(Orders orders, HttpServletRequest request) {
+        orderService.delete(orders, request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 

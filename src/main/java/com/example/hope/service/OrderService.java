@@ -10,7 +10,7 @@ public interface OrderService {
 
     void insert(List<Orders> orderList, Boolean isExpired);
 
-    void delete(long id);
+    void delete(Orders orders, String token);
 
     void update(Orders order);
 

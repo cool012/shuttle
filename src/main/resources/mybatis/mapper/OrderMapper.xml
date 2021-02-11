@@ -5,7 +5,14 @@
         insert into orders(cid,pid,sid,date,address,note,file,status)
         values
         <foreach collection="list" item="order" separator=",">
-            (#{order.cid},1,#{order.pid},#{order.date},#{order.address},#{order.note},#{order.file},#{order.status})
+            (#{order.cid},#{order.pid},1,#{order.date},#{order.address},#{order.note},#{order.file},#{order.status})
         </foreach>
     </insert>
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from orders
+        where id in
+        <foreach collection="list" item="order" separator="," open="(" close=")">
+            #{order.id}
+        </foreach>
+    </delete>
 </mapper>

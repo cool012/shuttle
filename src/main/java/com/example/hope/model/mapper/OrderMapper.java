@@ -2,6 +2,7 @@ package com.example.hope.model.mapper;
 
 import com.example.hope.common.provider.OrdersSqlProvider;
 import com.example.hope.model.entity.Orders;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,9 @@ public interface OrderMapper {
 
     // 批量添加订单
     int insertBatch(List<Orders> orderList);
+
+    // 批量删除订单
+    int deleteBatch(List<Orders> orders);
 
     @Insert("insert into orders(cid,sid,pid,date,address,note,file,status) values(#{cid},#{sid},#{pid},#{date},#{address},#{note},#{file},#{status})")
     @Options(useGeneratedKeys = true, keyProperty = "id")

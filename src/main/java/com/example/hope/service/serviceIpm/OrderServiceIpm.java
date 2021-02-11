@@ -11,6 +11,7 @@ import com.example.hope.service.OrderService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,15 +36,17 @@ public class OrderServiceIpm implements OrderService {
     private ProductServiceIpm productService;
     private RedisUtil redisUtil;
     private FileService fileService;
+    private AmqpTemplate amqpTemplate;
 
     @Autowired
     public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService,
-                           RedisUtil redisUtil, FileServiceImp fileService) {
+                           RedisUtil redisUtil, FileServiceImp fileService, AmqpTemplate amqpTemplate) {
         this.orderMapper = orderMapper;
         this.userService = userService;
         this.productService = productService;
         this.redisUtil = redisUtil;
         this.fileService = fileService;
+        this.amqpTemplate = amqpTemplate;
     }
 
     /**
@@ -56,14 +59,16 @@ public class OrderServiceIpm implements OrderService {
     @CacheEvict(value = "order", allEntries = true)
     public void insert(List<Orders> orderList, boolean isExpired) {
         int res = orderMapper.insertBatch(orderList);
-        // 批量设置过期时间
-        if (isExpired) {
-            for (Orders order : orderList) {
+        log.info("order insert -> " + orderList.toString() + " -> res -> " + res);
+        BusinessException.check(res, "添加失败");
+        for (Orders order : orderList) {
+            // 通过mq发送消息到websocket
+            amqpTemplate.convertAndSend("order.exchange", "order.created", order);
+            if (isExpired) {
+                // 批量设置过期时间
                 redisUtil.ins("order_" + order.getId(), "expired", 10, TimeUnit.MINUTES);
             }
         }
-        log.info("order insert -> " + orderList.toString() + " -> res -> " + res);
-        BusinessException.check(res, "添加失败");
     }
 
     /**

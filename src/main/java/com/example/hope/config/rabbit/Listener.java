@@ -1,7 +1,8 @@
-package com.example.hope.service;
+package com.example.hope.config.rabbit;
 
 import cn.hutool.json.JSONUtil;
 import com.example.hope.model.entity.Orders;
+import com.example.hope.service.WebSocketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -13,9 +14,14 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class OrderListenerService {
+public class Listener {
+
+    private WebSocketService webSocketService;
+
     @Autowired
-    private WebSocketService wsService;
+    public Listener(WebSocketService webSocketService) {
+        this.webSocketService = webSocketService;
+    }
 
     // 收消息
     @RabbitListener(bindings = @QueueBinding(
@@ -27,8 +33,8 @@ public class OrderListenerService {
             ),
             key = "order.created"
     ))
-    public void onOrderCreated(Orders o) {
-        log.info("order:{}", o);
-        wsService.sendMessage(JSONUtil.toJsonStr(o));
+    public void onOrderCreated(Orders order) {
+        log.info("create order ->:{}", order.getId());
+        webSocketService.sendMessage(JSONUtil.toJsonStr(order));
     }
 }

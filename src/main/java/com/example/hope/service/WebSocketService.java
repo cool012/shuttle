@@ -31,6 +31,7 @@ public class WebSocketService {
     @OnClose
     public void onClose(Session session) {
         clients.remove(session.getId());
+        log.info("{}已退出到服务端", session.getId());
     }
 
     /**

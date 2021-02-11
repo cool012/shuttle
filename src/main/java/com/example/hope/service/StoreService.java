@@ -14,6 +14,12 @@ public interface StoreService {
 
     void update(Store store);
 
+    List<Store> rank();
+
+    void sales(long id, int quantity);
+
+    List<Store> search(String keyword);
+
     PageInfo<Store> findAll(Map<String, String> option);
 
     List<Store> findByServiceId(long serviceId);
@@ -21,10 +27,4 @@ public interface StoreService {
     List<Store> findByCategoryId(long categoryId);
 
     List<Store> findById(long id);
-
-    List<Store> rank();
-
-    void sales(long id, int quantity);
-
-    List<Store> search(String keyword);
 }

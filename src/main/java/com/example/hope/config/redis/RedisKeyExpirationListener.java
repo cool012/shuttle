@@ -1,7 +1,5 @@
 package com.example.hope.config.redis;
 
-import com.example.hope.model.entity.Orders;
-import com.example.hope.service.OrderService;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
@@ -30,7 +28,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
      */
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        String key = message.toString();
+        String key = message.toString();//todo 清空缓存判断
         int id = Integer.parseInt(key.substring(key.indexOf("_") + 1));
         if (key.contains("order")) {
             orderServiceIpm.delete(id);

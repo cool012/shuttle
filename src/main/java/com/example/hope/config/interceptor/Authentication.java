@@ -1,4 +1,4 @@
-package com.example.hope.common.interceptor;
+package com.example.hope.config.interceptor;
 
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.PassToken;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
-public class AuthenticationInterceptor implements HandlerInterceptor {
+public class Authentication implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

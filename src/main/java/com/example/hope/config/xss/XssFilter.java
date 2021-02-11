@@ -1,10 +1,5 @@
 package com.example.hope.config.xss;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -23,7 +18,7 @@ import java.io.IOException;
 public class XssFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig){
     }
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -35,11 +30,11 @@ public class XssFilter implements Filter {
     @Override
     public void destroy() {
     }
-    /**
-     * 过滤json类型的
-     * @param builder
-     * @return
-     */
+//    /**
+//     * 过滤json类型的
+//     * @param builder
+//     * @return
+//     */
 //    @Bean
 //    @Primary
 //    public ObjectMapper xssObjectMapper(Jackson2ObjectMapperBuilder builder) {

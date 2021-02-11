@@ -46,7 +46,7 @@ public class WebSocketService {
 
     @OnError
     public void onError(Session session, Throwable error) {
-        log.error("发生错误");
+        log.error("{}连接发生错误", session.getId());
         error.printStackTrace();
     }
 

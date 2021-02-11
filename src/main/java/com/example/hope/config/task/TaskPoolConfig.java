@@ -1,4 +1,4 @@
-package com.example.hope.config;
+package com.example.hope.config.task;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

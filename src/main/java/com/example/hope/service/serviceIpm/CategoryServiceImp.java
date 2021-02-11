@@ -29,6 +29,10 @@ public class CategoryServiceImp implements CategoryService {
         this.categoryMapper = categoryMapper;
     }
 
+    /**
+     * 添加类别
+     * @param category 类别
+     */
     @Override
     @Transient
     @CacheEvict(value = "category", allEntries = true)
@@ -38,6 +42,10 @@ public class CategoryServiceImp implements CategoryService {
         BusinessException.check(res,"添加失败");
     }
 
+    /**
+     * 删除类别
+     * @param id 类别id
+     */
     @Override
     @Transient
     @CacheEvict(value = "category", allEntries = true)
@@ -47,6 +55,10 @@ public class CategoryServiceImp implements CategoryService {
         BusinessException.check(res,"删除失败");
     }
 
+    /**
+     * 更新类别
+     * @param category 类别
+     */
     @Override
     @Transient
     @CacheEvict(value = "category", allEntries = true)
@@ -56,12 +68,21 @@ public class CategoryServiceImp implements CategoryService {
         BusinessException.check(res,"更新失败");
     }
 
+    /**
+     * 查询全部类别
+     * @return 类别列表
+     */
     @Override
     @Cacheable(value = "category", key = "methodName")
     public List<Category> findAll() {
         return categoryMapper.select(null,null);
     }
 
+    /**
+     * 根据serviceId查询类别
+     * @param serviceId 服务id
+     * @return 类别列表
+     */
     @Override
     @Cacheable(value = "category", key = "methodName + #serviceId")
     public List<Category> findAllByServiceId(long serviceId) {

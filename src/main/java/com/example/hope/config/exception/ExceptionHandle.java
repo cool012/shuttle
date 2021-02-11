@@ -1,15 +1,11 @@
 package com.example.hope.config.exception;
 
 import com.example.hope.common.utils.ReturnMessageUtil;
+import com.example.hope.model.entity.ReturnMessage;
 import lombok.extern.log4j.Log4j2;
-import org.apache.ibatis.builder.BuilderException;
-import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @Log4j2
 @RestControllerAdvice

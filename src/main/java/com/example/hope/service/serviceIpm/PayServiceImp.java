@@ -6,7 +6,7 @@ import com.alipay.api.domain.AlipayTradeWapPayModel;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.example.hope.common.utils.Utils;
-import com.example.hope.config.AlipayConfig;
+import com.example.hope.config.alipay.AlipayConfig;
 import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -41,10 +40,10 @@ public class PayServiceImp implements PayService {
     /**
      * 充值
      *
-     * @param userId
-     * @param total
-     * @return
-     * @throws AlipayApiException
+     * @param userId 用户id
+     * @param total  充值总金额
+     * @return 支付宝sdk表单
+     * @throws AlipayApiException AlipayApiException
      */
     @Override
     public String alipay(long userId, double total) throws AlipayApiException {
@@ -58,49 +57,55 @@ public class PayServiceImp implements PayService {
         request.setBizModel(model);
         request.setNotifyUrl(alipayConfig.notify_url);
         request.setReturnUrl(alipayConfig.return_url);
-        String form = client.pageExecute(request).getBody();
-        return form;
+        return client.pageExecute(request).getBody();
     }
 
     /**
      * 同步通知
+     * 支付成功返回前端支付成功页面
      *
-     * @param request
-     * @throws Exception
+     * @param request HttpServletRequest
+     * @throws Exception Exception
      */
     @Override
     public String returnCall(HttpServletRequest request) throws Exception {
         Map<String, String[]> requestParams = request.getParameterMap();
         Map<String, String> params = getParams(requestParams);
-        boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, alipayConfig.charset,
-                alipayConfig.sign_type);
+        boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, AlipayConfig.charset,
+                AlipayConfig.sign_type);
         if (!signVerified) return redirectUrl + "0";
         return redirectUrl + "1";
     }
 
     /**
      * 异步通知
+     * 支付宝服务器回调公网ip，执行相关逻辑
      *
-     * @param request
-     * @throws Exception
+     * @param request HttpServletRequest
+     * @throws Exception Exception
      */
     @Override
     public void notifyCall(HttpServletRequest request) throws Exception {
         Map<String, String[]> requestParams = request.getParameterMap();
         Map<String, String> params = getParams(requestParams);
-        boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, alipayConfig.charset,
-                alipayConfig.sign_type);
+        boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, AlipayConfig.charset,
+                AlipayConfig.sign_type);
         if (signVerified) {
-            long userId = Long.valueOf(params.get("body"));
+            long userId = Long.parseLong(params.get("body"));
             int total = Double.valueOf(params.get("total_amount")).intValue();
             userService.addScore(userId, total);
         }
     }
 
+    /**
+     * 封装获取request参数
+     *
+     * @param requestParams request参数
+     * @return 结果集
+     */
     private Map<String, String> getParams(Map<String, String[]> requestParams) {
         Map<String, String> params = new HashMap<>();
-        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
-            String name = iter.next();
+        for (String name : requestParams.keySet()) {
             String[] values = requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {

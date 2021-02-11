@@ -30,7 +30,7 @@ public class ServiceServiceIpm implements ServiceService {
 
     /**
      * 添加服务
-     * @param services
+     * @param services 服务
      */
     @Override
     @Transient
@@ -44,7 +44,7 @@ public class ServiceServiceIpm implements ServiceService {
     /**
      * 删除服务
      *
-     * @param id
+     * @param id 服务id
      */
     @Override
     @Transient
@@ -57,7 +57,7 @@ public class ServiceServiceIpm implements ServiceService {
 
     /**
      * 修改服务
-     * @param services
+     * @param services 服务
      */
     @Override
     @Transient
@@ -70,13 +70,13 @@ public class ServiceServiceIpm implements ServiceService {
 
     /**
      * 查询全部服务
-     * @return
+     * @return 分页包装类
      */
     @Override
     @Cacheable(value = "service",key = "methodName + #option.toString()")
     public PageInfo<Services> findAll(Map<String, String> option){
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(serviceMapper.findAll());
     }
 }

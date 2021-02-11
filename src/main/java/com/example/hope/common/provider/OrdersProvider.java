@@ -7,7 +7,7 @@ import java.util.Map;
  * @author: DHY
  * @created: 2021/02/04 17:01
  */
-public class OrdersSqlProvider {
+public class OrdersProvider {
 
     private static final String SQL = "select " +
             "orders.*," +

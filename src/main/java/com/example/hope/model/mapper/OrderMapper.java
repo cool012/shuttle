@@ -1,8 +1,7 @@
 package com.example.hope.model.mapper;
 
-import com.example.hope.common.provider.OrdersSqlProvider;
+import com.example.hope.common.provider.OrdersProvider;
 import com.example.hope.model.entity.Orders;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +27,7 @@ public interface OrderMapper {
     @Update("update orders set address = #{address},date = #{date},note = #{note},file = #{file} where id = #{id}")
     int update(Orders order);
 
-    @SelectProvider(type = OrdersSqlProvider.class, method = "selectByKey")
+    @SelectProvider(type = OrdersProvider.class, method = "selectByKey")
     @Results(value = {
             @Result(column = "clientName", property = "client.name"),
             @Result(column = "clientPhone", property = "client.phone"),

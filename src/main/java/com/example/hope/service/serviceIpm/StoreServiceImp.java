@@ -38,7 +38,7 @@ public class StoreServiceImp implements StoreService {
     /**
      * 添加商店
      *
-     * @param store
+     * @param store 商店
      */
     @Override
     @Transient
@@ -50,9 +50,22 @@ public class StoreServiceImp implements StoreService {
     }
 
     /**
+     * 增加商店销量
+     *
+     * @param id       商店id
+     * @param quantity 数量
+     */
+    @Override
+    public void sales(long id, int quantity) {
+        int res = storeMapper.sales(id, quantity);
+        BusinessException.check(res, "增加商店销量失败");
+        redisUtil.incrScore("store_rank", String.valueOf(id), quantity);
+    }
+
+    /**
      * 删除商店
      *
-     * @param id
+     * @param id 商店id
      */
     @Override
     @Transient
@@ -66,7 +79,7 @@ public class StoreServiceImp implements StoreService {
     /**
      * 更新商店
      *
-     * @param store
+     * @param store 商店
      */
     @Override
     @Transient
@@ -80,21 +93,21 @@ public class StoreServiceImp implements StoreService {
     /**
      * 查询全部商店
      *
-     * @return
+     * @return 分页包装类
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #option.toString()")
     public PageInfo<Store> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(storeMapper.select(null, null));
     }
 
     /**
      * 根据serviceId查询商店
      *
-     * @param serviceId
-     * @return
+     * @param serviceId 服务id
+     * @return 商店列表
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #serviceId")
@@ -105,8 +118,8 @@ public class StoreServiceImp implements StoreService {
     /**
      * 根据categoryId查询商店
      *
-     * @param categoryId
-     * @return
+     * @param categoryId 类别id
+     * @return 商店列表
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #categoryId")
@@ -117,8 +130,8 @@ public class StoreServiceImp implements StoreService {
     /**
      * 根据id查询商店
      *
-     * @param id
-     * @return
+     * @param id 商店id
+     * @return 商店列表
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #id")
@@ -129,7 +142,7 @@ public class StoreServiceImp implements StoreService {
     /**
      * 排行榜
      *
-     * @return
+     * @return 商店列表
      */
     @Override
     public List<Store> rank() {
@@ -144,29 +157,16 @@ public class StoreServiceImp implements StoreService {
         }
         List<Store> stores = new ArrayList<>();
         for (String id : range) {
-            stores.add(findById(Long.valueOf(id)).get(0));
+            stores.add(findById(Long.parseLong(id)).get(0));
         }
         return stores;
     }
 
     /**
-     * 增加商店销量
-     *
-     * @param id
-     * @param quantity
-     */
-    @Override
-    public void sales(long id, int quantity) {
-        int res = storeMapper.sales(id, quantity);
-        BusinessException.check(res, "增加商店销量失败");
-        redisUtil.incrScore("store_rank", String.valueOf(id), Double.valueOf(quantity));
-    }
-
-    /**
      * 搜索
      *
-     * @param keyword
-     * @return
+     * @param keyword 关键词
+     * @return 商店列表
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #keyword")

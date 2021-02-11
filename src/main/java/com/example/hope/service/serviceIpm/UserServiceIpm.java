@@ -37,7 +37,7 @@ public class UserServiceIpm implements UserService {
     /**
      * 用户注册
      *
-     * @param user
+     * @param user 用户
      */
     @Override
     @Transient
@@ -56,10 +56,10 @@ public class UserServiceIpm implements UserService {
     /**
      * 用户登录
      *
-     * @param phone
-     * @param password
+     * @param phone    电话
+     * @param password 密码
      * @param expired  token过期时间，单位：分钟
-     * @return
+     * @return 用户信息和Token
      */
     @Override
     public Map<String, Object> login(String phone, String password, int expired) {
@@ -75,7 +75,7 @@ public class UserServiceIpm implements UserService {
     /**
      * 删除用户
      *
-     * @param id
+     * @param id 用户id
      */
     @Override
     @Transient
@@ -89,7 +89,7 @@ public class UserServiceIpm implements UserService {
     /**
      * 修改用户信息
      *
-     * @param user
+     * @param user 用户
      */
     @Override
     @Transient
@@ -103,21 +103,21 @@ public class UserServiceIpm implements UserService {
     /**
      * 用户修改密码
      *
-     * @param id
-     * @param password
+     * @param id       用户id
+     * @param password 密码
      */
     @Transient
     @CacheEvict(value = "user", allEntries = true)
     public void updatePassword(long id, String password) {
         int res = userMapper.updatePassword(id, Utils.encode(password));
-        log.info("user update password ->" + id, password + " -> res -> " + res);
+        log.info("user -> {} updatePassword password -> {} res -> {}", id, password, res);
         BusinessException.check(res, "修改密码失败");
     }
 
     /**
      * 增加点数
      *
-     * @param id
+     * @param id       用户id
      * @param quantity 数量
      */
     @Override
@@ -132,7 +132,7 @@ public class UserServiceIpm implements UserService {
     /**
      * 点数减1
      *
-     * @param id
+     * @param id 用户id
      */
     @Override
     @Transient
@@ -149,7 +149,7 @@ public class UserServiceIpm implements UserService {
     /**
      * 根据手机号查询用户
      *
-     * @param phone
+     * @param phone 电话
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #phone")
@@ -160,8 +160,8 @@ public class UserServiceIpm implements UserService {
     /**
      * 根据id查询用户
      *
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 用户列表
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #id")
@@ -172,13 +172,13 @@ public class UserServiceIpm implements UserService {
     /**
      * 查询全部用户
      *
-     * @return
+     * @return 用户列表
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #option.toString()")
     public PageInfo<User> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(userMapper.findAll());
     }
 
@@ -186,8 +186,8 @@ public class UserServiceIpm implements UserService {
     /**
      * 查询用户点数
      *
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 点数
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #id")
@@ -198,22 +198,22 @@ public class UserServiceIpm implements UserService {
     /**
      * 搜索
      *
-     * @param keyword
-     * @param option
-     * @return
+     * @param keyword 关键词
+     * @param option  分页可选项
+     * @return 分页包装类
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #keyword")
     public PageInfo<User> search(String keyword, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(userMapper.search("%" + keyword + "%"));
     }
 
     /**
      * 设置管理员
      *
-     * @param userId
+     * @param userId 用户id
      */
     @Override
     @CacheEvict(value = "user", allEntries = true)

@@ -1,7 +1,6 @@
 package com.example.hope.common.utils;
 
-import com.example.hope.config.exception.ReturnMessage;
-import org.springframework.http.HttpEntity;
+import com.example.hope.model.entity.ReturnMessage;
 
 public class ReturnMessageUtil {
 

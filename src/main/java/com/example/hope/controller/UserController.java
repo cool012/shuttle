@@ -4,8 +4,7 @@ import com.alipay.api.AlipayApiException;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
-import com.example.hope.config.AlipayConfig;
-import com.example.hope.config.exception.ReturnMessage;
+import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.User;
 import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
@@ -16,7 +15,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**

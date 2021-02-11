@@ -7,7 +7,7 @@ import java.util.Map;
  * @author: DHY
  * @created: 2021/02/06 20:00
  */
-public class CategorySqlProvider {
+public class CategoryProvider {
 
     private static final String SQL = "select " +
             "category.*," +

@@ -1,4 +1,4 @@
-package com.example.hope.config;
+package com.example.hope.config.cors;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

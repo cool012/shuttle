@@ -14,15 +14,15 @@ public interface ProductService {
 
     void update(Product product);
 
-    PageInfo<Product> findAll(Map<String, String> option);
-
-    List<Product> findByStoreId(long storeId);
-
-    Product findById(long id);
-
     void review(long id, int rate);
 
     List<Product> rank();
 
     List<Product> search(String keyword);
+
+    PageInfo<Product> findAll(Map<String, String> option);
+
+    List<Product> findByStoreId(long storeId);
+
+    Product findById(long id);
 }

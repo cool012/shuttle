@@ -3,7 +3,7 @@ package com.example.hope.controller;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
-import com.example.hope.config.exception.ReturnMessage;
+import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.Store;
 import com.example.hope.service.StoreService;
 import com.example.hope.service.serviceIpm.StoreServiceImp;

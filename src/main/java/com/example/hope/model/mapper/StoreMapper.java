@@ -1,6 +1,6 @@
 package com.example.hope.model.mapper;
 
-import com.example.hope.common.provider.StoreSqlProvider;
+import com.example.hope.common.provider.StoreProvider;
 import com.example.hope.model.entity.Store;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public interface StoreMapper {
     @Update("update store set name = #{name}, serviceId = #{serviceId}, categoryId = #{categoryId}, image = #{image}, rate = #{rate}, sales = #{sales} where id = #{id}")
     int update(Store store);
 
-    @SelectProvider(type = StoreSqlProvider.class, method = "selectByKey")
+    @SelectProvider(type = StoreProvider.class, method = "selectByKey")
     @Results(value = {
             @Result(column = "serviceName", property = "services.name"),
             @Result(column = "serviceColor", property = "services.color"),

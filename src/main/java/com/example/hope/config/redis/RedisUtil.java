@@ -28,11 +28,11 @@ public class RedisUtil {
     /**
      * 向redis添加元素
      *
-     * @param key
-     * @param value
-     * @param time
-     * @param unit
-     * @return
+     * @param key key
+     * @param value value
+     * @param time time
+     * @param unit unit
+     * @return 是否添加成功
      */
     public boolean ins(final String key, String value, int time, TimeUnit unit) {
         boolean result = false;
@@ -48,9 +48,9 @@ public class RedisUtil {
     /**
      * 向Zset添加元素
      *
-     * @param key
-     * @param value
-     * @param score
+     * @param key key
+     * @param value value
+     * @param score score
      */
     public void add(String key, String value, double score) {
         stringRedisTemplate.opsForZSet().add(key, value, score);
@@ -59,10 +59,10 @@ public class RedisUtil {
     /**
      * score的增加或减少
      *
-     * @param key
-     * @param value
-     * @param score
-     * @return
+     * @param key key
+     * @param value value
+     * @param score score
+     * @return score
      */
     public double incrScore(String key, String value, double score) {
         return stringRedisTemplate.opsForZSet().incrementScore(key, value, score);
@@ -70,10 +70,10 @@ public class RedisUtil {
 
     /**
      * 查询排行榜 0:-1表示获取全部
-     * @param key
-     * @param start
-     * @param end
-     * @return
+     * @param key key
+     * @param start start
+     * @param end end
+     * @return 结果集
      */
     public Set<String> range(String key, long start, long end) {
         return stringRedisTemplate.opsForZSet().reverseRange(key, start, end);

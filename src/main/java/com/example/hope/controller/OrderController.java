@@ -3,11 +3,9 @@ package com.example.hope.controller;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
-import com.example.hope.config.exception.ReturnMessage;
+import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.Orders;
-import com.example.hope.service.FileService;
 import com.example.hope.service.OrderService;
-import com.example.hope.service.serviceIpm.FileServiceImp;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -115,5 +113,12 @@ public class OrderController {
     @RequestMapping(value = "/findByReceive", method = RequestMethod.GET)
     public ReturnMessage<Object> findByReceive(@RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByReceive(option));
+    }
+
+    @LoginUser
+    @ApiOperation("查询全部完成订单")
+    @RequestMapping(value = "/findByCompleted", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByCompleted(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByCompleted(option));
     }
 }

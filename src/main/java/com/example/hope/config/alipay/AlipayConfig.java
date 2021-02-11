@@ -1,4 +1,4 @@
-package com.example.hope.config;
+package com.example.hope.config.alipay;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;

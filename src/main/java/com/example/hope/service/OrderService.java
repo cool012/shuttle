@@ -16,6 +16,8 @@ public interface OrderService {
 
     void receive(long id, long userId);
 
+    void completed(Orders orders, String token);
+
     PageInfo<Orders> findAll(Map<String, String> option);
 
     PageInfo<Orders> findByPid(long pid, Map<String, String> option);
@@ -26,12 +28,7 @@ public interface OrderService {
 
     Orders findById(long id);
 
-    void completed(Orders orders, String token);
-
     PageInfo<Orders> findByReceive(Map<String, String> option);
 
     PageInfo<Orders> findByCompleted(Map<String, String> option);
-
-
-
 }

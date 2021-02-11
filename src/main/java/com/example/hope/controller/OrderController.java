@@ -29,12 +29,10 @@ import java.util.Map;
 public class OrderController {
 
     private OrderService orderService;
-    private FileService fileService;
 
     @Autowired
-    public OrderController(OrderServiceIpm orderService, FileServiceImp fileService) {
+    public OrderController(OrderServiceIpm orderService) {
         this.orderService = orderService;
-        this.fileService = fileService;
     }
 
     @LoginUser
@@ -48,7 +46,7 @@ public class OrderController {
     @LoginUser
     @ApiOperation("删除订单")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(Orders orders, HttpServletRequest request) {
+    public ReturnMessage<Object> delete(@RequestBody List<Orders> orders, HttpServletRequest request) {
         orderService.delete(orders, request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
@@ -64,8 +62,8 @@ public class OrderController {
     @LoginUser
     @ApiOperation("服务员接单")
     @RequestMapping(value = "/receive", method = RequestMethod.POST)
-    public ReturnMessage<Object> receive(long id, long userId) {
-        orderService.receive(id, userId);
+    public ReturnMessage<Object> receive(long orderId, long userId) {
+        orderService.receive(orderId, userId);
         return ReturnMessageUtil.sucess();
     }
 
@@ -110,5 +108,12 @@ public class OrderController {
     public ReturnMessage<Object> completed(HttpServletRequest request, Orders orders) {
         orderService.completed(orders, request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
+    }
+
+    @LoginUser
+    @ApiOperation("查询全部未接单订单")
+    @RequestMapping(value = "/findByReceive", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByReceive(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByReceive(option));
     }
 }

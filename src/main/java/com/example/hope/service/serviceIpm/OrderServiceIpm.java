@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @description: 订单服务类
+ * @description: 订单服务实现类
  * @author: DHY
  * @created: 2020/10/25 11:15
  */
@@ -37,7 +37,8 @@ public class OrderServiceIpm implements OrderService {
     private FileService fileService;
 
     @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService, RedisUtil redisUtil, FileServiceImp fileService) {
+    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService,
+                           RedisUtil redisUtil, FileServiceImp fileService) {
         this.orderMapper = orderMapper;
         this.userService = userService;
         this.productService = productService;
@@ -46,17 +47,17 @@ public class OrderServiceIpm implements OrderService {
     }
 
     /**
-     * 添加订单
+     * 批量添加订单
      *
-     * @param orderList
+     * @param orderList 订单列表
      */
     @Override
     @Transient
     @CacheEvict(value = "order", allEntries = true)
-    public void insert(List<Orders> orderList, Boolean isExpired) {
+    public void insert(List<Orders> orderList, boolean isExpired) {
         int res = orderMapper.insertBatch(orderList);
         // 批量设置过期时间
-        if (Boolean.valueOf(isExpired)) {
+        if (isExpired) {
             for (Orders order : orderList) {
                 redisUtil.ins("order_" + order.getId(), "expired", 10, TimeUnit.MINUTES);
             }
@@ -66,21 +67,25 @@ public class OrderServiceIpm implements OrderService {
     }
 
     /**
-     * 删除订单
+     * 批量删除订单
      *
-     * @param orders
+     * @param orders 订单列表
      */
     @Override
     @Transient
     @CacheEvict(value = "order", allEntries = true)
-    public void delete(Orders orders, String token) {
+    public void delete(List<Orders> orders, String token) {
         long userId = JwtUtils.getUserId(token);
-        long orderId = orders.getId();
-        int res = 0;
+        boolean isAdmin = JwtUtils.is_admin(token);
         // 只允许下单用户或管理员在订单为未接单的状态下删除订单
-        if ((orders.getCid() == userId || JwtUtils.is_admin(token)) && orders.getStatus() == -1)
-            res = orderMapper.delete(orderId);
-        log.info("order delete id -> " + orderId + " -> res -> " + res);
+        for (Orders order : orders) {
+            if ((order.getCid() != userId || !isAdmin) && order.getStatus() != -1)
+                BusinessException.check(0, "删除无效");
+        }
+        int res = orderMapper.deleteBatch(orders);
+        for (Orders order : orders) {
+            log.info("order delete id -> " + order.getId() + " -> res -> " + res);
+        }
         BusinessException.check(res, "删除失败");
     }
 
@@ -88,7 +93,7 @@ public class OrderServiceIpm implements OrderService {
     /**
      * 删除订单
      *
-     * @param id
+     * @param id 订单id
      */
     @Transient
     @CacheEvict(value = "order", allEntries = true)
@@ -101,7 +106,7 @@ public class OrderServiceIpm implements OrderService {
     /**
      * 更新订单
      *
-     * @param order
+     * @param order 订单id
      */
     @Override
     @Transient
@@ -112,88 +117,70 @@ public class OrderServiceIpm implements OrderService {
         BusinessException.check(res, "更新失败");
     }
 
-
-    /**
-     * 接单
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    @Transient
-    @CacheEvict(value = "order", allEntries = true)
-    public void receive(long id, long userId) {
-        // 减少点数
-        userService.reduceScore(userId);
-        // 增加销量
-        productService.addSales(findById(id).getPid(), 1);
-        // 更新订单状态
-        int res = orderMapper.receive(id, userId);
-        redisUtil.ins("completed_" + id, "expired", 1, TimeUnit.HOURS);
-        BusinessException.check(res, "接单失败");
-    }
-
     /**
      * 查询全部订单
      *
-     * @return
+     * @param option 分页参数
+     * @return 分页包装数据
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findAll(Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(orderMapper.select(null, null));
     }
 
     /**
      * 根据产品id查询订单
      *
-     * @param pid
-     * @return
+     * @param option 分页参数
+     * @param pid    产品id
+     * @return 分页包装数据
      */
-    // value代表缓存名称 key代表键 在redis中以 value::key 的形式表示redis的key
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(orderMapper.select(String.valueOf(pid), "pid"));
     }
 
     /**
      * 根据cid查询订单
      *
-     * @param cid
-     * @return
+     * @param option 分页参数
+     * @param cid    客户用户id
+     * @return 分页包装数据
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid"));
     }
 
     /**
      * 根据sid查询订单
      *
-     * @param sid
-     * @return
+     * @param option 分页参数
+     * @param sid    服务员用户id
+     * @return 分页包装数据
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findBySid(long sid, Map<String, String> option) {
         Utils.check_map(option);
-        PageHelper.startPage(Integer.valueOf(option.get("pageNo")), Integer.valueOf(option.get("pageSize")));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid"));
     }
 
     /**
      * 按订单id查询订单
      *
-     * @param id
-     * @return
+     * @param id 订单id
+     * @return 分页包装数据
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #id")
@@ -202,10 +189,56 @@ public class OrderServiceIpm implements OrderService {
     }
 
     /**
-     * 更新订单状态为完成
+     * 查询全部未接单订单
      *
-     * @param orders
-     * @return
+     * @param option 分页参数
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
+    public PageInfo<Orders> findByReceive(Map<String, String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        return PageInfo.of(orderMapper.select("-1", "status"));
+    }
+
+    /**
+     * 查询全部已接单订单
+     *
+     * @param option 分页参数
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
+    public PageInfo<Orders> findByCompleted(Map<String, String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        return PageInfo.of(orderMapper.select("1", "status"));
+    }
+
+    /**
+     * 接单
+     *
+     * @param id 订单id
+     */
+    @Override
+    @Transient
+    @CacheEvict(value = "order", allEntries = true)
+    public void receive(long id, long userId) {
+        // 减少点数
+        userService.reduceScore(userId);
+        // 更新订单状态
+        int res = orderMapper.receive(id, userId);
+        // 下单1小时后自动更新为完成状态
+        redisUtil.ins("completed_" + id, "expired", 1, TimeUnit.HOURS);
+        BusinessException.check(res, "接单失败");
+    }
+
+    /**
+     * 主动完成
+     *
+     * @param orders 订单
+     * @param token  Token
      */
     @Override
     @CacheEvict(value = "order", allEntries = true)
@@ -216,6 +249,24 @@ public class OrderServiceIpm implements OrderService {
             BusinessException.check(0, "非订单用户或管理员操作");
         // 如果存在文件，完成订单时删除文件
         if (orders.getFile() != null) fileService.remove(orders.getFile());
+        // 增加产品销量
+        productService.addSales(orders.getPid(), 1);
+        int res = orderMapper.completed(orders.getId());
+        BusinessException.check(res, "完成订单失败");
+    }
+
+    /**
+     * 自动完成
+     *
+     * @param orderId 订单id
+     */
+    @CacheEvict(value = "order", allEntries = true)
+    public void completed(long orderId) {
+        Orders orders = findById(orderId);
+        // 如果存在文件，完成订单时删除文件
+        if (orders.getFile() != null) fileService.remove(orders.getFile());
+        // 增加产品销量
+        productService.addSales(orders.getPid(), 1);
         int res = orderMapper.completed(orders.getId());
         BusinessException.check(res, "完成订单失败");
     }

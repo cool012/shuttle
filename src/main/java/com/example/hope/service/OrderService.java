@@ -8,9 +8,9 @@ import java.util.Map;
 
 public interface OrderService {
 
-    void insert(List<Orders> orderList, Boolean isExpired);
+    void insert(List<Orders> orderList, boolean isExpired);
 
-    void delete(Orders orders, String token);
+    void delete(List<Orders> orders, String token);
 
     void update(Orders order);
 
@@ -27,5 +27,11 @@ public interface OrderService {
     Orders findById(long id);
 
     void completed(Orders orders, String token);
+
+    PageInfo<Orders> findByReceive(Map<String, String> option);
+
+    PageInfo<Orders> findByCompleted(Map<String, String> option);
+
+
 
 }

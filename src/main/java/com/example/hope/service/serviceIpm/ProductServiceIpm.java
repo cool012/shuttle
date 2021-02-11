@@ -127,8 +127,7 @@ public class ProductServiceIpm implements ProductService {
         BusinessException.check(res, "更新销量失败");
         redisUtil.incrScore("product_rank", String.valueOf(id), Double.valueOf(sales));
         // 增加商店销量
-        Store store = findById(id).getStore();
-        storeService.sales(store.getId(), sales);
+        storeService.sales(findById(id).getStoreId(), sales);
 
     }
 

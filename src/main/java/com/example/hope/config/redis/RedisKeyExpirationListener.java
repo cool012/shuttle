@@ -35,8 +35,8 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         if (key.contains("order")) {
             orderServiceIpm.delete(id);
         }
-//        if(key.contains("completed")){
-//            orderService.completed(id);
-//        }
+        if(key.contains("completed")){
+            orderServiceIpm.completed(id);
+        }
     }
 }

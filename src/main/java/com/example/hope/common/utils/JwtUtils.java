@@ -1,6 +1,7 @@
 package com.example.hope.common.utils;
 
 import com.example.hope.config.exception.BusinessException;
+import com.example.hope.config.exception.UnauthorizedException;
 import com.example.hope.model.entity.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +106,7 @@ public class JwtUtils {
                     .parseClaimsJws(token).getBody();
             return claims;
         } catch (ExpiredJwtException eje) {
-            throw new BusinessException(0, "Token过期");
+            throw new UnauthorizedException();
         } catch (Exception e) {
             throw new BusinessException(0, "token解析异常");
         }

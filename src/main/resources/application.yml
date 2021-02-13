@@ -54,3 +54,4 @@ alipay:
   gateway: ${gateway}
   notifyUrl: ${notifyUrl}
   redirectUrl: ${redirectUrl}
+  returnUrl : ${returnUrl}

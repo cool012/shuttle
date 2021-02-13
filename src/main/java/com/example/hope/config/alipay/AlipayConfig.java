@@ -27,7 +27,8 @@ public class AlipayConfig implements ApplicationRunner {
     @Value("${alipay.gateway}")
     public String gatewayUrl;
 
-    public String return_url = "http://localhost:8081/payment/return";
+    @Value("${alipay.returnUrl}")
+    public String return_url;
 
     public String alipay_public_key;
 

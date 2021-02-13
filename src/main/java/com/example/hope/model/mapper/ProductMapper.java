@@ -17,7 +17,7 @@ public interface ProductMapper {
     @Delete("delete from product where id = #{id}")
     int delete(long id);
 
-    @Update("update product set name = #{name},price = #{price},image = #{image},rate = #{rate},storeId = #{storeId} where id = #{id}")
+    @Update("update product set name = #{name},price = #{price},image = #{image},rate = #{rate},storeId = #{storeId}, sales = #{sales} where id = #{id}")
     int update(Product product);
 
     @SelectProvider(type = ProductProvider.class, method = "selectByKey")

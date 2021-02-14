@@ -117,6 +117,7 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void update(Orders order) {
+        if(order.getFile().equals("")) order.setFile(null);
         int res = orderMapper.update(order);
         log.info("order update -> " + order.toString() + " -> res -> " + res);
         BusinessException.check(res, "更新失败");
@@ -249,11 +250,11 @@ public class OrderServiceIpm implements OrderService {
     @CacheEvict(value = "order", allEntries = true)
     public void completed(Orders orders, String token) {
         long userId = JwtUtils.getUserId(token);
-        // 只允许订单服务者或管理员修改订单为完成状态
-        if (userId != orders.getSid() || !JwtUtils.is_admin(token))
+        // 只允许订单用户或管理员修改订单为完成状态
+        if (userId != orders.getCid() || !JwtUtils.is_admin(token))
             BusinessException.check(0, "非订单用户或管理员操作");
         // 如果存在文件，完成订单时删除文件
-        if (orders.getFile() != null) fileService.remove(orders.getFile());
+        if (orders.getFile() != null && !orders.getFile().equals("")) fileService.remove(orders.getFile());
         // 增加产品销量
         productService.addSales(orders.getPid(), 1);
         int res = orderMapper.completed(orders.getId());

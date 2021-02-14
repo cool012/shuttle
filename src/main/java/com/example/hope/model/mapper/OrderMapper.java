@@ -24,7 +24,7 @@ public interface OrderMapper {
     @Delete("delete from orders where id = #{id}")
     int delete(long id);
 
-    @Update("update orders set address = #{address},date = #{date},note = #{note},file = #{file} where id = #{id}")
+    @Update("update orders set address = #{address},date = #{date},note = #{note},file = #{file},status = #{status} where id = #{id}")
     int update(Orders order);
 
     @SelectProvider(type = OrdersProvider.class, method = "selectByKey")

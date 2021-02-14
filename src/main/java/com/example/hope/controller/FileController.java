@@ -38,7 +38,6 @@ public class FileController {
         return ReturnMessageUtil.sucess(fileService.upload(file));
     }
 
-    @LoginUser
     @ApiOperation("下载")
     @RequestMapping(value = "/download/{fileName}", method = RequestMethod.GET)
     @ResponseBody

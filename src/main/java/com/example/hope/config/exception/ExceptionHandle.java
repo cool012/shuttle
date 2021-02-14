@@ -26,7 +26,7 @@ public class ExceptionHandle {
         }
 
         exception.printStackTrace();
-        log.error(exception.getStackTrace());
+        log.error(exception.getMessage());
 
         // 系统异常 code:-1
         return ReturnMessageUtil.error(-1, "系统异常");

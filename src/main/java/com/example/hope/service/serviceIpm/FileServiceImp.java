@@ -51,7 +51,7 @@ public class FileServiceImp implements FileService {
             log.error("upload error");
             throw new BusinessException(-1, "上传文件失败");
         }
-        return path;
+        return fileName;
     }
 
     /**

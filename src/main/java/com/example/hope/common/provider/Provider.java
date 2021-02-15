@@ -14,8 +14,8 @@ public class Provider {
         stringBuffer.append(sql);
         if (para.get("key") != null && para.get("id") != null) {
             if (para.get("key").equals("search"))
-                stringBuffer.append(" where ").append(table).append(".name like %").append(para.get("keyword"))
-                        .append("%");
+                stringBuffer.append(" where ").append(table).append(".name like '%").append(para.get("id"))
+                        .append("%'");
             else if (table.equals("orders"))
                 stringBuffer.append(" and ").append(table).append(".").append(para.get("key")).append(" = ")
                         .append(para.get("id"));

@@ -39,8 +39,7 @@ public interface OrderMapper {
             @Result(column = "productImage", property = "product.image"),
             @Result(column = "productPrice", property = "product.price"),
             @Result(column = "productRate", property = "product.rate"),
-            @Result(column = "productSales", property = "product.sales"),
-            @Result(column = "serviceId", property = "serviceId")
+            @Result(column = "productSales", property = "product.sales")
     })
     List<Orders> select(@Param("id") String id, @Param("key") String key);
 

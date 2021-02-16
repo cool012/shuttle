@@ -17,7 +17,7 @@ public class Product implements Serializable {
     private String image;
     private int quantity;
     private int sales;
-    private int rate;
+    private float rate;
     private long storeId;
     private Store store;
 }

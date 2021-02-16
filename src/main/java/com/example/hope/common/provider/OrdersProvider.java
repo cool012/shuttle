@@ -19,10 +19,11 @@ public class OrdersProvider {
             "product.name as productName," +
             "product.image as productImage," +
             "product.price as productPrice," +
-            "product.rate as productRate," +
+            "round(product.rate,2) as productRate," +
             "product.sales as productSales," +
             "store.name as storeName," +
-            "store.serviceId as serviceId " +
+            "store.serviceId as serviceId," +
+            "store.id as storeId " +
             "from " +
             "orders," +
             "user as client," +

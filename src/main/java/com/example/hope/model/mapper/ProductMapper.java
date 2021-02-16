@@ -22,14 +22,16 @@ public interface ProductMapper {
 
     @SelectProvider(type = ProductProvider.class, method = "selectByKey")
     @Results(value = {
+            @Result(column = "newRate", property = "rate"),
             @Result(column = "storeName", property = "store.name"),
             @Result(column = "serviceId", property = "store.serviceId")
+
     })
     List<Product> select(@Param("id") String storeId, @Param("key") String key);
 
     @Update("update product set sales = sales + #{quantity} where id = #{id}")
     int addSales(long id, int quantity);
 
-    @Update("update product set rate = (rate + #{rate}) / 2 where id = #{id}")
+    @Update("update product set rate = (rate * sales + #{rate}) / (sales + 1) where id = #{id}")
     int review(long id, int rate);
 }

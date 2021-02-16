@@ -77,6 +77,19 @@ public class StoreServiceImp implements StoreService {
     }
 
     /**
+     * 更新商店评分
+     *
+     * @param id   商店id
+     * @param rate 评分
+     */
+    @Override
+    public void review(long id, int rate) {
+        int res = storeMapper.review(id, rate);
+        log.info("store review -> " + id + " -> res -> " + res);
+        BusinessException.check(res, "更新失败");
+    }
+
+    /**
      * 更新商店
      *
      * @param store 商店

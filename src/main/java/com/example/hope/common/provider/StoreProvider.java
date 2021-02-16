@@ -13,7 +13,8 @@ public class StoreProvider {
             "store.*," +
             "service.name as serviceName," +
             "service.color as serviceColor," +
-            "category.name as categoryName " +
+            "category.name as categoryName," +
+            "round(store.rate,2) as newRate " +
             "from store " +
             "left join " +
             "service " +
@@ -25,6 +26,6 @@ public class StoreProvider {
             "store.categoryId = category.id";
 
     public String selectByKey(Map<String, Object> para) {
-        return Provider.selectByKey(para, SQL,"store");
+        return Provider.selectByKey(para, SQL, "store");
     }
 }

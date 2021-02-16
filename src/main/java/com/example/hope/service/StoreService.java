@@ -27,4 +27,6 @@ public interface StoreService {
     List<Store> findByCategoryId(long categoryId);
 
     List<Store> findById(long id);
+
+    void review(long id, int rate);
 }

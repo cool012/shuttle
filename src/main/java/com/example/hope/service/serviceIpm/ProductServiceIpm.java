@@ -100,24 +100,25 @@ public class ProductServiceIpm implements ProductService {
     /**
      * 更新产品评分
      *
-     * @param id    产品id
-     * @param rate  评分
-     * @param token Token
+     * @param product 产品
+     * @param rate    评分
+     * @param token   Token
      */
     @Override
     @CacheEvict(value = "product", allEntries = true)
-    public void review(long id, int rate, String token) {
+    public void review(Product product, int rate, String token) {
         long userId = JwtUtils.getUserId(token);
         int res = 0;
         // 只允许下单此产品的用户或管理员对产品评分
         List<Orders> orders = orderService.findByCid(userId, new HashMap<>()).getList();
         for (Orders order : orders) {
-            if ((order.getStatus() == 0 && order.getId() == id) || JwtUtils.is_admin(token)) {
-                res = productMapper.review(id, rate);
+            if ((order.getStatus() == 0 && order.getId() == product.getId()) || JwtUtils.is_admin(token)) {
+                res = productMapper.review(product.getId(), rate);
+                storeService.review(product.getStoreId(), rate);
                 break;
             }
         }
-        log.info("product review -> " + id + " for ->" + rate + " -> res " + res);
+        log.info("product review -> " + product.getId() + " for ->" + rate + " -> res " + res);
         BusinessException.check(res, "更新评分失败");
     }
 

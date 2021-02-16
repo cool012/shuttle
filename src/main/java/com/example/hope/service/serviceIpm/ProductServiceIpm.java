@@ -1,10 +1,13 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
+import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
+import com.example.hope.service.OrderService;
 import com.example.hope.service.ProductService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
@@ -26,6 +29,8 @@ public class ProductServiceIpm implements ProductService {
     private ProductMapper productMapper;
     private StoreService storeService;
     private RedisUtil redisUtil;
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     public ProductServiceIpm(ProductMapper productMapper, StoreService storeService, RedisUtil redisUtil) {
@@ -95,12 +100,23 @@ public class ProductServiceIpm implements ProductService {
     /**
      * 更新产品评分
      *
-     * @param id   产品id
-     * @param rate 评分
+     * @param id    产品id
+     * @param rate  评分
+     * @param token Token
      */
     @Override
-    public void review(long id, int rate) {
-        int res = productMapper.review(id, rate);
+    @CacheEvict(value = "product", allEntries = true)
+    public void review(long id, int rate, String token) {
+        long userId = JwtUtils.getUserId(token);
+        int res = 0;
+        // 只允许下单此产品的用户或管理员对产品评分
+        List<Orders> orders = orderService.findByCid(userId, new HashMap<>()).getList();
+        for (Orders order : orders) {
+            if ((order.getStatus() == 0 && order.getId() == id) || JwtUtils.is_admin(token)) {
+                res = productMapper.review(id, rate);
+                break;
+            }
+        }
         log.info("product review -> " + id + " for ->" + rate + " -> res " + res);
         BusinessException.check(res, "更新评分失败");
     }

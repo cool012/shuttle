@@ -14,7 +14,7 @@ public interface ProductService {
 
     void update(Product product);
 
-    void review(long id, int rate);
+    void review(long id, int rate, String token);
 
     List<Product> rank();
 

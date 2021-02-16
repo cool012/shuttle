@@ -33,17 +33,17 @@ public class OrderServiceIpm implements OrderService {
 
     private OrderMapper orderMapper;
     private UserServiceIpm userService;
+    @Autowired
     private ProductServiceIpm productService;
     private RedisUtil redisUtil;
     private FileService fileService;
     private AmqpTemplate amqpTemplate;
 
     @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, ProductServiceIpm productService,
-                           RedisUtil redisUtil, FileServiceImp fileService, AmqpTemplate amqpTemplate) {
+    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, RedisUtil redisUtil
+            , FileServiceImp fileService, AmqpTemplate amqpTemplate) {
         this.orderMapper = orderMapper;
         this.userService = userService;
-        this.productService = productService;
         this.redisUtil = redisUtil;
         this.fileService = fileService;
         this.amqpTemplate = amqpTemplate;
@@ -117,7 +117,7 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void update(Orders order) {
-        if(order.getFile().equals("")) order.setFile(null);
+        if (order.getFile().equals("")) order.setFile(null);
         int res = orderMapper.update(order);
         log.info("order update -> " + order.toString() + " -> res -> " + res);
         BusinessException.check(res, "更新失败");

@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
@@ -74,8 +75,8 @@ public class ProductController {
     @LoginUser
     @ApiOperation("更新产品评分")
     @RequestMapping(value = "/review", method = RequestMethod.POST)
-    public ReturnMessage<Object> review(long id, int rate) {
-        productService.review(id, rate);
+    public ReturnMessage<Object> review(long id, int rate, HttpServletRequest request) {
+        productService.review(id, rate, request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 

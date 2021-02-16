@@ -37,7 +37,7 @@ spring:
       max-file-size: 10MB # 单个文件的最大值
 logging:
   level:
-    com.example.hope.model.mapper.OrederMapper: debug
+    com.example.hope.model.mapper.OrderMapper: debug
 pagehelper:
   helperDialect: mysql
   params: count=countSql

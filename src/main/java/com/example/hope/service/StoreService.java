@@ -22,7 +22,7 @@ public interface StoreService {
 
     PageInfo<Store> findAll(Map<String, String> option);
 
-    List<Store> findByServiceId(long serviceId);
+    PageInfo<Store> findByServiceId(long serviceId, Map<String, String> option);
 
     List<Store> findByCategoryId(long categoryId);
 

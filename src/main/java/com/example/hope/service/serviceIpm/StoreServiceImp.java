@@ -110,9 +110,11 @@ public class StoreServiceImp implements StoreService {
      * @return 商店列表
      */
     @Override
-    @Cacheable(value = "store", key = "methodName + #serviceId")
-    public List<Store> findByServiceId(long serviceId) {
-        return storeMapper.select(String.valueOf(serviceId), "serviceId");
+    @Cacheable(value = "store", key = "methodName + #serviceId + #option.toString()")
+    public PageInfo<Store> findByServiceId(long serviceId, Map<String, String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        return PageInfo.of(storeMapper.select(String.valueOf(serviceId), "serviceId"));
     }
 
     /**

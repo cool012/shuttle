@@ -1,6 +1,7 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
+import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.Category;
@@ -61,7 +62,7 @@ public class CategoryController {
         return ReturnMessageUtil.sucess(categoryService.findAll());
     }
 
-    @Admin
+    @LoginUser
     @ApiOperation("按服务id查询全部类别")
         @RequestMapping(value = "/findAllByServiceId/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findAllByServiceId(@PathVariable long id) {

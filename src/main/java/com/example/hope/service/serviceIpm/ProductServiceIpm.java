@@ -30,7 +30,7 @@ public class ProductServiceIpm implements ProductService {
     private StoreService storeService;
     private RedisUtil redisUtil;
     @Autowired
-    private OrderService orderService;
+    private OrderServiceIpm orderServiceIpm;
 
     @Autowired
     public ProductServiceIpm(ProductMapper productMapper, StoreService storeService, RedisUtil redisUtil) {
@@ -106,18 +106,20 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @CacheEvict(value = "product", allEntries = true)
     public void review(Product product, String token) {
-        System.out.println(product.toString());
         long userId = JwtUtils.getUserId(token);
         int res = 0;
+        boolean status = false;
         // 只允许下单此产品的用户或管理员对产品评分
-        List<Orders> orders = orderService.findByCid(userId, new HashMap<>()).getList();
+        List<Orders> orders = orderServiceIpm.findByCid(userId);
         for (Orders order : orders) {
             if ((order.getStatus() == 0 && order.getId() == product.getId()) || JwtUtils.is_admin(token)) {
                 res = productMapper.review(product.getId(), product.getRate());
                 storeService.review(product.getStoreId(), product.getRate());
+                status = true;
                 break;
             }
         }
+        if (!status) throw new BusinessException(0, "只允许下单此产品的用户对产品评分");
         log.info("product review -> " + product.getId() + " for ->" + product.getRate() + " -> res " + res);
         BusinessException.check(res, "更新评分失败");
     }

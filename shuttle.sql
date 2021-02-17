@@ -71,3 +71,13 @@ create table orders(
 	FOREIGN KEY (sid) REFERENCES user(id),
 	primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table comments(
+    id bigint not null auto_increment,
+    content varchar(255) not null comment '内容',
+    name varchar(255) not null comment '评论者昵称',
+    storeId bigint not null comment '商店id',
+    date datetime not null comment '时间',
+    userId bigint not null comment '用户id',
+    primary key(id)
+)

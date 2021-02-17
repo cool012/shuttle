@@ -32,9 +32,9 @@ public class ExceptionHandle {
         return ReturnMessageUtil.error(-1, "系统异常");
     }
 
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(value = UnauthorizedException.class)
-    public ReturnMessage<Object> handle() {
-        return ReturnMessageUtil.error(0, "token过期");
-    }
+//    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+//    @ExceptionHandler(value = UnauthorizedException.class)
+//    public ReturnMessage<Object> handle() {
+//        return ReturnMessageUtil.error(0, "token过期");
+//    }
 }

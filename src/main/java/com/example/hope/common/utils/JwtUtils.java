@@ -26,7 +26,7 @@ public class JwtUtils {
      * 获取Token
      *
      * @param user 用户
-     * @param Exp 过期时间（单位：分）
+     * @param Exp  过期时间（单位：分）
      * @return String
      */
     public static String createToken(User user, int Exp) {
@@ -110,7 +110,7 @@ public class JwtUtils {
                     .parseClaimsJws(token).getBody();
             return claims;
         } catch (ExpiredJwtException eje) {
-            throw new UnauthorizedException();
+            throw new BusinessException(0, "token过期");
         } catch (Exception e) {
             throw new BusinessException(0, "token解析异常");
         }

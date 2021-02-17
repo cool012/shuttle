@@ -82,9 +82,9 @@ public class OrderServiceIpm implements OrderService {
     public void delete(List<Orders> orders, String token) {
         long userId = JwtUtils.getUserId(token);
         boolean isAdmin = JwtUtils.is_admin(token);
-        // 只允许下单用户或管理员在订单为未接单的状态下删除订单
+        // 只允许下单用户或管理员在订单为未接单或已完成的状态下删除订单
         for (Orders order : orders) {
-            if ((order.getCid() != userId || !isAdmin) && order.getStatus() != -1)
+            if ((order.getCid() != userId || !isAdmin) && order.getStatus() == 0)
                 BusinessException.check(0, "删除无效");
         }
         int res = orderMapper.deleteBatch(orders);

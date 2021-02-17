@@ -10,7 +10,7 @@ public interface CommentsService {
 
     void insert(String token, Comments comments);
 
-    void delete(long id);
+    void delete(Comments comments, String token);
 
     void update(Comments comments, String token);
 

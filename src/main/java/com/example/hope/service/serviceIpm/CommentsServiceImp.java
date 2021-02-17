@@ -49,14 +49,17 @@ public class CommentsServiceImp implements CommentsService {
         long userId = JwtUtils.getUserId(token);
         comments.setUserId(userId);
         int res = 0;
+        boolean status = false;
         // 只允许在当前商店下单完成的用户评论
         List<Orders> orders = orderServiceIpm.findByCid(userId);
         for (Orders order : orders) {
             if (order.getStoreId() == comments.getStoreId() && order.getStatus() == 1) {
                 res = commentsMapper.insert(comments);
+                status = true;
                 break;
             }
         }
+        if (!status) throw new BusinessException(0, "只有在此商店完成过订单的用户才能评论");
         log.info("comments insert -> " + comments.toString() + " -> " + res);
         BusinessException.check(res, "评论失败");
     }
@@ -64,13 +67,18 @@ public class CommentsServiceImp implements CommentsService {
     /**
      * 删除评论
      *
-     * @param id 评论id
+     * @param comments 评论
+     * @param token    Token
      */
     @Override
     @CacheEvict(value = "comments", allEntries = true)
-    public void delete(long id) {
-        int res = commentsMapper.delete(id);
-        log.info("comment delete ->" + id + " res ->" + res);
+    public void delete(Comments comments, String token) {
+        long userId = JwtUtils.getUserId(token);
+        int res;
+        if (comments.getUserId() == userId || JwtUtils.is_admin(token)) {
+            res = commentsMapper.delete(comments);
+        } else throw new BusinessException(0, "只有当前用户才能删除该评论");
+        log.info("comment delete ->" + comments.toString() + " res ->" + res);
         BusinessException.check(res, "删除失败");
     }
 

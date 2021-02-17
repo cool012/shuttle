@@ -13,8 +13,8 @@ public interface CommentsMapper {
     @Insert("insert into comments(content,name,storeId,date,userId) values(#{content},#{name},#{storeId},#{date},#{userId})")
     int insert(Comments comments);
 
-    @Delete("delete from comments where id = #{id}")
-    int delete(long id);
+    @Delete("delete from comments where id = #{id} and userId = #{userId}")
+    int delete(Comments comments);
 
     @Update("update comments set content = #{content}, storeId = #{storeId}, date = #{date} where id = #{id} and userId = #{userId}")
     int update(Comments comments);

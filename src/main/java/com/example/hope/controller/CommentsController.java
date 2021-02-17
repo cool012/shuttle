@@ -39,11 +39,11 @@ public class CommentsController {
         return ReturnMessageUtil.sucess();
     }
 
-    @Admin
+    @LoginUser
     @ApiOperation("删除评论")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ReturnMessage<Object> delete(long id) {
-        commentsService.delete(id);
+    public ReturnMessage<Object> delete(Comments comments, HttpServletRequest request) {
+        commentsService.delete(comments, request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 

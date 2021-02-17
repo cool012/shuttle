@@ -145,7 +145,7 @@ public class OrderServiceIpm implements OrderService {
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #pid.toString() +  #option.toString()")
     public PageInfo<Orders> findByPid(long pid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
@@ -153,19 +153,31 @@ public class OrderServiceIpm implements OrderService {
     }
 
     /**
-     * 根据cid查询订单
+     * 根据cid查询订单（分页）
      *
      * @param option 分页参数
      * @param cid    客户用户id
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
     public PageInfo<Orders> findByCid(long cid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid"));
     }
+
+    /**
+     * 根据cid查询订单
+     *
+     * @param cid 客户用户id
+     * @return 分页包装数据
+     */
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + 'override'")
+    public List<Orders> findByCid(long cid) {
+        return orderMapper.select(String.valueOf(cid), "cid");
+    }
+
 
     /**
      * 根据sid查询订单
@@ -175,7 +187,7 @@ public class OrderServiceIpm implements OrderService {
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
+    @Cacheable(value = "order", key = "methodName + #sid.toString() + #option.toString()")
     public PageInfo<Orders> findBySid(long sid, Map<String, String> option) {
         Utils.check_map(option);
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
@@ -189,7 +201,7 @@ public class OrderServiceIpm implements OrderService {
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #id")
+    @Cacheable(value = "order", key = "methodName + #id.toString()")
     public Orders findById(long id) {
         return orderMapper.select(String.valueOf(id), "id").get(0);
     }

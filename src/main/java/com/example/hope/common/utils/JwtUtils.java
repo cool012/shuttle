@@ -25,8 +25,8 @@ public class JwtUtils {
     /**
      * 获取Token
      *
-     * @param user
-     * @param Exp
+     * @param user 用户
+     * @param Exp 过期时间（单位：分）
      * @return String
      */
     public static String createToken(User user, int Exp) {
@@ -70,34 +70,38 @@ public class JwtUtils {
     /**
      * 获取UserId
      *
-     * @param token
-     * @return
+     * @param token Token
+     * @return userId
      */
     public static long getUserId(String token) {
-        long userId = parseJWT(token).get("userId", Integer.class);
-        return userId;
+        return parseJWT(token).get("userId", Integer.class);
     }
 
+    /**
+     * 获取UserName
+     *
+     * @param token Token
+     * @return userName
+     */
+    public static String getUserName(String token) {
+        return parseJWT(token).get("name", String.class);
+    }
+
+    /**
+     * 管理员
+     *
+     * @param token Token
+     * @return admin
+     */
     public static boolean is_admin(String token) {
-        boolean admin = parseJWT(token).get("admin", Boolean.class);
-        return admin;
+        return parseJWT(token).get("admin", Boolean.class);
     }
-
-//    public static User getUser(String token) {
-//        long id = parseJWT(token).get("userId", Integer.class);
-//        String phone = parseJWT(token).get("phone", String.class);
-//        String address = parseJWT(token).get("address", String.class);
-//        int score = parseJWT(token).get("score", Integer.class);
-//        boolean admin = parseJWT(token).get("admin", Boolean.class);
-//        String name = parseJWT(token).get("name", String.class);
-//        return new User(null, phone, address, score, admin, name);
-//    }
 
     /**
      * 解析token
      *
-     * @param token
-     * @return
+     * @param token Token
+     * @return token对象
      */
     public static Claims parseJWT(String token) {
         try {

@@ -19,7 +19,7 @@ public class OrdersProvider {
             "product.name as productName," +
             "product.image as productImage," +
             "product.price as productPrice," +
-            "round(product.rate,2) as productRate," +
+            "round(product.rate,1) as productRate," +
             "product.sales as productSales," +
             "store.name as storeName," +
             "store.serviceId as serviceId," +

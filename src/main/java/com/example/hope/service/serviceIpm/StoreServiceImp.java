@@ -83,9 +83,9 @@ public class StoreServiceImp implements StoreService {
      * @param rate 评分
      */
     @Override
-    public void review(long id, int rate) {
+    public void review(long id, float rate) {
         int res = storeMapper.review(id, rate);
-        log.info("store review -> " + id + " -> res -> " + res);
+        log.info(id + " " + rate);
         BusinessException.check(res, "更新失败");
     }
 

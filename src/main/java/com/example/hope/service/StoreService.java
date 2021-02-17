@@ -28,5 +28,5 @@ public interface StoreService {
 
     List<Store> findById(long id);
 
-    void review(long id, int rate);
+    void review(long id, float rate);
 }

@@ -33,5 +33,5 @@ public interface ProductMapper {
     int addSales(long id, int quantity);
 
     @Update("update product set rate = (rate * sales + #{rate}) / (sales + 1) where id = #{id}")
-    int review(long id, int rate);
+    int review(long id, float rate);
 }

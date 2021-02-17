@@ -263,7 +263,7 @@ public class OrderServiceIpm implements OrderService {
     public void completed(Orders orders, String token) {
         long userId = JwtUtils.getUserId(token);
         // 只允许订单用户或管理员修改订单为完成状态
-        if (userId != orders.getCid() || !JwtUtils.is_admin(token))
+        if (userId != orders.getCid() || JwtUtils.is_admin(token))
             BusinessException.check(0, "非订单用户或管理员操作");
         // 如果存在文件，完成订单时删除文件
         if (orders.getFile() != null && !orders.getFile().equals("")) fileService.remove(orders.getFile());

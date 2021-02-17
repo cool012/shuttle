@@ -64,7 +64,7 @@ public class CategoryController {
 
     @LoginUser
     @ApiOperation("按服务id查询全部类别")
-        @RequestMapping(value = "/findAllByServiceId/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/findAllByServiceId/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findAllByServiceId(@PathVariable long id) {
         return ReturnMessageUtil.sucess(categoryService.findAllByServiceId(id));
     }

@@ -112,7 +112,8 @@ public class ProductServiceIpm implements ProductService {
         // 只允许下单此产品的用户或管理员对产品评分
         List<Orders> orders = orderServiceIpm.findByCid(userId);
         for (Orders order : orders) {
-            if ((order.getStatus() == 0 && order.getId() == product.getId()) || JwtUtils.is_admin(token)) {
+            System.out.println(order);
+            if ((order.getStatus() == 0 && order.getPid() == product.getId()) || JwtUtils.is_admin(token)) {
                 res = productMapper.review(product.getId(), product.getRate());
                 storeService.review(product.getStoreId(), product.getRate());
                 status = true;

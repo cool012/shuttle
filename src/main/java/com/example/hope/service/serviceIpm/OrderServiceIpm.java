@@ -203,7 +203,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #id.toString()")
     public Orders findById(long id) {
-        return orderMapper.select(String.valueOf(id), "id").get(0);
+        List<Orders> orders = orderMapper.select(String.valueOf(id), "id");
+        if (orders.size() == 0) throw new BusinessException(0, "没有该订单");
+        return orders.get(0);
     }
 
     /**
@@ -243,6 +245,7 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void receive(long id, long userId) {
+        findById(id);
         // 减少点数
         userService.reduceScore(userId);
         // 更新订单状态

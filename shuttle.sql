@@ -80,4 +80,10 @@ create table comments(
     date datetime not null comment '时间',
     userId bigint not null comment '用户id',
     primary key(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table ads(
+    id bigint not null auto_increment,
+    image varchar(255) not null comment 'ad图片',
+    storeId bigint not null comment '商店id'
 )

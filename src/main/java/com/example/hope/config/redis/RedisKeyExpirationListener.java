@@ -1,5 +1,6 @@
 package com.example.hope.config.redis;
 
+import com.example.hope.service.AdsService;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
@@ -16,11 +17,14 @@ import org.springframework.stereotype.Component;
 public class RedisKeyExpirationListener extends KeyExpirationEventMessageListener {
 
     private OrderServiceIpm orderServiceIpm;
+    private AdsService adsService;
 
     @Autowired
-    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer, OrderServiceIpm orderService) {
+    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer, OrderServiceIpm orderService,
+                                      AdsService adsService) {
         super(listenerContainer);
         this.orderServiceIpm = orderService;
+        this.adsService = adsService;
     }
 
     /**
@@ -30,11 +34,8 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     public void onMessage(Message message, byte[] pattern) {
         String key = message.toString();//todo 清空缓存判断
         int id = Integer.parseInt(key.substring(key.indexOf("_") + 1));
-        if (key.contains("order")) {
-            orderServiceIpm.delete(id);
-        }
-        if(key.contains("completed")){
-            orderServiceIpm.completed(id);
-        }
+        if (key.contains("order")) orderServiceIpm.delete(id);
+        else if (key.contains("completed")) orderServiceIpm.completed(id);
+        else if (key.contains("ads")) adsService.delete(id);
     }
 }

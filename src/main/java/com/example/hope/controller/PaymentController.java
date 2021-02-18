@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @RequestMapping("/payment")
-@Api(tags = "用户相关接口")
+@Api(tags = "支付相关接口")
 public class PaymentController {
 
     private PayService payService;

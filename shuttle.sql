@@ -85,5 +85,16 @@ create table comments(
 create table ads(
     id bigint not null auto_increment,
     image varchar(255) not null comment 'ad图片',
-    storeId bigint not null comment '商店id'
-)
+    storeId bigint not null comment '商店id',
+    primary key(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE log4j2 (
+    id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    time char(23) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    level char(5) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    logger varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    message varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    exception varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci,
+    PRIMARY KEY (id) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;

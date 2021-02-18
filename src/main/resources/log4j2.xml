@@ -2,7 +2,7 @@
 <Configuration>
     <!--<Configuration status="WARN" monitorInterval="30"> -->
     <properties>
-        <property name="LOG_HOME">/home/ubuntu/app/logs</property>
+        <property name="LOG_HOME">logs</property>
     </properties>
     <Appenders>
         <!--*********************控制台日志***********************-->
@@ -28,8 +28,8 @@
                 <pattern>%d %p %C{} [%t] %m%n</pattern>
             </PatternLayout>
             <Policies>
-            <!--设置日志基础文件大小，超过该大小就触发日志文件滚动更新-->
-            <SizeBasedTriggeringPolicy size="100 MB"/>
+                <!--设置日志基础文件大小，超过该大小就触发日志文件滚动更新-->
+                <SizeBasedTriggeringPolicy size="100 MB"/>
             </Policies>
             设置日志的文件个数上限，不设置默认为7个，超过大小后会被覆盖；依赖于filePattern中的%i
             <DefaultRolloverStrategy max="100"/>
@@ -53,17 +53,20 @@
     </Appenders>
 
     <Loggers>
-        <!-- 根日志设置 -->
-        <Root level="warn">
-            <AppenderRef ref="consoleAppender" level="warn"/>
-            <AppenderRef ref="infoFileAppender" level="info"/>
-            <AppenderRef ref="errorFileAppender" level="error"/>
-        </Root>
 
-        <!--druid数据源日志-->
-        <Logger name="druid.sql.Statement" level="warn"/>
-        <!-- mybatis日志 -->
-        <Logger name="com.mybatis" level="warn"/>
+        <!-- 根日志设置 -->
+<!--        <Root level="warn">-->
+<!--            <AppenderRef ref="consoleAppender" level="warn"/>-->
+<!--        </Root>-->
+
+        <Logger level="info" name="com.example.hope.service.serviceIpm">
+            <AppenderRef ref="infoFileAppender" level="info"/>
+        </Logger>
+
+        <Logger level="warning" name="com.example.hope" additivity="false">
+            <AppenderRef ref="errorFileAppender" level="error"/>
+        </Logger>
+
     </Loggers>
 
 </Configuration>

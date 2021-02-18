@@ -38,6 +38,7 @@ spring:
 logging:
   level:
     com.example.hope.model.mapper.ProductMapper: debug
+  config: classpath:log4j2.xml
 pagehelper:
   helperDialect: mysql
   params: count=countSql
@@ -54,4 +55,4 @@ alipay:
   gateway: ${gateway}
   notifyUrl: ${notifyUrl}
   redirectUrl: ${redirectUrl}
-  returnUrl : ${returnUrl}
+  returnUrl: ${returnUrl}

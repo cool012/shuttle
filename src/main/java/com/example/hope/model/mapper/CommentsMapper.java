@@ -19,9 +19,9 @@ public interface CommentsMapper {
     @Update("update comments set content = #{content}, storeId = #{storeId}, date = #{date} where id = #{id} and userId = #{userId}")
     int update(Comments comments);
 
-    @Select("select * from comments where storeId = #{storeId}")
+    @Select("select * from comments where storeId = #{storeId} order by date desc")
     List<Comments> findByStoreId(long storeId);
 
-    @Select("select * from comments")
+    @Select("select * from comments order by date desc")
     List<Comments> findAll();
 }

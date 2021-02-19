@@ -83,7 +83,7 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
 server:
-  port: 8081
+  port: ${port}
 jwt:
   key: ${key}
 alipay:

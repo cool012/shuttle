@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
@@ -60,7 +61,7 @@ public class CommentsServiceImp implements CommentsService {
             }
         }
         if (!status) throw new BusinessException(0, "只有在此商店完成过订单的用户才能评论");
-        log.info("comments insert -> " + comments.toString() + " -> " + res);
+        log.info(LoggerHelper.logger(comments, res));
         BusinessException.check(res, "评论失败");
     }
 
@@ -78,7 +79,7 @@ public class CommentsServiceImp implements CommentsService {
         if (comments.getUserId() == userId || JwtUtils.is_admin(token)) {
             res = commentsMapper.delete(comments);
         } else throw new BusinessException(0, "只有当前用户才能删除该评论");
-        log.info("comment delete ->" + comments.toString() + " res ->" + res);
+        log.info(LoggerHelper.logger(comments, res));
         BusinessException.check(res, "删除失败");
     }
 
@@ -93,7 +94,7 @@ public class CommentsServiceImp implements CommentsService {
     public void update(Comments comments, String token) {
         comments.setUserId(JwtUtils.getUserId(token));
         int res = commentsMapper.update(comments);
-        log.info("update comment ->" + comments.toString() + " res -> " + res);
+        log.info(LoggerHelper.logger(comments, res));
         BusinessException.check(res, "更新失败");
     }
 

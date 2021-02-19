@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
@@ -49,7 +50,7 @@ public class ProductServiceIpm implements ProductService {
     @CacheEvict(value = "product", allEntries = true)
     public void insert(Product product) {
         int res = productMapper.insert(product);
-        log.info("product insert -> " + product.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(product, res));
         BusinessException.check(res, "添加失败");
     }
 
@@ -79,7 +80,7 @@ public class ProductServiceIpm implements ProductService {
     @CacheEvict(value = "product", allEntries = true)
     public void delete(long id) {
         int res = productMapper.delete(id);
-        log.info("product delete id -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }
 
@@ -93,7 +94,7 @@ public class ProductServiceIpm implements ProductService {
     @CacheEvict(value = "product", allEntries = true)
     public void update(Product product) {
         int res = productMapper.update(product);
-        log.info("product update -> " + product.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(product, res));
         BusinessException.check(res, "更新失败");
     }
 
@@ -121,7 +122,7 @@ public class ProductServiceIpm implements ProductService {
             }
         }
         if (!status) throw new BusinessException(0, "只允许下单此产品的用户对产品评分");
-        log.info("product review -> " + product.getId() + " for ->" + product.getRate() + " -> res " + res);
+        log.info(LoggerHelper.logger(product, res));
         BusinessException.check(res, "更新评分失败");
     }
 

@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
@@ -59,7 +60,7 @@ public class OrderServiceIpm implements OrderService {
     @CacheEvict(value = "order", allEntries = true)
     public void insert(List<Orders> orderList, boolean isExpired) {
         int res = orderMapper.insertBatch(orderList);
-        log.info("order insert -> " + orderList.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(orderList, res));
         BusinessException.check(res, "添加失败");
         for (Orders order : orderList) {
             // 通过mq发送消息到websocket
@@ -89,7 +90,7 @@ public class OrderServiceIpm implements OrderService {
         }
         int res = orderMapper.deleteBatch(orders);
         for (Orders order : orders) {
-            log.info("order delete id -> " + order.getId() + " -> res -> " + res);
+            log.info(LoggerHelper.logger(orders, res));
         }
         BusinessException.check(res, "删除失败");
     }
@@ -104,7 +105,7 @@ public class OrderServiceIpm implements OrderService {
     @CacheEvict(value = "order", allEntries = true)
     public void delete(long id) {
         int res = orderMapper.delete(id);
-        log.info("order delete id -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }
 
@@ -119,7 +120,7 @@ public class OrderServiceIpm implements OrderService {
     public void update(Orders order) {
         if (order.getFile().equals("")) order.setFile(null);
         int res = orderMapper.update(order);
-        log.info("order update -> " + order.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(order, res));
         BusinessException.check(res, "更新失败");
     }
 

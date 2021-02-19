@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Services;
@@ -37,7 +38,7 @@ public class ServiceServiceIpm implements ServiceService {
     @CacheEvict(value = "service",allEntries = true)
     public void insert(Services services){
         int res = serviceMapper.insert(services);
-        log.info("service insert service -> " + services.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(services, res));
         BusinessException.check(res,"添加失败");
     }
 
@@ -51,7 +52,7 @@ public class ServiceServiceIpm implements ServiceService {
     @CacheEvict(value = "service",allEntries = true)
     public void delete(Long id) {
         int res = serviceMapper.delete(id);
-        log.info("service delete id -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res,"删除失败");
     }
 
@@ -64,7 +65,7 @@ public class ServiceServiceIpm implements ServiceService {
     @CacheEvict(value = "service",allEntries = true)
     public void update(Services services){
         int res = serviceMapper.update(services);
-        log.info("service update service -> " + services.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(services, res));
         BusinessException.check(res,"修改失败");
     }
 

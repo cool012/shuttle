@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Category;
 import com.example.hope.model.mapper.CategoryMapper;
@@ -38,7 +39,7 @@ public class CategoryServiceImp implements CategoryService {
     @CacheEvict(value = "category", allEntries = true)
     public void insert(Category category) {
         int res = categoryMapper.insert(category);
-        log.info("category insert -> " + category.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(category, res));
         BusinessException.check(res,"添加失败");
     }
 
@@ -51,7 +52,7 @@ public class CategoryServiceImp implements CategoryService {
     @CacheEvict(value = "category", allEntries = true)
     public void delete(long id) {
         int res = categoryMapper.delete(id);
-        log.info("category delete -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res,"删除失败");
     }
 
@@ -64,7 +65,7 @@ public class CategoryServiceImp implements CategoryService {
     @CacheEvict(value = "category", allEntries = true)
     public void update(Category category) {
         int res = categoryMapper.update(category);
-        log.info("category delete -> " + category.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(category, res));
         BusinessException.check(res,"更新失败");
     }
 

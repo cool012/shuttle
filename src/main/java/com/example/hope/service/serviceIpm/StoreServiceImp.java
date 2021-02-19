@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
@@ -45,7 +46,7 @@ public class StoreServiceImp implements StoreService {
     @CacheEvict(value = "store", allEntries = true)
     public void insert(Store store) {
         int res = storeMapper.insert(store);
-        log.info("store insert -> " + store.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "添加失败");
     }
 
@@ -72,7 +73,7 @@ public class StoreServiceImp implements StoreService {
     @CacheEvict(value = "store", allEntries = true)
     public void delete(long id) {
         int res = storeMapper.delete(id);
-        log.info("store delete -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }
 
@@ -85,7 +86,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     public void review(long id, float rate) {
         int res = storeMapper.review(id, rate);
-        log.info(id + " " + rate);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "更新失败");
     }
 
@@ -99,7 +100,7 @@ public class StoreServiceImp implements StoreService {
     @CacheEvict(value = "store", allEntries = true)
     public void update(Store store) {
         int res = storeMapper.update(store);
-        log.info("store update -> " + store.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "更新失败");
     }
 

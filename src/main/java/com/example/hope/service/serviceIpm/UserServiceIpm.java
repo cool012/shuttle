@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
@@ -43,13 +44,11 @@ public class UserServiceIpm implements UserService {
     @Transient
     @CacheEvict(value = "user", allEntries = true)
     public void register(User user) {
-        System.out.println(user);
         // 检查输入合法
         Utils.check_user(user);
         // 用户密码加密
         user.setPassword(Utils.encode(user.getPassword()));
         int res = userMapper.insert(user);
-        log.info("user register -> " + user.toString() + " -> res -> " + res);
         BusinessException.check(res, "注册失败");
     }
 
@@ -82,7 +81,7 @@ public class UserServiceIpm implements UserService {
     @CacheEvict(value = "user", allEntries = true)
     public void delete(long id) {
         int res = userMapper.delete(id);
-        log.info("user delete -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }
 
@@ -96,7 +95,7 @@ public class UserServiceIpm implements UserService {
     @CacheEvict(value = "user", allEntries = true)
     public void update(User user) {
         int res = userMapper.update(user);
-        log.info("user update -> " + user.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(user, res));
         BusinessException.check(res, "更新失败");
     }
 
@@ -110,7 +109,7 @@ public class UserServiceIpm implements UserService {
     @CacheEvict(value = "user", allEntries = true)
     public void updatePassword(long id, String password) {
         int res = userMapper.updatePassword(id, Utils.encode(password));
-        log.info("user -> {} updatePassword password -> {} res -> {}", id, password, res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "修改密码失败");
     }
 
@@ -125,7 +124,7 @@ public class UserServiceIpm implements UserService {
     @CacheEvict(value = "user", allEntries = true)
     public void addScore(long id, int quantity) {
         int res = userMapper.addScore(id, quantity);
-        log.info("user addScore -> userId:" + id + " -> quantity:" + quantity + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "增加点数失败");
     }
 
@@ -142,7 +141,7 @@ public class UserServiceIpm implements UserService {
             throw new BusinessException(-1, "用户点数为0");
         }
         int res = userMapper.reduceScore(id);
-        log.info("user reduceScore -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "减少点数失败");
     }
 
@@ -213,13 +212,13 @@ public class UserServiceIpm implements UserService {
     /**
      * 设置管理员
      *
-     * @param userId 用户id
+     * @param id 用户id
      */
     @Override
     @CacheEvict(value = "user", allEntries = true)
-    public void admin(long userId) {
-        int res = userMapper.admin(userId);
-        log.info("user update admin -> " + userId + " -> res -> " + res);
+    public void admin(long id) {
+        int res = userMapper.admin(id);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "设置管理员失败");
     }
 }

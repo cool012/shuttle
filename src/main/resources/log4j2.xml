@@ -54,11 +54,6 @@
 
     <Loggers>
 
-        <!-- 根日志设置 -->
-<!--        <Root level="warn">-->
-<!--            <AppenderRef ref="consoleAppender" level="warn"/>-->
-<!--        </Root>-->
-
         <Logger level="info" name="com.example.hope.service.serviceIpm">
             <AppenderRef ref="infoFileAppender" level="info"/>
         </Logger>

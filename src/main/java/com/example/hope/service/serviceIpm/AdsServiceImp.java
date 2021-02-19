@@ -1,5 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
+import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
 import com.example.hope.model.entity.Ads;
@@ -46,7 +47,7 @@ public class AdsServiceImp implements AdsService {
         int res = adsMapper.insert(ads);
         // 设置过期时间
         if (res > 0) redisUtil.ins("ads_" + ads.getId(), "expired", expired, TimeUnit.DAYS);
-        log.info("ads insert -> " + ads.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(ads, res));
         BusinessException.check(res, "添加失败");
     }
 
@@ -60,7 +61,7 @@ public class AdsServiceImp implements AdsService {
     @CacheEvict(value = "ads", allEntries = true)
     public void delete(long id) {
         int res = adsMapper.delete(id);
-        log.info("ads delete -> " + id + " -> res -> " + res);
+        log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }
 
@@ -74,7 +75,7 @@ public class AdsServiceImp implements AdsService {
     @CacheEvict(value = "ads", allEntries = true)
     public void update(Ads ads) {
         int res = adsMapper.update(ads);
-        log.info("ads delete -> " + ads.toString() + " -> res -> " + res);
+        log.info(LoggerHelper.logger(ads, res));
         BusinessException.check(res, "更新失败");
     }
 

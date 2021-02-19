@@ -1,10 +1,13 @@
 package com.example.hope.service.serviceIpm;
 
 import com.example.hope.common.logger.LoggerHelper;
+import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Category;
 import com.example.hope.model.mapper.CategoryMapper;
 import com.example.hope.service.CategoryService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,6 +17,7 @@ import javax.annotation.Resource;
 import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description: 类别服务实现类
@@ -92,9 +96,11 @@ public class CategoryServiceImp implements CategoryService {
      * @return 类别列表
      */
     @Override
-    @Cacheable(value = "category", key = "methodName")
-    public List<Category> findAll() {
-        return categoryMapper.select(null, null);
+    @Cacheable(value = "category", key = "methodName + #option.toString()")
+    public PageInfo<Category> findAll(Map<String, String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        return PageInfo.of(categoryMapper.select(null, null));
     }
 
     /**

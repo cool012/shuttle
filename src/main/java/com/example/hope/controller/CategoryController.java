@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * @description: 类别相关路由
  * @author: DHY
@@ -58,8 +60,8 @@ public class CategoryController {
     @Admin
     @ApiOperation("查询全部类别")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll() {
-        return ReturnMessageUtil.sucess(categoryService.findAll());
+    public ReturnMessage<Object> findAll(Map<String, String> option) {
+        return ReturnMessageUtil.sucess(categoryService.findAll(option));
     }
 
     @LoginUser

@@ -13,11 +13,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.beans.Transient;
 import java.util.List;
 import java.util.Map;
@@ -32,23 +32,23 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class OrderServiceIpm implements OrderService {
 
+    @Resource
     private OrderMapper orderMapper;
-    private UserServiceIpm userService;
-    @Autowired
-    private ProductServiceIpm productService;
-    private RedisUtil redisUtil;
-    private FileService fileService;
-    private AmqpTemplate amqpTemplate;
 
-    @Autowired
-    public OrderServiceIpm(OrderMapper orderMapper, UserServiceIpm userService, RedisUtil redisUtil
-            , FileServiceImp fileService, AmqpTemplate amqpTemplate) {
-        this.orderMapper = orderMapper;
-        this.userService = userService;
-        this.redisUtil = redisUtil;
-        this.fileService = fileService;
-        this.amqpTemplate = amqpTemplate;
-    }
+    @Resource
+    private UserServiceIpm userService;
+
+    @Resource
+    private ProductServiceIpm productService;
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private FileService fileService;
+
+    @Resource
+    private AmqpTemplate amqpTemplate;
 
     /**
      * 批量添加订单
@@ -90,23 +90,35 @@ public class OrderServiceIpm implements OrderService {
         }
         int res = orderMapper.deleteBatch(orders);
         for (Orders order : orders) {
-            log.info(LoggerHelper.logger(orders, res));
+            log.info(LoggerHelper.logger(order, res));
         }
         BusinessException.check(res, "删除失败");
     }
 
-
     /**
-     * 删除订单
+     * 根据id删除订单
      *
      * @param id 订单id
      */
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void delete(long id) {
-        int res = orderMapper.delete(id);
+        int res = orderMapper.delete(id, "id");
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
+    }
+
+
+    /**
+     * 根据产品id删除订单
+     *
+     * @param pid 产品id
+     */
+    @Transient
+    @CacheEvict(value = "order", allEntries = true)
+    public void deleteByPid(long pid) {
+        int res = orderMapper.delete(pid, "pid");
+        log.info(LoggerHelper.logger(pid, res));
     }
 
     /**

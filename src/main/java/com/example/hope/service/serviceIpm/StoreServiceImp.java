@@ -4,8 +4,11 @@ import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
+import com.example.hope.model.entity.Product;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
+import com.example.hope.service.OrderService;
+import com.example.hope.service.ProductService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -15,6 +18,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.beans.Transient;
 import java.util.*;
 
@@ -27,14 +31,17 @@ import java.util.*;
 @Log4j2
 public class StoreServiceImp implements StoreService {
 
+    @Resource
     private StoreMapper storeMapper;
+
+    @Resource
     private RedisUtil redisUtil;
 
-    @Autowired
-    StoreServiceImp(StoreMapper storeMapper, RedisUtil redisUtil) {
-        this.storeMapper = storeMapper;
-        this.redisUtil = redisUtil;
-    }
+    @Resource
+    private ProductServiceIpm productServiceIpm;
+
+    @Resource
+    private AdsServiceImp adsServiceImp;
 
     /**
      * 添加商店
@@ -72,9 +79,23 @@ public class StoreServiceImp implements StoreService {
     @Transient
     @CacheEvict(value = "store", allEntries = true)
     public void delete(long id) {
-        int res = storeMapper.delete(id);
+        int res = storeMapper.delete(id, "id");
+        productServiceIpm.deleteByStoreId(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
+    }
+
+    /**
+     * 根据类别id删除商店
+     *
+     * @param categoryId 类别id
+     */
+    @Transient
+    @CacheEvict(value = "store", allEntries = true)
+    public void deleteByCategoryId(long categoryId) {
+        for (Store store : findByCategoryId(categoryId)) productServiceIpm.deleteByStoreId(store.getId());
+        int res = storeMapper.delete(categoryId, "categoryId");
+        log.info(LoggerHelper.logger(categoryId, res));
     }
 
     /**

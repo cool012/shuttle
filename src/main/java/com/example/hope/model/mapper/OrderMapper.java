@@ -21,8 +21,8 @@ public interface OrderMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Orders order);
 
-    @Delete("delete from orders where id = #{id}")
-    int delete(long id);
+    @Delete("delete from orders where ${key} = #{id}")
+    int delete(long id,String key);
 
     @Update("update orders set address = #{address},date = #{date},note = #{note},file = #{file},status = #{status} where id = #{id}")
     int update(Orders order);

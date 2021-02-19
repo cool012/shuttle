@@ -14,8 +14,8 @@ public interface CategoryMapper {
     @Insert("insert into category(name,serviceId) values(#{name},#{serviceId})")
     int insert(Category category);
 
-    @Delete("delete from category where id = #{id}")
-    int delete(long id);
+    @Delete("delete from category where ${key} = #{id}")
+    int delete(@Param("id") long id, @Param("key") String key);
 
     @Update("update category set name = #{name},serviceId = #{serviceId} where id = #{id}")
     int update(Category category);

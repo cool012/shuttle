@@ -11,11 +11,11 @@ import com.example.hope.service.CommentsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +28,11 @@ import java.util.Map;
 @Service
 public class CommentsServiceImp implements CommentsService {
 
+    @Resource
     private CommentsMapper commentsMapper;
-    private OrderServiceIpm orderServiceIpm;
 
-    @Autowired
-    public CommentsServiceImp(CommentsMapper commentsMapper, OrderServiceIpm orderServiceIpm) {
-        this.commentsMapper = commentsMapper;
-        this.orderServiceIpm = orderServiceIpm;
-    }
+    @Resource
+    private OrderServiceIpm orderServiceIpm;
 
 
     /**

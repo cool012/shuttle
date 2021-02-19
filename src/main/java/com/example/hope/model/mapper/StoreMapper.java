@@ -14,8 +14,8 @@ public interface StoreMapper {
     @Insert("insert into store(name,serviceId,categoryId,image,rate,sales) values(#{name},#{serviceId},#{categoryId},#{image},#{rate},#{sales})")
     int insert(Store store);
 
-    @Delete("delete from store where id = #{id}")
-    int delete(long id);
+    @Delete("delete from store where ${key} = #{id}")
+    int delete(long id, String key);
 
     @Update("update store set name = #{name}, serviceId = #{serviceId}, categoryId = #{categoryId}, image = #{image}, rate = #{rate}, sales = #{sales} where id = #{id}")
     int update(Store store);

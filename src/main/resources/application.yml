@@ -75,7 +75,7 @@ spring:
       max-file-size: 10MB # 单个文件的最大值
 logging:
   level:
-    com.example.hope.model.mapper.ProductMapper: debug
+    com.example.hope.model.mapper.CategoryMapper: debug
   config: classpath:log4j2.xml
 pagehelper:
   helperDialect: mysql

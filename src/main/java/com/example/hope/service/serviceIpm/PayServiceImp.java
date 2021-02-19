@@ -9,10 +9,10 @@ import com.example.hope.common.utils.Utils;
 import com.example.hope.config.alipay.AlipayConfig;
 import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,17 +25,15 @@ import java.util.Map;
 @Service
 public class PayServiceImp implements PayService {
 
+    @Resource
     private AlipayConfig alipayConfig;
+
+    @Resource
     private UserService userService;
+
     // 重定向url，前端支付结果界面
     @Value("${alipay.redirectUrl}")
     private String redirectUrl;
-
-    @Autowired
-    PayServiceImp(AlipayConfig alipayConfig, UserServiceIpm userServiceIpm) {
-        this.alipayConfig = alipayConfig;
-        this.userService = userServiceIpm;
-    }
 
     /**
      * 充值

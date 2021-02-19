@@ -9,11 +9,11 @@ import com.example.hope.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.beans.Transient;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +28,8 @@ import java.util.Map;
 @Service
 public class UserServiceIpm implements UserService {
 
+    @Resource
     private UserMapper userMapper;
-
-    @Autowired
-    UserServiceIpm(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     /**
      * 用户注册

@@ -14,8 +14,8 @@ public interface AdsMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Ads ads);
 
-    @Delete("delete from ads where id = #{id}")
-    int delete(long id);
+    @Delete("delete from ads where ${key} = #{id}")
+    int delete(long id, String key);
 
     @Update("update ads set image = #{image},storeId = #{storeId} where id = #{id}")
     int update(Ads ads);

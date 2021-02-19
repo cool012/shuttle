@@ -8,18 +8,17 @@ import com.example.hope.config.redis.RedisUtil;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
-import com.example.hope.service.OrderService;
 import com.example.hope.service.ProductService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.beans.Transient;
 import java.util.*;
 
@@ -27,18 +26,17 @@ import java.util.*;
 @Service
 public class ProductServiceIpm implements ProductService {
 
+    @Resource
     private ProductMapper productMapper;
-    private StoreService storeService;
-    private RedisUtil redisUtil;
-    @Autowired
-    private OrderServiceIpm orderServiceIpm;
 
-    @Autowired
-    public ProductServiceIpm(ProductMapper productMapper, StoreService storeService, RedisUtil redisUtil) {
-        this.productMapper = productMapper;
-        this.storeService = storeService;
-        this.redisUtil = redisUtil;
-    }
+    @Resource
+    private StoreService storeService;
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private OrderServiceIpm orderServiceIpm;
 
     /**
      * 添加产品
@@ -79,9 +77,23 @@ public class ProductServiceIpm implements ProductService {
     @Transient
     @CacheEvict(value = "product", allEntries = true)
     public void delete(long id) {
-        int res = productMapper.delete(id);
+        int res = productMapper.delete(id, "id");
+        orderServiceIpm.deleteByPid(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
+    }
+
+    /**
+     * 根据商店id删除产品
+     *
+     * @param storeId 商店id
+     */
+    @Transient
+    @CacheEvict(value = "product", allEntries = true)
+    public void deleteByStoreId(long storeId) {
+        for (Product product : findByStoreId(storeId)) orderServiceIpm.deleteByPid(product.getId());
+        int res = productMapper.delete(storeId, "StoreId");
+        log.info(LoggerHelper.logger(storeId, res));
     }
 
     /**

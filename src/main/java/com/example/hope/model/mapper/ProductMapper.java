@@ -14,8 +14,8 @@ public interface ProductMapper {
     @Insert("insert into product(name,price,image,quantity,rate,storeId) values(#{name},#{price},#{image},#{quantity},#{rate},#{storeId})")
     int insert(Product product);
 
-    @Delete("delete from product where id = #{id}")
-    int delete(long id);
+    @Delete("delete from product where ${key} = #{id}")
+    int delete(long id, String key);
 
     @Update("update product set name = #{name},price = #{price},image = #{image},rate = #{rate},storeId = #{storeId}, sales = #{sales} where id = #{id}")
     int update(Product product);

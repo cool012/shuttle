@@ -25,8 +25,7 @@ create table category(
 	id bigint not null auto_increment,
 	name varchar(255) not null comment '类别名',
 	serviceId bigint not null comment '商店id',
-	primary key(id),
-	FOREIGN KEY (serviceId) REFERENCES service(id)
+	primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table store(
@@ -38,8 +37,6 @@ create table store(
 	rate int(2) not null comment '商店评分',
 	sales int(3) not null comment  '商店销量',
 	primary key(id),
-	FOREIGN KEY (serviceId) REFERENCES service(id),
-	FOREIGN KEY (categoryId) REFERENCES category(id),
 	unique(name)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -52,8 +49,7 @@ create table product(
 	sales int(10) default 0,
 	rate int(10) default 5 comment '评分',
 	storeId bigint not null comment '商店id',
-	primary key(id),
-	foreign key(storeId) references store(id)
+	primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table orders(
@@ -66,9 +62,6 @@ create table orders(
 	note varchar(255) comment '备注',
 	file varchar(255) comment '附件',
 	status int(10) not null default -1 comment '订单状态',
-	FOREIGN KEY (pid) REFERENCES product(id),
-	FOREIGN KEY (cid) REFERENCES user(id),
-	FOREIGN KEY (sid) REFERENCES user(id),
 	primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

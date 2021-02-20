@@ -250,6 +250,20 @@ public class OrderServiceIpm implements OrderService {
     }
 
     /**
+     * 查询全部配送中订单
+     *
+     * @param option 分页参数
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
+    public PageInfo<Orders> findByPresent(Map<String, String> option) {
+        Utils.check_map(option);
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        return PageInfo.of(orderMapper.select("0", "status"));
+    }
+
+    /**
      * 接单
      *
      * @param id 订单id

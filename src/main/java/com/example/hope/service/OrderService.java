@@ -31,4 +31,6 @@ public interface OrderService {
     PageInfo<Orders> findByReceive(Map<String, String> option);
 
     PageInfo<Orders> findByCompleted(Map<String, String> option);
+
+    PageInfo<Orders> findByPresent(Map<String, String> option);
 }

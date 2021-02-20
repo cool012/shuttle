@@ -121,11 +121,4 @@ public class OrderController {
     public ReturnMessage<Object> findByCompleted(@RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByCompleted(option));
     }
-
-    @LoginUser
-    @ApiOperation("查询全部配送订单")
-    @RequestMapping(value = "/findByPresent", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByPresent(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(orderService.findByPresent(option));
-    }
 }

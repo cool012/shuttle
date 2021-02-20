@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @created: 2020/10/30 13:49
  */
 @RestController
-@RequestMapping("/poster")
+@RequestMapping("/picture")
 @Api(tags = "广告相关接口")
 public class AdsController {
 

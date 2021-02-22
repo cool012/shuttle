@@ -1,6 +1,7 @@
 package com.example.hope.controller;
 
 import com.example.hope.annotation.Admin;
+import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.Ads;
 import com.example.hope.model.entity.ReturnMessage;
@@ -53,7 +54,7 @@ public class AdsController {
         return ReturnMessageUtil.sucess();
     }
 
-    @Admin
+    @LoginUser
     @ApiOperation("查询全部广告")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll() {

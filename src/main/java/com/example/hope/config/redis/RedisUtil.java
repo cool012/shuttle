@@ -28,27 +28,37 @@ public class RedisUtil {
     /**
      * 向redis添加元素
      *
-     * @param key key
+     * @param key   key
      * @param value value
-     * @param time time
-     * @param unit unit
+     * @param time  time
+     * @param unit  unit
      * @return 是否添加成功
      */
-    public boolean ins(final String key, String value, int time, TimeUnit unit) {
-        boolean result = false;
+    public void ins(final String key, String value, int time, TimeUnit unit) {
         try {
             redisTemplate.opsForValue().set(key, value, time, unit);
-            result = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+    }
+
+    /**
+     * 从redis里删除元素
+     *
+     * @param key key
+     */
+    public void del(final String key) {
+        try {
+            if (redisTemplate.hasKey(key)) redisTemplate.delete(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * 向Zset添加元素
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @param score score
      */
@@ -59,7 +69,7 @@ public class RedisUtil {
     /**
      * score的增加或减少
      *
-     * @param key key
+     * @param key   key
      * @param value value
      * @param score score
      * @return score
@@ -70,9 +80,10 @@ public class RedisUtil {
 
     /**
      * 查询排行榜 0:-1表示获取全部
-     * @param key key
+     *
+     * @param key   key
      * @param start start
-     * @param end end
+     * @param end   end
      * @return 结果集
      */
     public Set<String> range(String key, long start, long end) {

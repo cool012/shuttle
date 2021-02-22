@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @author: DHY
  * @created: 2020/10/25 11:15
  */
+
 @Log4j2
 @Service
 public class OrderServiceIpm implements OrderService {
@@ -103,9 +104,7 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void delete(long id) {
-        int res = 0;
-        int status = findById(id).getStatus();
-        if (status == -1 || status == 1) res = orderMapper.delete(id, "id");
+        int res = orderMapper.delete(id, "id");
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }
@@ -279,6 +278,7 @@ public class OrderServiceIpm implements OrderService {
         userService.reduceScore(userId);
         // 更新订单状态
         int res = orderMapper.receive(id, userId);
+        redisUtil.del("order_" + id);
         // 下单1小时后自动更新为完成状态
         redisUtil.ins("completed_" + id, "expired", 1, TimeUnit.HOURS);
         BusinessException.check(res, "接单失败");

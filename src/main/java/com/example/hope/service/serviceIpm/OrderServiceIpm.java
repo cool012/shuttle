@@ -103,7 +103,9 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void delete(long id) {
-        int res = orderMapper.delete(id, "id");
+        int res = 0;
+        int status = findById(id).getStatus();
+        if (status == -1 || status == 1) res = orderMapper.delete(id, "id");
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }

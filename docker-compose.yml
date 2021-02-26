@@ -1,0 +1,69 @@
+version: '3'
+services:
+  mysql:
+    container_name: shuttle-mysql
+    image: mysql:1
+    build: ./mysql
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d/
+    environment:
+      MYSQL_ROOT_PASSWORD: ${dbPassword}
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - 3306:3306
+    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  redis:
+    container_name: shuttle-redis
+    image: redis
+    command: redis-server --requirepass ${redisPassword}
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: shuttle-rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - ./data:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${mqUser}
+      RABBITMQ_DEFAULT_PASS: ${mqPassword}
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  app:
+    restart: always
+    build: ./
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - ~/.m2:/root/.m2
+    ports:
+      - ${port}:${port}
+    environment:
+      dbHost: mysql
+      dbName: ${dbName}
+      dbUser: ${dbUser}
+      dbPasswd: ${dbPassword}
+      key: ${key}
+      appId: ${appId}
+      gateway: ${gateway}
+      notifyUrl: ${notifyUrl}
+      redisPassword: ${redisPassword}
+      redisHost: redis
+      mqHost: rabbitmq
+      mqUser: ${mqUser}
+      mqPasswd: ${mqPassword}
+      redirectUrl: ${redirectUrl}
+      returnUrl: ${returnUrl}
+      druidUser: ${druidUser}
+      druidPasswd: ${druidPasswd}
+      port: ${port}
+    command: mvn clean spring-boot:run
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq

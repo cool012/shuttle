@@ -101,12 +101,12 @@ sudo chmod +x /usr/local/bin/docker-compose
 ## 部署
 
 ```sh
-git clone https://github.com/TouwaErioer/shuttle-interconnected
+git clone https://github.com/TouwaErioer/shuttle
 
 # 因为项目涉及到文件的读写，要开放相应的权限
-sudo chmod 777 /shuttle-interconnected
+sudo chmod 777 shuttle
 
-cd /shuttle-interconnected
+cd shuttle
 
 sudo docker-compose up -d
 ```

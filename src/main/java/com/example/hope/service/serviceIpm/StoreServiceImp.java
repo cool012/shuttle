@@ -4,6 +4,7 @@ import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisUtil;
+import com.example.hope.elasticsearch.service.EsStoreService;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
@@ -43,6 +44,9 @@ public class StoreServiceImp implements StoreService {
     @Resource
     private AdsServiceImp adsServiceImp;
 
+    @Resource
+    private EsStoreService esStoreService;
+
     /**
      * 添加商店
      *
@@ -55,6 +59,7 @@ public class StoreServiceImp implements StoreService {
         int res = storeMapper.insert(store);
         log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "添加失败");
+        esStoreService.save(store);
     }
 
     /**
@@ -83,6 +88,7 @@ public class StoreServiceImp implements StoreService {
         productServiceIpm.deleteByStoreId(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
+        esStoreService.delete(id);
     }
 
     /**
@@ -123,6 +129,7 @@ public class StoreServiceImp implements StoreService {
         int res = storeMapper.update(store);
         log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "更新失败");
+        esStoreService.save(store);
     }
 
     /**

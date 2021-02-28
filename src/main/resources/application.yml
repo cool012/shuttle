@@ -73,10 +73,13 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB # 单个文件的最大值
+  elasticsearch:
+    rest:
+      uris: ${elasticsearchUrl}
+
 logging:
   level:
     com.example.hope.model.mapper.CategoryMapper: debug
-  config: classpath:log4j2.xml
 pagehelper:
   helperDialect: mysql
   params: count=countSql

@@ -3,6 +3,7 @@ package com.example.hope.controller;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
+import com.example.hope.elasticsearch.service.EsStoreService;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.Store;
 import com.example.hope.service.StoreService;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -24,12 +26,11 @@ import java.util.Map;
 @Api(tags = "商店相关接口")
 public class StoreController {
 
+    @Resource
     private StoreService storeService;
 
-    @Autowired
-    public StoreController(StoreServiceImp storeService) {
-        this.storeService = storeService;
-    }
+    @Resource
+    private EsStoreService esStoreService;
 
     @Admin
     @ApiOperation("添加商店")
@@ -95,6 +96,6 @@ public class StoreController {
     @ApiOperation("搜索")
     @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
     public ReturnMessage<Object> search(@PathVariable("keyword") String keyword) {
-        return ReturnMessageUtil.sucess(storeService.search(keyword));
+        return ReturnMessageUtil.sucess(esStoreService.search(keyword));
     }
 }

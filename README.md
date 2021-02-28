@@ -8,7 +8,7 @@ shuttle是一个综合性C2C校园服务平台，主要服务于移动端的单�
 
 | Syntax | Description | Version|
 |  :----: |  :----: | :----: |
-| Web Frame | Spring Boot | 2.3.4 |
+| Web Frame | Spring Boot | 2.3.0 |
 | NoSQL | Redis | 4.0.9 |
 | Databases | Mysql | 5.5 |
 | Pool | Druid | 1.1.10 |
@@ -18,6 +18,7 @@ shuttle是一个综合性C2C校园服务平台，主要服务于移动端的单�
 | API Manager | Swagger | 2.9.2 |
 | Security | JWT | 3.4.0 |
 | Pagination | PageHelper | 1.2.5 |
+| SearchEngine | ElasticSearch | 7.6.2 | 
 
 ## 必要参数
 
@@ -60,6 +61,9 @@ druidPassword=
 
 # http端口
 port=
+
+# elasticsearch地址
+elasticsearchUrl=
 ```
 
 ## 必要文件

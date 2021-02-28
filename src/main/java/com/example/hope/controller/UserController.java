@@ -6,15 +6,14 @@ import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.User;
+import com.example.hope.elasticsearch.service.EsUserService;
 import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
-import com.example.hope.service.serviceIpm.PayServiceImp;
-import com.example.hope.service.serviceIpm.UserServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -27,14 +26,14 @@ import java.util.Map;
 @Api(tags = "用户相关接口")
 public class UserController {
 
+    @Resource
     private UserService userService;
+
+    @Resource
     private PayService payService;
 
-    @Autowired
-    public UserController(UserServiceIpm userService, PayServiceImp payServiceImp) {
-        this.userService = userService;
-        this.payService = payServiceImp;
-    }
+    @Resource
+    private EsUserService esUserService;
 
     @ApiOperation("用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -117,9 +116,9 @@ public class UserController {
 
     @Admin
     @ApiOperation("搜索")
-    @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public ReturnMessage<Object> search(String keyword, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(userService.search(keyword, option));
+    @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
+    public ReturnMessage<Object> search(@PathVariable("keyword") String keyword) {
+        return ReturnMessageUtil.sucess(esUserService.search(keyword));
     }
 
     @Admin

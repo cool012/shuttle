@@ -31,6 +31,6 @@ public class ElasticSearchRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         esProductService.importAll();
         esUserService.importAll();
-        esUserService.importAll();
+        esStoreService.importAll();
     }
 }

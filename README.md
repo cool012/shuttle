@@ -18,7 +18,7 @@ shuttle是一个综合性C2C校园服务平台，主要服务于移动端的单�
 | API Manager | Swagger | 2.9.2 |
 | Security | JWT | 3.4.0 |
 | Pagination | PageHelper | 1.2.5 |
-| SearchEngine | ElasticSearch | 7.6.2 | 
+| SearchEngine | ElasticSearch | 7.6.2 |
 
 ## 必要参数
 
@@ -98,9 +98,21 @@ sudo curl -L https://github.com/docker/compose/releases/download/1.27.4/docker-c
 
 # 赋予相应权限
 sudo chmod +x /usr/local/bin/docker-compose
+
+# 创建elasticsearch数据文件目录
+mkdir /elasticsearch/data
+
+# 赋予相应权限
+sudo chmod 777 /elasticsearch/data
 ```
 
 > 参考：[Docker —— 从入门到实践](https://yeasy.gitbook.io/docker_practice/install/debian)
+
+## 分支
+
+[master](https://github.com/TouwaErioer/shuttle) 主分支，使用log4j2作为日志框架，日志写入到项目根 目录 `logs` 文件夹
+
+[KEL](https://github.com/TouwaErioer/shuttle) 使用 KEL （ Kibana +ElasticSearch + Logstash）作为日志系统
 
 ## 部署
 

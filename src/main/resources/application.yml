@@ -80,6 +80,8 @@ spring:
 logging:
   level:
     com.example.hope.model.mapper.CategoryMapper: debug
+  config: classpath:log4j2.xml
+
 pagehelper:
   helperDialect: mysql
   params: count=countSql

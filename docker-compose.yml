@@ -48,6 +48,16 @@ services:
       - 9200:9200
       - 9300:9300
 
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - /data/mongo/db:/data/db/
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${mongoUser}
+      MONGO_INITDB_ROOT_PASSWORD: ${mongoPassword}
+
   app:
     restart: always
     build: ./
@@ -79,8 +89,13 @@ services:
       druidPasswd: ${druidPasswd}
       port: ${port}
       elasticsearchUrl: http://es:9200
+      mongoUser: ${mongoUser}
+      mongoPassword: ${mongoPassword}
+      mongoHost: mongodb
     command: mvn clean spring-boot:run
     depends_on:
       - mysql
       - redis
       - rabbitmq
+      - elasticsearch
+      - mongodb

@@ -58,14 +58,14 @@ public class CommentsController {
     @Admin
     @ApiOperation("查询全部评论")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(commentsService.findAll(option));
+    public ReturnMessage<Object> findAll() {
+        return ReturnMessageUtil.sucess(commentsService.findAll());
     }
 
     @LoginUser
     @ApiOperation("按商店id查询全部评论")
     @RequestMapping(value = "/findByStoreId/{storeId}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByStoreId(@PathVariable long storeId, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(commentsService.findByStoreId(storeId, option));
+    public ReturnMessage<Object> findByStoreId(@PathVariable long storeId) {
+        return ReturnMessageUtil.sucess(commentsService.findByStoreId(storeId));
     }
 }

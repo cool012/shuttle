@@ -76,6 +76,10 @@ spring:
   elasticsearch:
     rest:
       uris: ${elasticsearchUrl}
+  data:
+    mongodb:
+      uri: mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/?authSource=admin
+      database: shuttle
 
 logging:
   level:

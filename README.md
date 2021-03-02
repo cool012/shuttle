@@ -25,45 +25,32 @@ shuttle是一个综合性C2C校园服务平台，主要服务于移动端的单�
 请在项目根目录创建 `.env` 文件，添加下列参数
 
 ```sh
-# mysql用户
-dbUser=
-# mysql数据库名称
-dbName=
-# mysql密码
-dbPassword=
+dbUser= # mysql用户
+dbName= # mysql数据库名称
+dbPassword= # mysql密码
 
-# redis密码
-redisPassword=
+redisPassword= # redis密码
 
-# rabbitmq用户
-mqUser=
-# rabbitmq密码
-mqPassword=
+mqUser= # rabbitmq用户
+mqPassword= # rabbitmq密码
 
-# jwt密钥
-key=
+key= # jwt密钥
 
-# 支付宝沙盒应用id
-appId=
-# 支付宝沙盒网关
-gateway=
-# 支付宝沙盒异步通知
-notifyUrl=
-# 支付宝沙盒同步通知
-returnUrl=
-# 重定向
-redirectUrl=
+appId= # 支付宝沙盒应用id
+gateway= # 支付宝沙盒网关
+notifyUrl= # 支付宝沙盒异步通知
+returnUrl= # 支付宝沙盒同步通知
+redirectUrl= # 支付宝沙盒同步通知
 
-# druid用户
-druidUser=
-# druid密码
-druidPassword=
+druidUser= # druid用户
+druidPassword= # druid密码
 
-# http端口
-port=
+port= # http端口
 
-# elasticsearch地址
-elasticsearchUrl=
+elasticsearchUrl= # elasticsearch地址
+
+mongoUser= # mongodb用户
+mongoPassword= # mongodb密码
 ```
 
 ## 必要文件

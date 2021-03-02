@@ -4,7 +4,7 @@ import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
-import com.example.hope.config.redis.RedisUtil;
+import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
@@ -34,7 +34,7 @@ public class ProductServiceIpm implements ProductService {
     private StoreService storeService;
 
     @Resource
-    private RedisUtil redisUtil;
+    private RedisService redisService;
 
     @Resource
     private OrderServiceIpm orderServiceIpm;
@@ -68,7 +68,7 @@ public class ProductServiceIpm implements ProductService {
         int res = productMapper.addSales(id, sales);
         log.info("product addSales -> " + id + " for -> " + sales + " -> res " + res);
         BusinessException.check(res, "更新销量失败");
-        redisUtil.incrScore("product_rank", String.valueOf(id), sales);
+        redisService.incrScore("product_rank", String.valueOf(id), sales);
         // 增加商店销量
         storeService.sales(findById(id).getStoreId(), sales);
     }
@@ -189,14 +189,14 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     public List<Product> rank() {
-        Set<String> rank = redisUtil.range("product_rank", 0, 9);
+        Set<String> rank = redisService.range("product_rank", 0, 9);
         // 如果排行榜为空，将所有产品加入进去，分数为0
         if (rank.size() == 0) {
             List<Product> stores = findAll(new HashMap<>()).getList();
             for (Product product : stores) {
-                redisUtil.incrScore("product_rank", String.valueOf(product.getId()), 0);
+                redisService.incrScore("product_rank", String.valueOf(product.getId()), 0);
             }
-            rank = redisUtil.range("product_rank", 0, 9);
+            rank = redisService.range("product_rank", 0, 9);
         }
         List<Product> products = new ArrayList<>();
         for (String id : rank) {

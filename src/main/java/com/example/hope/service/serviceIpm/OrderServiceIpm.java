@@ -4,7 +4,7 @@ import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
-import com.example.hope.config.redis.RedisUtil;
+import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.FileService;
@@ -43,7 +43,7 @@ public class OrderServiceIpm implements OrderService {
     private ProductServiceIpm productService;
 
     @Resource
-    private RedisUtil redisUtil;
+    private RedisService redisService;
 
     @Resource
     private FileService fileService;
@@ -68,7 +68,7 @@ public class OrderServiceIpm implements OrderService {
             amqpTemplate.convertAndSend("order.exchange", "order.created", order);
             if (isExpired) {
                 // 批量设置过期时间
-                redisUtil.ins("order_" + order.getId(), "expired", 10, TimeUnit.MINUTES);
+                redisService.expire("order_" + order.getId(), "expire", 10, TimeUnit.MINUTES);
             }
         }
     }
@@ -278,9 +278,9 @@ public class OrderServiceIpm implements OrderService {
         userService.reduceScore(userId);
         // 更新订单状态
         int res = orderMapper.receive(id, userId);
-        redisUtil.del("order_" + id);
+        redisService.del("order_" + id);
         // 下单1小时后自动更新为完成状态
-        redisUtil.ins("completed_" + id, "expired", 1, TimeUnit.HOURS);
+        redisService.expire("completed_" + id, "expire", 1, TimeUnit.HOURS);
         BusinessException.check(res, "接单失败");
     }
 

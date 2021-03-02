@@ -3,18 +3,14 @@ package com.example.hope.service.serviceIpm;
 import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
-import com.example.hope.config.redis.RedisUtil;
+import com.example.hope.config.redis.RedisService;
 import com.example.hope.elasticsearch.service.EsStoreService;
-import com.example.hope.model.entity.Product;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
-import com.example.hope.service.OrderService;
-import com.example.hope.service.ProductService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -36,7 +32,7 @@ public class StoreServiceImp implements StoreService {
     private StoreMapper storeMapper;
 
     @Resource
-    private RedisUtil redisUtil;
+    private RedisService redisService;
 
     @Resource
     private ProductServiceIpm productServiceIpm;
@@ -72,7 +68,7 @@ public class StoreServiceImp implements StoreService {
     public void sales(long id, int quantity) {
         int res = storeMapper.sales(id, quantity);
         BusinessException.check(res, "增加商店销量失败");
-        redisUtil.incrScore("store_rank", String.valueOf(id), quantity);
+        redisService.incrScore("store_rank", String.valueOf(id), quantity);
     }
 
     /**
@@ -190,14 +186,14 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     public List<Store> rank() {
-        Set<String> range = redisUtil.range("store_rank", 0, 9);
+        Set<String> range = redisService.range("store_rank", 0, 9);
         // 如果排行榜为空，将所有商店加入进去，分数为0
         if (range.size() == 0) {
             List<Store> stores = findAll(new HashMap<>()).getList();
             for (Store store : stores) {
-                redisUtil.incrScore("store_rank", String.valueOf(store.getId()), 0);
+                redisService.incrScore("store_rank", String.valueOf(store.getId()), 0);
             }
-            range = redisUtil.range("store_rank", 0, 9);
+            range = redisService.range("store_rank", 0, 9);
         }
         List<Store> stores = new ArrayList<>();
         for (String id : range) {

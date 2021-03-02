@@ -5,7 +5,7 @@ services:
     image: mysql:1
     build: ./mysql
     volumes:
-      - ./mysql/init:/docker-entrypoint-initdb.d/
+      - ./init/mysql:/docker-entrypoint-initdb.d/
     environment:
       MYSQL_ROOT_PASSWORD: ${dbPassword}
       MYSQL_ROOT_HOST: '%'

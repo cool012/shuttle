@@ -18,10 +18,8 @@ public class HelloController {
         return Utils.encode("hope");
     }
 
-
     @PostMapping("/test")
     public String test(String text){
-        System.out.println(text);
         return text;
     }
 

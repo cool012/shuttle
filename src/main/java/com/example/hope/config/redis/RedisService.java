@@ -14,27 +14,25 @@ import java.util.concurrent.TimeUnit;
  * @created: 2020/11/14 21:07
  */
 @Component
-public class RedisUtil {
+public class RedisService {
 
     private RedisTemplate<String, String> redisTemplate;
     private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    public RedisUtil(RedisTemplate<String, String> redisTemplate, StringRedisTemplate stringRedisTemplate) {
+    public RedisService(RedisTemplate<String, String> redisTemplate, StringRedisTemplate stringRedisTemplate) {
         this.redisTemplate = redisTemplate;
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**
-     * 向redis添加元素
+     * 向redis添加元素，设置expire
      *
-     * @param key   key
-     * @param value value
-     * @param time  time
-     * @param unit  unit
-     * @return 是否添加成功
+     * @param key  key
+     * @param time time
+     * @param unit unit
      */
-    public void ins(final String key, String value, int time, TimeUnit unit) {
+    public void expire(final String key, String value, int time, TimeUnit unit) {
         try {
             redisTemplate.opsForValue().set(key, value, time, unit);
         } catch (Exception e) {

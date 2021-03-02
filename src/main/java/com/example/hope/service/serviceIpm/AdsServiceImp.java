@@ -2,7 +2,7 @@ package com.example.hope.service.serviceIpm;
 
 import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.config.exception.BusinessException;
-import com.example.hope.config.redis.RedisUtil;
+import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Ads;
 import com.example.hope.model.mapper.AdsMapper;
 import com.example.hope.service.AdsService;
@@ -29,7 +29,7 @@ public class AdsServiceImp implements AdsService {
     private AdsMapper adsMapper;
 
     @Resource
-    private RedisUtil redisUtil;
+    private RedisService redisService;
 
     /**
      * 添加广告
@@ -43,7 +43,7 @@ public class AdsServiceImp implements AdsService {
     public void insert(Ads ads, int expired) {
         int res = adsMapper.insert(ads);
         // 设置过期时间
-        if (res > 0) redisUtil.ins("ads_" + ads.getId(), "expired", expired, TimeUnit.DAYS);
+        if (res > 0) redisService.expire("ads_" + ads.getId(), "expire", expired, TimeUnit.DAYS);
         log.info(LoggerHelper.logger(ads, res));
         BusinessException.check(res, "添加失败");
     }

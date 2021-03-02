@@ -1,4 +1,4 @@
-package com.example.hope.mongo.repository;
+package com.example.hope.repository.mongo;
 
 import com.example.hope.model.entity.Comments;
 import org.springframework.data.mongodb.repository.MongoRepository;

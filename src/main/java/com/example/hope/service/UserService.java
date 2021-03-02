@@ -30,7 +30,7 @@ public interface UserService {
 
     PageInfo<User> findAll(Map<String, String> option);
 
-    PageInfo<User> search(String keyword,Map<String, String> option);
+    List<User> search(String keyword);
 
     void admin(long userId);
 }

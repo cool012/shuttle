@@ -4,9 +4,9 @@ import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
-import com.example.hope.elasticsearch.service.EsStoreService;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
+import com.example.hope.repository.elasticsearch.StoreRepository;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -38,10 +38,7 @@ public class StoreServiceImp implements StoreService {
     private ProductServiceIpm productServiceIpm;
 
     @Resource
-    private AdsServiceImp adsServiceImp;
-
-    @Resource
-    private EsStoreService esStoreService;
+    private StoreRepository storeRepository;
 
     /**
      * 添加商店
@@ -55,7 +52,7 @@ public class StoreServiceImp implements StoreService {
         int res = storeMapper.insert(store);
         log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "添加失败");
-        esStoreService.save(store);
+        storeRepository.save(store);
     }
 
     /**
@@ -84,7 +81,7 @@ public class StoreServiceImp implements StoreService {
         productServiceIpm.deleteByStoreId(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
-        esStoreService.delete(id);
+        storeRepository.deleteById(id);
     }
 
     /**
@@ -125,7 +122,7 @@ public class StoreServiceImp implements StoreService {
         int res = storeMapper.update(store);
         log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "更新失败");
-        esStoreService.save(store);
+        storeRepository.save(store);
     }
 
     /**
@@ -209,8 +206,7 @@ public class StoreServiceImp implements StoreService {
      * @return 商店列表
      */
     @Override
-    @Cacheable(value = "store", key = "methodName + #keyword")
     public List<Store> search(String keyword) {
-        return storeMapper.select(keyword, "search");
+        return storeRepository.queryStoreByName(keyword);
     }
 }

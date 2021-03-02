@@ -1,4 +1,4 @@
-package com.example.hope.elasticsearch.repository;
+package com.example.hope.repository.elasticsearch;
 
 import com.example.hope.model.entity.Store;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

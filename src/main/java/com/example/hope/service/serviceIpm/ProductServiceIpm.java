@@ -8,7 +8,7 @@ import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
-import com.example.hope.elasticsearch.service.EsProductService;
+import com.example.hope.repository.elasticsearch.ProductRepository;
 import com.example.hope.service.ProductService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
@@ -40,7 +40,7 @@ public class ProductServiceIpm implements ProductService {
     private OrderServiceIpm orderServiceIpm;
 
     @Resource
-    private EsProductService esProductService;
+    private ProductRepository productRepository;
 
     /**
      * 添加产品
@@ -54,7 +54,7 @@ public class ProductServiceIpm implements ProductService {
         int res = productMapper.insert(product);
         log.info(LoggerHelper.logger(product, res));
         BusinessException.check(res, "添加失败");
-        esProductService.save(product);
+        productRepository.save(product);
     }
 
     /**
@@ -86,7 +86,7 @@ public class ProductServiceIpm implements ProductService {
         orderServiceIpm.deleteByPid(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
-        esProductService.delete(id);
+        productRepository.deleteById(id);
     }
 
     /**
@@ -114,7 +114,7 @@ public class ProductServiceIpm implements ProductService {
         int res = productMapper.update(product);
         log.info(LoggerHelper.logger(product, res));
         BusinessException.check(res, "更新失败");
-        esProductService.save(product);
+        productRepository.save(product);
     }
 
     /**
@@ -211,8 +211,7 @@ public class ProductServiceIpm implements ProductService {
      * @return 产品列表
      */
     @Override
-    @Cacheable(value = "product", key = "methodName + #keyword")
     public List<Product> search(String keyword) {
-        return productMapper.select(keyword, "search");
+        return productRepository.queryProductByName(keyword);
     }
 }

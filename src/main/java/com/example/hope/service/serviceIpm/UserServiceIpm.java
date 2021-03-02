@@ -5,7 +5,7 @@ import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
-import com.example.hope.elasticsearch.service.EsUserService;
+import com.example.hope.repository.elasticsearch.UserRepository;
 import com.example.hope.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -33,7 +33,7 @@ public class UserServiceIpm implements UserService {
     private UserMapper userMapper;
 
     @Resource
-    private EsUserService esUserService;
+    private UserRepository userRepository;
 
     /**
      * 用户注册
@@ -50,7 +50,7 @@ public class UserServiceIpm implements UserService {
         user.setPassword(Utils.encode(user.getPassword()));
         int res = userMapper.insert(user);
         BusinessException.check(res, "注册失败");
-        esUserService.save(user);
+        userRepository.save(user);
     }
 
     /**
@@ -84,7 +84,7 @@ public class UserServiceIpm implements UserService {
         int res = userMapper.delete(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
-        esUserService.delete(id);
+        userRepository.deleteById(id);
     }
 
     /**
@@ -99,7 +99,7 @@ public class UserServiceIpm implements UserService {
         int res = userMapper.update(user);
         log.info(LoggerHelper.logger(user, res));
         BusinessException.check(res, "更新失败");
-        esUserService.save(user);
+        userRepository.save(user);
     }
 
     /**
@@ -201,15 +201,11 @@ public class UserServiceIpm implements UserService {
      * 搜索
      *
      * @param keyword 关键词
-     * @param option  分页可选项
-     * @return 分页包装类
+     * @return 用户列表
      */
     @Override
-    @Cacheable(value = "user", key = "methodName + #keyword")
-    public PageInfo<User> search(String keyword, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
-        return PageInfo.of(userMapper.search("%" + keyword + "%"));
+    public List<User> search(String keyword) {
+        return userRepository.queryUserByNameOrPhone(keyword);
     }
 
     /**

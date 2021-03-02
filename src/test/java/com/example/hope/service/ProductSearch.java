@@ -1,6 +1,6 @@
 package com.example.hope.service;
 
-import com.example.hope.elasticsearch.repository.ProductRepository;
+import com.example.hope.repository.elasticsearch.ProductRepository;
 import com.example.hope.model.entity.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

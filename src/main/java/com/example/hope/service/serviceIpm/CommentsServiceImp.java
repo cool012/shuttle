@@ -73,7 +73,7 @@ public class CommentsServiceImp implements CommentsService {
     @Override
     public void update(Comments comments, String token) {
         comments.setUserId(JwtUtils.getUserId(token));
-        commentsRepository.insert(comments);
+        commentsRepository.save(comments);
     }
 
     /**

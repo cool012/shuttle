@@ -97,9 +97,4 @@ jwt:
   key: ${key}
 alipay:
   appId: ${appid}
-  privateKey: ${privateKey}
-  publicKey: ${publicKey}
   gateway: ${gateway}
-  notifyUrl: ${notifyUrl}
-  redirectUrl: ${redirectUrl}
-  returnUrl: ${returnUrl}

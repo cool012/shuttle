@@ -6,19 +6,20 @@ shuttle是一个综合性C2C校园服务平台，主要服务于移动端的单�
 
 ## 依赖
 
-| Syntax | Description | Version|
-|  :----: |  :----: | :----: |
-| Web Frame | Spring Boot | 2.3.0 |
-| NoSQL | Redis | 4.0.9 |
-| Databases | Mysql | 5.5 |
-| Pool | Druid | 1.1.10 |
-| ORM | MyBatis | 2.1.0 |
-| Log | log4j2 | 2.13.2 |
-| MQ | RabbitMQ | 3.x |
-| API Manager | Swagger | 2.9.2 |
-| Security | JWT | 3.4.0 |
-| Pagination | PageHelper | 1.2.5 |
-| SearchEngine | ElasticSearch | 7.6.2 |
+| Description | Version|
+|  :----: | :----: |
+| Spring Boot | 2.3.0 |
+| Redis | 4.0.9 |
+| Mysql | 5.5 |
+| Druid | 1.1.10 |
+| MyBatis | 2.1.0 |
+| log4j2 | 2.13.2 |
+| RabbitMQ | latest |
+| Swagger | 2.9.2 |
+| JWT | 3.4.0 |
+| PageHelper | 1.2.5 |
+| ElasticSearch | 7.6.2 |
+| MongoDB | latest |
 
 ## 必要参数
 
@@ -28,27 +29,16 @@ shuttle是一个综合性C2C校园服务平台，主要服务于移动端的单�
 dbUser= # mysql用户
 dbName= # mysql数据库名称
 dbPassword= # mysql密码
-
 redisPassword= # redis密码
-
 mqUser= # rabbitmq用户
 mqPassword= # rabbitmq密码
-
 key= # jwt密钥
-
 appId= # 支付宝沙盒应用id
 gateway= # 支付宝沙盒网关
-notifyUrl= # 支付宝沙盒异步通知
-returnUrl= # 支付宝沙盒同步通知
-redirectUrl= # 支付宝沙盒同步通知
-
 druidUser= # druid用户
 druidPassword= # druid密码
-
 port= # http端口
-
 elasticsearchUrl= # elasticsearch地址
-
 mongoUser= # mongodb用户
 mongoPassword= # mongodb密码
 ```
@@ -65,27 +55,13 @@ private.txt
 public.txt
 ```
 
-## 环境搭建
+## 环境依赖
+
+* Docker
+* Docler-compose
+* 为 `ElasticSearch` 赋予相应权限
 
 ```sh
-# 环境debin10
-
-# 添加软件源的 GPG 密钥
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-
-# 向 sources.list 中添加 Docker 软件源
-add-apt-repository  "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-
-# 安装 Docker
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
-
-# 下载docker-compose二进制包
-sudo curl -L https://github.com/docker/compose/releases/download/1.27.4/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-
-# 赋予相应权限
-sudo chmod +x /usr/local/bin/docker-compose
-
 # 创建elasticsearch数据文件目录
 mkdir /elasticsearch/data
 
@@ -93,24 +69,31 @@ mkdir /elasticsearch/data
 sudo chmod 777 /elasticsearch/data
 ```
 
-> 参考：[Docker —— 从入门到实践](https://yeasy.gitbook.io/docker_practice/install/debian)
-
 ## 分支
 
-[master](https://github.com/TouwaErioer/shuttle) 主分支，使用log4j2作为日志框架，日志写入到项目根 目录 `logs` 文件夹
+[master](https://github.com/TouwaErioer/shuttle) 主分支，使用 `log4j2` 作为日志框架，日志写入到项目根 目录 `logs` 文件夹
 
-[KEL](https://github.com/TouwaErioer/shuttle) 使用 KEL （ Kibana +ElasticSearch + Logstash）作为日志系统
+[KEL](https://github.com/TouwaErioer/shuttle) 使用 `Kibana、ElasticSearch、Logstash` 作为日志系统
 
 ## 部署
 
 ```sh
+# 克隆项目
 git clone https://github.com/TouwaErioer/shuttle
 
 # 因为项目涉及到文件的读写，要开放相应的权限
 sudo chmod 777 shuttle
 
+# 切换到项目
 cd shuttle
 
+# 在后台启动
 sudo docker-compose up -d
+
+# 停止并删除容器
+sudo docker-compose down
+
+# 停止
+sudo docker-compose stop
 ```
 

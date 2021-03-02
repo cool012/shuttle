@@ -77,14 +77,12 @@ services:
       key: ${key}
       appId: ${appId}
       gateway: ${gateway}
-      notifyUrl: ${notifyUrl}
       redisPassword: ${redisPassword}
       redisHost: redis
       mqHost: rabbitmq
       mqUser: ${mqUser}
       mqPasswd: ${mqPassword}
       redirectUrl: ${redirectUrl}
-      returnUrl: ${returnUrl}
       druidUser: ${druidUser}
       druidPasswd: ${druidPasswd}
       port: ${port}

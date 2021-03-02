@@ -3,7 +3,7 @@ services:
   mysql:
     container_name: shuttle-mysql
     image: mysql:1
-    build: ./mysql
+    build: ./init
     volumes:
       - ./init/mysql:/docker-entrypoint-initdb.d/
     environment:
@@ -84,7 +84,7 @@ services:
       mqPasswd: ${mqPassword}
       redirectUrl: ${redirectUrl}
       druidUser: ${druidUser}
-      druidPasswd: ${druidPasswd}
+      druidPasswd: ${druidPassword}
       port: ${port}
       elasticsearchUrl: http://es:9200
       mongoUser: ${mongoUser}

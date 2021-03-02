@@ -31,6 +31,10 @@ public class PayServiceImp implements PayService {
     @Resource
     private UserService userService;
 
+    // 重定向url，前端支付结果界面
+    @Value("${alipay.redirectUrl}")
+    private String redirectUrl;
+
     /**
      * 充值
      *
@@ -67,8 +71,11 @@ public class PayServiceImp implements PayService {
         Map<String, String> params = getParams(requestParams);
         boolean signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.alipay_public_key, AlipayConfig.charset,
                 AlipayConfig.sign_type);
-        if (!signVerified) return alipayConfig.redirect_url+ "0";
-        return alipayConfig.redirect_url + "1";
+        String redirectUrl;
+        if (this.redirectUrl.equals("")) redirectUrl = alipayConfig.redirect_url;
+        else redirectUrl = String.format("http://%s/return/", this.redirectUrl);
+        if (!signVerified) return redirectUrl + "0";
+        return redirectUrl + "1";
     }
 
     /**

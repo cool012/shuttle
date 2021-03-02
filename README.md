@@ -35,6 +35,7 @@ mqPassword= # rabbitmq密码
 key= # jwt密钥
 appId= # 支付宝沙盒应用id
 gateway= # 支付宝沙盒网关
+redirectUrl= # 前端服务器ip，如果前端部署在同一台服务器上可以不填
 druidUser= # druid用户
 druidPassword= # druid密码
 port= # http端口

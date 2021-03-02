@@ -98,3 +98,4 @@ jwt:
 alipay:
   appId: ${appid}
   gateway: ${gateway}
+  redirectUrl: ${redirectUrl}

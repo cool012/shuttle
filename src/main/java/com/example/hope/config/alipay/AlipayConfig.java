@@ -1,5 +1,6 @@
 package com.example.hope.config.alipay;
 
+import cn.hutool.json.JSONObject;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.example.hope.common.utils.Utils;
@@ -48,7 +49,7 @@ public class AlipayConfig implements ApplicationRunner {
     public void run(ApplicationArguments args) throws IOException {
         this.merchant_private_key = Utils.getKey("private.txt");
         this.alipay_public_key = Utils.getKey("public.txt");
-        String ip = new RestTemplate().getForEntity("https://api.ipify.org", String.class).getBody();
+        String ip = new RestTemplate().getForEntity("http://ip-api.com/json", JSONObject.class).getBody().getStr("query");
         System.out.println(ip);
         this.notify_url = String.format("http://%s:%s/payment/notify", ip, this.http_port);
         this.return_url = String.format("http://%s:%s/payment/return", ip, this.http_port);

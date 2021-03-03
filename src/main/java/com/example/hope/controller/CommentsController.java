@@ -8,6 +8,7 @@ import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.service.CommentsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,14 +59,14 @@ public class CommentsController {
     @Admin
     @ApiOperation("查询全部评论")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll() {
-        return ReturnMessageUtil.sucess(commentsService.findAll());
+    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(commentsService.findAll(option));
     }
 
     @LoginUser
     @ApiOperation("按商店id查询全部评论")
     @RequestMapping(value = "/findByStoreId/{storeId}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByStoreId(@PathVariable long storeId) {
-        return ReturnMessageUtil.sucess(commentsService.findByStoreId(storeId));
+    public ReturnMessage<Object> findByStoreId(@PathVariable long storeId, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(commentsService.findByStoreId(storeId, option));
     }
 }

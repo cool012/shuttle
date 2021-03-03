@@ -1,16 +1,29 @@
 package com.example.hope.service.serviceIpm;
 
 import com.example.hope.common.utils.JwtUtils;
+import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Comments;
 import com.example.hope.model.entity.Orders;
+import com.example.hope.model.entity.Page;
 import com.example.hope.repository.mongo.CommentsRepository;
 import com.example.hope.service.CommentsService;
+import com.mongodb.BasicDBObject;
 import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.annotations.Options;
+import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.xml.stream.events.Comment;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description: 评论服务实现类
@@ -26,6 +39,9 @@ public class CommentsServiceImp implements CommentsService {
 
     @Resource
     private CommentsRepository commentsRepository;
+
+    @Resource
+    private MongoTemplate mongoTemplate;
 
 
     /**
@@ -83,8 +99,28 @@ public class CommentsServiceImp implements CommentsService {
      * @return 分页包装类
      */
     @Override
-    public List<Comments> findByStoreId(long storeId) {
-        return commentsRepository.findByStoreId(storeId);
+    public Page findByStoreId(long storeId, Map<String, String> option) {
+        Utils.check_map(option);
+
+        Page page = new Page<Comments>();
+        String _id = option.get("_id");
+        page.setPageSize(Integer.parseInt(option.get("pageSize")));
+        page.setPageNo(Integer.parseInt(option.get("pageNo")));
+
+        Criteria criteria = Criteria.where("storeId").is(storeId);
+
+        // 分页查询优化，不跳页，附带前一页最后一条记录的_id
+        if (_id != null) criteria = criteria.and("_id").gt(new ObjectId(_id));
+        Query query = new Query(criteria);
+
+        if (_id != null) query.limit(page.getPageSize());
+        else query.skip((page.getPageNo() - 1) * page.getPageSize()).limit(page.getPageSize());
+
+        int count = (int) mongoTemplate.count(new Query(Criteria.where("storeId").is(storeId)), Comments.class);
+        page.setCount(count);
+        page.setTotal((count + page.getPageSize() - 1) / page.getPageSize());
+        page.setList(mongoTemplate.find(query, Comments.class));
+        return page;
     }
 
     /**
@@ -93,7 +129,26 @@ public class CommentsServiceImp implements CommentsService {
      * @return 分页包装类
      */
     @Override
-    public List<Comments> findAll() {
-        return commentsRepository.findAll();
+    public Page<Comments> findAll(Map<String, String> option) {
+        Utils.check_map(option);
+
+        Page page = new Page<Comments>();
+        String _id = option.get("_id");
+        page.setPageSize(Integer.parseInt(option.get("pageSize")));
+        page.setPageNo(Integer.parseInt(option.get("pageNo")));
+        Criteria criteria = new Criteria();
+
+        // 分页查询优化，不跳页，附带前一页最后一条记录的_id
+        if (_id != null) criteria = Criteria.where("_id").gt(new ObjectId(_id));
+        Query query = new Query(criteria);
+
+        if (_id != null) query.limit(page.getPageSize());
+        else query.skip((page.getPageNo() - 1) * page.getPageSize()).limit(page.getPageSize());
+
+        int count = (int) mongoTemplate.count(new Query(), Comments.class);
+        page.setCount(count);
+        page.setTotal((count + page.getPageSize() - 1) / page.getPageSize());
+        page.setList(mongoTemplate.find(query, Comments.class));
+        return page;
     }
 }

@@ -1,8 +1,7 @@
 package com.example.hope.service;
 
 import com.example.hope.model.entity.Comments;
-import com.example.hope.model.entity.User;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.model.entity.Page;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,7 @@ public interface CommentsService {
 
     void update(Comments comments, String token);
 
-    List<Comments> findByStoreId(long storeId);
+    Page<Comments> findByStoreId(long storeId, Map<String, String> option);
 
-    List<Comments> findAll();
+    Page<Comments> findAll(Map<String, String> option);
 }

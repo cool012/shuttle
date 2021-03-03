@@ -62,9 +62,9 @@ public class UserServiceIpm implements UserService {
      * @return 用户信息和Token
      */
     @Override
-    public Map<String, Object> login(String phone, String password, int expired) {
+    public Map<String, Object> login(String account, String password, int expired) {
         String encryption_password = Utils.encode(password);
-        User user = userMapper.login(phone, encryption_password);
+        User user = userMapper.login(account, encryption_password);
         BusinessException.check(user != null ? 1 : 0, "登录失败，用户名或密码错误");
         Map<String, Object> map = new HashMap<>();
         map.put("token", JwtUtils.createToken(user, expired));

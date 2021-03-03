@@ -10,7 +10,7 @@ public interface UserService {
 
     void register(User user);
 
-    Map<String, Object> login(String phone, String password, int expired);
+    Map<String, Object> login(String account, String password, int expired);
 
     void delete(long id);
 

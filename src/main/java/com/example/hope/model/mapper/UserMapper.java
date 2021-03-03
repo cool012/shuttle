@@ -34,8 +34,9 @@ public interface UserMapper {
     @Select("select id,phone,address,admin,score,name from user")
     List<User> findAll();
 
-    @Select("select id,phone,address,score,name,admin from user where phone = #{phone} and password = #{encryption_password}")
-    User login(String phone, String encryption_password);
+    @Select("select id,phone,address,score,name,admin from user where (phone = #{account} or name = #{account}) and" +
+            " password = #{encryption_password}")
+    User login(String account, String encryption_password);
 
     @Select("select id,phone,address,admin,score,name from user where phone = #{phone}")
     List<User> findByPhone(String phone);

@@ -60,6 +60,10 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void insert(List<Orders> orderList, boolean isExpired) {
+        orderList.forEach(order -> {
+            if (!userService.exist(order.getCid()) || !userService.exist(order.getSid()) || !productService.exist(order.getPid()))
+                throw new BusinessException(1, "客户或服务者或产品不存在");
+        });
         int res = orderMapper.insertBatch(orderList);
         log.info(LoggerHelper.logger(orderList, res));
         BusinessException.check(res, "添加失败");
@@ -131,6 +135,8 @@ public class OrderServiceIpm implements OrderService {
     @Transient
     @CacheEvict(value = "order", allEntries = true)
     public void update(Orders order) {
+        if (!userService.exist(order.getCid()) || !userService.exist(order.getSid()) || !productService.exist(order.getPid()))
+            throw new BusinessException(1, "客户或服务者或产品不存在");
         if (order.getFile().equals("")) order.setFile(null);
         int res = orderMapper.update(order);
         log.info(LoggerHelper.logger(order, res));
@@ -319,5 +325,16 @@ public class OrderServiceIpm implements OrderService {
         productService.addSales(orders.getPid(), 1);
         int res = orderMapper.completed(orders.getId());
         BusinessException.check(res, "完成订单失败");
+    }
+
+    /**
+     * 是否存在订单
+     *
+     * @param id 订单id
+     * @return boolean
+     */
+    @Override
+    public boolean exist(long id) {
+        return findById(id) != null;
     }
 }

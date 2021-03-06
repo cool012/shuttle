@@ -33,4 +33,6 @@ public interface UserService {
     List<User> search(String keyword);
 
     void admin(long userId);
+
+    boolean exist(long userId);
 }

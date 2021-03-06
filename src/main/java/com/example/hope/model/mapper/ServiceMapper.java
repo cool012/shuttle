@@ -21,4 +21,7 @@ public interface ServiceMapper {
 
     @Select("select id,name,color,icon from service")
     List<Services> findAll();
+
+    @Select("select * from service where id = #serviceId")
+    List<Services> findById(long serviceId);
 }

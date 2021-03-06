@@ -6,6 +6,7 @@ import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Category;
 import com.example.hope.model.mapper.CategoryMapper;
 import com.example.hope.service.CategoryService;
+import com.example.hope.service.ServiceService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
@@ -34,6 +35,9 @@ public class CategoryServiceImp implements CategoryService {
     @Resource
     private StoreServiceImp storeServiceImp;
 
+    @Resource
+    private ServiceService serviceService;
+
     /**
      * 添加类别
      *
@@ -43,6 +47,7 @@ public class CategoryServiceImp implements CategoryService {
     @Transient
     @CacheEvict(value = "category", allEntries = true)
     public void insert(Category category) {
+        if (!serviceService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");
         int res = categoryMapper.insert(category);
         log.info(LoggerHelper.logger(category, res));
         BusinessException.check(res, "添加失败");
@@ -85,6 +90,7 @@ public class CategoryServiceImp implements CategoryService {
     @Transient
     @CacheEvict(value = "category", allEntries = true)
     public void update(Category category) {
+        if (!serviceService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");
         int res = categoryMapper.update(category);
         log.info(LoggerHelper.logger(category, res));
         BusinessException.check(res, "更新失败");
@@ -113,5 +119,28 @@ public class CategoryServiceImp implements CategoryService {
     @Cacheable(value = "category", key = "methodName + #serviceId")
     public List<Category> findAllByServiceId(long serviceId) {
         return categoryMapper.select(String.valueOf(serviceId), "serviceId");
+    }
+
+    /**
+     * 是否存在类别
+     *
+     * @param id 类别id
+     * @return boolean
+     */
+    @Override
+    public boolean exist(long id) {
+        return findById(id).size() == 0;
+    }
+
+    /**
+     * 根据id查询类别
+     *
+     * @param id 类别id
+     * @return 类别列表
+     */
+    @Override
+    @Cacheable(value = "category", key = "methodName + #id")
+    public List<Category> findById(long id) {
+        return categoryMapper.select("id", String.valueOf(id));
     }
 }

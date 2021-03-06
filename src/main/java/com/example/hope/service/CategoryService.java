@@ -17,4 +17,8 @@ public interface CategoryService {
     PageInfo<Category> findAll(Map<String, String> option);
 
     List<Category> findAllByServiceId(long serviceId);
+
+    boolean exist(long id);
+
+    List<Category> findById(long id);
 }

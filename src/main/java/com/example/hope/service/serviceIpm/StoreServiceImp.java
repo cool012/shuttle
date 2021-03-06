@@ -7,6 +7,8 @@ import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
 import com.example.hope.repository.elasticsearch.StoreRepository;
+import com.example.hope.service.CategoryService;
+import com.example.hope.service.ServiceService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -40,6 +42,12 @@ public class StoreServiceImp implements StoreService {
     @Resource
     private StoreRepository storeRepository;
 
+    @Resource
+    private CategoryService categoryService;
+
+    @Resource
+    private ServiceService serviceService;
+
     /**
      * 添加商店
      *
@@ -49,6 +57,8 @@ public class StoreServiceImp implements StoreService {
     @Transient
     @CacheEvict(value = "store", allEntries = true)
     public void insert(Store store) {
+        if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))
+            throw new BusinessException(0, "类别或服务id不存在");
         int res = storeMapper.insert(store);
         log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "添加失败");
@@ -119,6 +129,8 @@ public class StoreServiceImp implements StoreService {
     @Transient
     @CacheEvict(value = "store", allEntries = true)
     public void update(Store store) {
+        if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))
+            throw new BusinessException(0, "类别或服务id不存在");
         int res = storeMapper.update(store);
         log.info(LoggerHelper.logger(store, res));
         BusinessException.check(res, "更新失败");
@@ -208,5 +220,16 @@ public class StoreServiceImp implements StoreService {
     @Override
     public List<Store> search(String keyword) {
         return storeRepository.queryStoreByName(keyword);
+    }
+
+    /**
+     * 是否存在商店
+     *
+     * @param id 商店id
+     * @return boolean
+     */
+    @Override
+    public boolean exist(long id) {
+        return findById(id).size() != 0;
     }
 }

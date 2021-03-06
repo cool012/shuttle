@@ -51,6 +51,7 @@ public class ProductServiceIpm implements ProductService {
     @Transient
     @CacheEvict(value = "product", allEntries = true)
     public void insert(Product product) {
+        if (!storeService.exist(product.getStoreId())) throw new BusinessException(0, "商店id不存在");
         int res = productMapper.insert(product);
         log.info(LoggerHelper.logger(product, res));
         BusinessException.check(res, "添加失败");
@@ -111,6 +112,7 @@ public class ProductServiceIpm implements ProductService {
     @Transient
     @CacheEvict(value = "product", allEntries = true)
     public void update(Product product) {
+        if (!storeService.exist(product.getStoreId())) throw new BusinessException(0, "商店id不存在");
         int res = productMapper.update(product);
         log.info(LoggerHelper.logger(product, res));
         BusinessException.check(res, "更新失败");
@@ -213,5 +215,16 @@ public class ProductServiceIpm implements ProductService {
     @Override
     public List<Product> search(String keyword) {
         return productRepository.queryProductByName(keyword);
+    }
+
+    /**
+     * 是否存在产品
+     *
+     * @param id 产品id
+     * @return boolean
+     */
+    @Override
+    public boolean exist(long id) {
+        return findById(id) != null;
     }
 }

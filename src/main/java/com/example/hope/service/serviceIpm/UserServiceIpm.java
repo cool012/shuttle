@@ -56,7 +56,7 @@ public class UserServiceIpm implements UserService {
     /**
      * 用户登录
      *
-     * @param phone    电话
+     * @param account  账户
      * @param password 密码
      * @param expired  token过期时间，单位：分钟
      * @return 用户信息和Token
@@ -219,5 +219,16 @@ public class UserServiceIpm implements UserService {
         int res = userMapper.admin(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "设置管理员失败");
+    }
+
+    /**
+     * 是否存在用户
+     *
+     * @param userId 用户Id
+     * @return boolean
+     */
+    @Override
+    public boolean exist(long userId) {
+        return findById(userId).size() != 0;
     }
 }

@@ -25,4 +25,6 @@ public interface ProductService {
     List<Product> findByStoreId(long storeId);
 
     Product findById(long id);
+
+    boolean exist(long id);
 }

@@ -33,4 +33,6 @@ public interface OrderService {
     PageInfo<Orders> findByCompleted(Map<String, String> option);
 
     PageInfo<Orders> findByPresent(Map<String, String> option);
+
+    boolean exist(long id);
 }

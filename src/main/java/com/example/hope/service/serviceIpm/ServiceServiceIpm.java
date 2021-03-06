@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -82,5 +83,28 @@ public class ServiceServiceIpm implements ServiceService {
         Utils.check_map(option);
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
         return PageInfo.of(serviceMapper.findAll());
+    }
+
+    /**
+     * 是否存在服务
+     *
+     * @param id 服务id
+     * @return boolean
+     */
+    @Override
+    public boolean exist(long id) {
+        return findById(id).size() != 0;
+    }
+
+    /**
+     * 根据服务id查询服务
+     *
+     * @param id 服务id
+     * @return 服务列表
+     */
+    @Override
+    @Cacheable(value = "service", key = "methodName + #id")
+    public List<Services> findById(long id) {
+        return serviceMapper.findById(id);
     }
 }

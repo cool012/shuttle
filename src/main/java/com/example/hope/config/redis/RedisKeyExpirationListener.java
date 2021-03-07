@@ -32,8 +32,8 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
      */
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        String key = message.toString();//todo 清空缓存判断
-        int id = Integer.parseInt(key.substring(key.indexOf("_") + 1));
+        String key = message.toString();
+        long id = Long.parseLong(key.substring(key.indexOf("_") + 1));
         if (key.contains("order")) orderServiceIpm.delete(id);
         else if (key.contains("completed")) orderServiceIpm.completed(id);
         else if (key.contains("ads")) adsService.delete(id);

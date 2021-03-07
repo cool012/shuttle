@@ -113,8 +113,8 @@ public class UserController {
     @Admin
     @ApiOperation("搜索")
     @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
-    public ReturnMessage<Object> search(@PathVariable("keyword") String keyword) {
-        return ReturnMessageUtil.sucess(userService.search(keyword));
+    public ReturnMessage<Object> search(@PathVariable("keyword") String keyword, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(userService.search(keyword, option));
     }
 
     @Admin

@@ -5,13 +5,18 @@ import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
+import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.UserRepository;
 import com.example.hope.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,6 +39,9 @@ public class UserServiceIpm implements UserService {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    private EsPageHelper<User> esPageHelper;
 
     /**
      * 用户注册
@@ -204,8 +212,13 @@ public class UserServiceIpm implements UserService {
      * @return 用户列表
      */
     @Override
-    public List<User> search(String keyword) {
-        return userRepository.queryUserByNameOrPhone(keyword);
+    public SearchHits search(String keyword, Map<String, String> option) {
+        // todo 字母模糊搜索
+        QueryBuilder queryBuilder = QueryBuilders
+                .boolQuery()
+                .should(QueryBuilders.wildcardQuery("name", String.format("*%s*", keyword)))
+                .should(QueryBuilders.wildcardQuery("phone", String.format("*%s*", keyword)));
+        return esPageHelper.build(queryBuilder, option, User.class);
     }
 
     /**

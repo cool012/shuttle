@@ -2,6 +2,8 @@ package com.example.hope.service;
 
 import com.example.hope.model.entity.User;
 import com.github.pagehelper.PageInfo;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ public interface UserService {
 
     PageInfo<User> findAll(Map<String, String> option);
 
-    List<User> search(String keyword);
+    SearchHits search(String keyword, Map<String, String> option);
 
     void admin(long userId);
 

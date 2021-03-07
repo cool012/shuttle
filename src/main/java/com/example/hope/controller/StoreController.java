@@ -89,7 +89,7 @@ public class StoreController {
     @LoginUser
     @ApiOperation("搜索")
     @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
-    public ReturnMessage<Object> search(@PathVariable("keyword") String keyword) {
-        return ReturnMessageUtil.sucess(storeService.search(keyword));
+    public ReturnMessage<Object> search(@PathVariable("keyword") String keyword, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(storeService.search(keyword, option));
     }
 }

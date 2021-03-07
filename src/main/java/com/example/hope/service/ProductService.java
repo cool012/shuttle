@@ -2,6 +2,7 @@ package com.example.hope.service;
 
 import com.example.hope.model.entity.Product;
 import com.github.pagehelper.PageInfo;
+import org.springframework.data.elasticsearch.core.SearchHits;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public interface ProductService {
 
     List<Product> rank();
 
-    List<Product> search(String keyword);
+    SearchHits<Product> search(String keyword, Map<String, String> option);
 
     PageInfo<Product> findAll(Map<String, String> option);
 

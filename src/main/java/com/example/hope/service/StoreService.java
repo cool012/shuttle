@@ -2,6 +2,7 @@ package com.example.hope.service;
 
 import com.example.hope.model.entity.Store;
 import com.github.pagehelper.PageInfo;
+import org.springframework.data.elasticsearch.core.SearchHits;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public interface StoreService {
 
     void sales(long id, int quantity);
 
-    List<Store> search(String keyword);
+    SearchHits search(String keyword, Map<String, String> option);
 
     PageInfo<Store> findAll(Map<String, String> option);
 

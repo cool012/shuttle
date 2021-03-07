@@ -6,6 +6,7 @@ import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
+import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.StoreRepository;
 import com.example.hope.service.CategoryService;
 import com.example.hope.service.ServiceService;
@@ -13,8 +14,10 @@ import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -47,6 +50,9 @@ public class StoreServiceImp implements StoreService {
 
     @Resource
     private ServiceService serviceService;
+
+    @Resource
+    private EsPageHelper<Store> esPageHelper;
 
     /**
      * 添加商店
@@ -218,8 +224,8 @@ public class StoreServiceImp implements StoreService {
      * @return 商店列表
      */
     @Override
-    public List<Store> search(String keyword) {
-        return storeRepository.queryStoreByName(keyword);
+    public SearchHits search(String keyword, Map<String, String> option) {
+        return esPageHelper.build(QueryBuilders.matchQuery("name", keyword), option, Store.class);
     }
 
     /**

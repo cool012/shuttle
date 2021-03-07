@@ -8,6 +8,7 @@ import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
+import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.ProductRepository;
 import com.example.hope.service.ProductService;
 import com.example.hope.service.StoreService;
@@ -15,8 +16,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -41,6 +44,9 @@ public class ProductServiceIpm implements ProductService {
 
     @Resource
     private ProductRepository productRepository;
+
+    @Resource
+    private EsPageHelper<Product> esPageHelper;
 
     /**
      * 添加产品
@@ -210,11 +216,13 @@ public class ProductServiceIpm implements ProductService {
     /**
      * 搜索
      *
-     * @return 产品列表
+     * @param keywords 关键词
+     * @param option   分页参数
+     * @return 分页包装类
      */
     @Override
-    public List<Product> search(String keyword) {
-        return productRepository.queryProductByName(keyword);
+    public SearchHits search(String keywords, Map<String, String> option) {
+        return esPageHelper.build(QueryBuilders.matchQuery("name", keywords), option, Product.class);
     }
 
     /**

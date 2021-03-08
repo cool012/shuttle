@@ -161,8 +161,9 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Cacheable(value = "product", key = "methodName + #option.toString()")
     public PageInfo<Product> findAll(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), "product.id desc");
+        Utils.checkOption(option, Product.class);
+        String orderBy = String.format("product.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(productMapper.select(null, null));
     }
 

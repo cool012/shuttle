@@ -94,7 +94,7 @@ public class CommentsServiceImp implements CommentsService {
      */
     @Override
     public Page findByStoreId(long storeId, Map<String, String> option) {
-        Utils.check_map(option);
+        Utils.checkOption(option, null);
 
         Page page = new Page<Comments>();
         String _id = option.get("_id");
@@ -124,7 +124,7 @@ public class CommentsServiceImp implements CommentsService {
      */
     @Override
     public Page<Comments> findAll(Map<String, String> option) {
-        Utils.check_map(option);
+        Utils.checkOption(option, null);
 
         Page page = new Page<Comments>();
         String _id = option.get("_id");

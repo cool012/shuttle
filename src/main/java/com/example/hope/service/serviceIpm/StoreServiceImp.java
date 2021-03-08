@@ -151,8 +151,9 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #option.toString()")
     public PageInfo<Store> findAll(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Store.class);
+        String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(storeMapper.select(null, null));
     }
 
@@ -165,8 +166,9 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #serviceId + #option.toString()")
     public PageInfo<Store> findByServiceId(long serviceId, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Store.class);
+        String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(storeMapper.select(String.valueOf(serviceId), "serviceId"));
     }
 

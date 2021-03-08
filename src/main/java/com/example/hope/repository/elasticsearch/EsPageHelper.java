@@ -23,7 +23,7 @@ public class EsPageHelper<T> {
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
     public SearchHits build(QueryBuilder queryBuilder, Map<String, String> option, Class<T> clazz) {
-        Utils.check_map(option);
+        Utils.checkOption(option, null);
         int pageNo = Integer.parseInt(option.get("pageNo"));
         int pageSize = Integer.parseInt(option.get("pageSize"));
         NativeSearchQueryBuilder query = new NativeSearchQueryBuilder();

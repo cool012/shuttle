@@ -104,8 +104,9 @@ public class CategoryServiceImp implements CategoryService {
     @Override
     @Cacheable(value = "category", key = "methodName + #option.toString()")
     public PageInfo<Category> findAll(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Category.class);
+        String orderBy = String.format("category.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(categoryMapper.select(null, null));
     }
 

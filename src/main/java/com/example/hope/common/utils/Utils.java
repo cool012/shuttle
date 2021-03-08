@@ -1,7 +1,6 @@
 package com.example.hope.common.utils;
 
 import cn.hutool.core.lang.Validator;
-import cn.hutool.core.util.ReUtil;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -10,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -24,31 +24,25 @@ import java.util.Map;
 public class Utils {
 
 
-    public static Map<String, String> check_map(Map<String, String> option) {
+    public static Map<String, String> checkOption(Map<String, String> option, Class clazz) {
 
-        if (!option.containsKey("sort")) {
-            option.put("sort", "create_time");
-        } else {
-            if (!option.get("sort").equals("create_time")) {
-                throw new IllegalArgumentException("sort参数错误");
+        if (clazz != null) {
+            if (!option.containsKey("sort")) {
+                option.put("sort", "id");
+            } else {
+                boolean isSort = false;
+                for (Field field : clazz.getDeclaredFields())
+                    if (option.get("sort").equals(field.getName())) isSort = true;
+                if (!isSort) throw new BusinessException(1, "sort参数错误");
             }
-        }
 
-        if (!option.containsKey("order")) {
-            option.put("order", "ASC");
-        } else {
-            String order = option.get("order");
-            if (!order.equals("ASC") && !order.equals("DESC")) {
-                throw new IllegalArgumentException("order参数错误");
-            }
-        }
-
-        if (!option.containsKey("completed")) {
-            option.put("completed", "-1");
-        } else {
-            String completed = option.get("completed");
-            if (!completed.equals("0") && !completed.equals("1") && !completed.equals("-1")) {
-                throw new IllegalArgumentException("completed参数错误");
+            if (!option.containsKey("order")) {
+                option.put("order", "DESC");
+            } else {
+                String order = option.get("order");
+                if (!order.equals("ASC") && !order.equals("DESC")) {
+                    throw new BusinessException(1, "order参数错误");
+                }
             }
         }
 
@@ -81,7 +75,7 @@ public class Utils {
 
     public static void check_user(User user) {
         if (!Validator.isMobile(user.getPhone())) {
-            throw new IllegalArgumentException("手机号格式不正确");
+            throw new BusinessException(1, "手机号格式不正确");
         }
     }
 

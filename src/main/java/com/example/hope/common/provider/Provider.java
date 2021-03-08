@@ -12,18 +12,17 @@ public class Provider {
     public static String selectByKey(Map<String, Object> para, String sql, String table) {
         StringBuilder stringBuffer = new StringBuilder();
         stringBuffer.append(sql);
-        String orderBy = String.format(" order by %s.id desc", table);
         if (para.get("key") != null && para.get("id") != null) {
             if (para.get("key").equals("search"))
                 stringBuffer.append(" where ").append(table).append(".name like '%").append(para.get("id"))
-                        .append("%'").append(orderBy);
+                        .append("%'");
             else if (table.equals("orders"))
                 stringBuffer.append(" and ").append(table).append(".").append(para.get("key")).append(" = ")
-                        .append(para.get("id")).append(orderBy);
+                        .append(para.get("id"));
             else
                 stringBuffer.append(" where ").append(table).append(".").append(para.get("key")).append(" = ")
-                        .append(para.get("id")).append(orderBy);
-        }else stringBuffer.append(orderBy);
+                        .append(para.get("id"));
+        }
         return stringBuffer.toString();
     }
 }

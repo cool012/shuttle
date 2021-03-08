@@ -152,8 +152,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findAll(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select(null, null));
     }
 
@@ -167,8 +168,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #pid.toString() +  #option.toString()")
     public PageInfo<Orders> findByPid(long pid, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select(String.valueOf(pid), "pid"));
     }
 
@@ -182,8 +184,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
     public PageInfo<Orders> findByCid(long cid, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid"));
     }
 
@@ -209,8 +212,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #sid.toString() + #option.toString()")
     public PageInfo<Orders> findBySid(long sid, Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid"));
     }
 
@@ -237,8 +241,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findByReceive(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select("-1", "status"));
     }
 
@@ -251,8 +256,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findByCompleted(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select("1", "status"));
     }
 
@@ -265,8 +271,9 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
     public PageInfo<Orders> findByPresent(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select("0", "status"));
     }
 

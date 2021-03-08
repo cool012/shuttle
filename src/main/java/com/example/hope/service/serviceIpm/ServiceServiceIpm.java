@@ -80,8 +80,10 @@ public class ServiceServiceIpm implements ServiceService {
     @Override
     @Cacheable(value = "service", key = "methodName + #option.toString()")
     public PageInfo<Services> findAll(Map<String, String> option) {
-        Utils.check_map(option);
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")));
+        Utils.checkOption(option, Services.class);
+
+        String orderBy = String.format("%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(serviceMapper.findAll());
     }
 

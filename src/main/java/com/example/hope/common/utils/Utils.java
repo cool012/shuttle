@@ -2,6 +2,7 @@ package com.example.hope.common.utils;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.ReUtil;
+import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -53,10 +54,26 @@ public class Utils {
 
         if (!option.containsKey("pageNo")) {
             option.put("pageNo", "1");
+        } else {
+            try {
+                int pageNo = Integer.parseInt(option.get("pageNo"));
+                pageNo = pageNo <= 0 ? 0 : pageNo;
+                option.put("pageNo", String.valueOf(pageNo));
+            } catch (NumberFormatException e) {
+                throw new BusinessException(1, "pageNo参数错误");
+            }
         }
 
         if (!option.containsKey("pageSize")) {
             option.put("pageSize", "9");
+        } else {
+            try {
+                int pageSize = Integer.parseInt(option.get("pageSize"));
+                pageSize = pageSize <= 0 ? 1 : pageSize;
+                option.put("pageSize", String.valueOf(pageSize));
+            } catch (NumberFormatException e) {
+                throw new BusinessException(1, "pageSize参数错误");
+            }
         }
 
         return option;

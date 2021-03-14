@@ -155,7 +155,7 @@ public class OrderServiceIpm implements OrderService {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(null, null));
+        return PageInfo.of(orderMapper.select(null, null, null));
     }
 
     /**
@@ -171,7 +171,7 @@ public class OrderServiceIpm implements OrderService {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(pid), "pid"));
+        return PageInfo.of(orderMapper.select(String.valueOf(pid), "pid", null));
     }
 
     /**
@@ -187,7 +187,7 @@ public class OrderServiceIpm implements OrderService {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid"));
+        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", null));
     }
 
     /**
@@ -198,12 +198,12 @@ public class OrderServiceIpm implements OrderService {
      */
     @Cacheable(value = "order", key = "methodName + #cid.toString() + 'override'")
     public List<Orders> findByCid(long cid) {
-        return orderMapper.select(String.valueOf(cid), "cid");
+        return orderMapper.select(String.valueOf(cid), "cid", null);
     }
 
 
     /**
-     * 根据sid查询订单
+     * 根据sid查询订单(已完成)
      *
      * @param option 分页参数
      * @param sid    服务员用户id
@@ -211,11 +211,27 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #sid.toString() + #option.toString()")
-    public PageInfo<Orders> findBySid(long sid, Map<String, String> option) {
+    public PageInfo<Orders> findBySidOrCompleted(long sid, Map<String, String> option) {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid"));
+        return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid", String.valueOf(1)));
+    }
+
+    /**
+     * 根据sid查询订单(配送中)
+     *
+     * @param option 分页参数
+     * @param sid    服务员用户id
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #sid.toString() + #option.toString()")
+    public PageInfo<Orders> findBySidOrPresent(long sid, Map<String, String> option) {
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid", String.valueOf(0)));
     }
 
     /**
@@ -227,7 +243,7 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Cacheable(value = "order", key = "methodName + #id.toString()")
     public Orders findById(long id) {
-        List<Orders> orders = orderMapper.select(String.valueOf(id), "id");
+        List<Orders> orders = orderMapper.select(String.valueOf(id), "id", null);
         if (orders.size() == 0) throw new BusinessException(0, "没有该订单");
         return orders.get(0);
     }
@@ -244,7 +260,7 @@ public class OrderServiceIpm implements OrderService {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select("-1", "status"));
+        return PageInfo.of(orderMapper.select("-1", "status", null));
     }
 
     /**
@@ -259,7 +275,7 @@ public class OrderServiceIpm implements OrderService {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select("1", "status"));
+        return PageInfo.of(orderMapper.select("1", "status", null));
     }
 
     /**
@@ -274,7 +290,7 @@ public class OrderServiceIpm implements OrderService {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select("0", "status"));
+        return PageInfo.of(orderMapper.select("0", "status", null));
     }
 
     /**

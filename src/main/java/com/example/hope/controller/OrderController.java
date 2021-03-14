@@ -87,10 +87,17 @@ public class OrderController {
     }
 
     @LoginUser
-    @ApiOperation("根据sid查询订单")
-    @RequestMapping(value = "/findBySid/{id}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findBySid(@PathVariable long id, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(orderService.findBySid(id, option));
+    @ApiOperation("查询用户完成的订单")
+    @RequestMapping(value = "/findBySidOrCompleted/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findBySidOrCompleted(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findBySidOrCompleted(id, option));
+    }
+
+    @LoginUser
+    @ApiOperation("查询用户配送中的订单")
+    @RequestMapping(value = "/findBySidOrPresent/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findBySidOrPresent(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findBySidOrPresent(id, option));
     }
 
     @LoginUser

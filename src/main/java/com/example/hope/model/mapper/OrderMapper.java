@@ -22,7 +22,7 @@ public interface OrderMapper {
     int insert(Orders order);
 
     @Delete("delete from orders where ${key} = #{id}")
-    int delete(long id,String key);
+    int delete(long id, String key);
 
     @Update("update orders set address = #{address},date = #{date},note = #{note},file = #{file},status = #{status} where id = #{id}")
     int update(Orders order);
@@ -41,7 +41,7 @@ public interface OrderMapper {
             @Result(column = "productRate", property = "product.rate"),
             @Result(column = "productSales", property = "product.sales")
     })
-    List<Orders> select(@Param("id") String id, @Param("key") String key);
+    List<Orders> select(@Param("id") String id, @Param("key") String key, @Param("status") String status);
 
     @Update("update orders set status = 0,sid = #{sid} where id = #{id}")
     int receive(long id, long sid);

@@ -31,6 +31,18 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    /**
+     * showdoc
+     * @catalog 文件
+     * @title 上传
+     * @description 上传文件的接口
+     * @method post
+     * @header Authorization 必选 String token
+     * @url /file/upload
+     * @param file 必要 file 文件
+     * @return {"code": 1,"message": "success","data": "filePath"}
+     * @remark 只允许用户操作
+     */
     @LoginUser
     @ApiOperation("上传")
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
@@ -38,6 +50,18 @@ public class FileController {
         return ReturnMessageUtil.sucess(fileService.upload(file));
     }
 
+    /**
+     * showdoc
+     * @catalog 文件
+     * @title 下载
+     * @description 下载文件的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @url /download/{fileName}
+     * @param fileName 必要 string 文件名
+     * @return file
+     * @remark 只允许用户操作
+     */
     @ApiOperation("下载")
     @RequestMapping(value = "/download/{fileName}", method = RequestMethod.GET)
     @ResponseBody

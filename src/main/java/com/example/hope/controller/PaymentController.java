@@ -28,6 +28,15 @@ public class PaymentController {
         this.payService = payServiceImp;
     }
 
+    /**
+     * showdoc
+     *
+     * @catalog 支付
+     * @title 同步通知
+     * @description 同步通知的接口
+     * @method get
+     * @url /payment/return
+     */
     @RequestMapping("/return")
     @ResponseBody
     public void returnCall(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -35,6 +44,15 @@ public class PaymentController {
         response.sendRedirect(redirectUrl);
     }
 
+    /**
+     * showdoc
+     *
+     * @catalog 支付
+     * @title 异步通知
+     * @description 异步通知的接口
+     * @method get
+     * @url /payment/notify
+     */
     @RequestMapping("/notify")
     @ResponseBody
     public void notifyCall(HttpServletRequest request) throws Exception {

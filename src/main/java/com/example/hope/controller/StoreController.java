@@ -26,6 +26,23 @@ public class StoreController {
     @Resource
     private StoreService storeService;
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 添加
+     * @description 添加商店的接口
+     * @method post
+     * @header Authorization 必选 String token
+     * @url /store/insert
+     * @param store.name 必选 string 商店名称
+     * @param store.serviceId 必选 long 商店服务id
+     * @param store.categoryId 必选 long 商店类别id
+     * @param store.image 必选 string 商店图片
+     * @param store.rate 必选 int 商店评分
+     * @param store.sales 必选 int 商店销量
+     * @return {"code": 1,"message": "success","data": "null"}
+     * @remark 只允许管理员操作
+     */
     @Admin
     @ApiOperation("添加商店")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
@@ -34,6 +51,18 @@ public class StoreController {
         return ReturnMessageUtil.sucess();
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 删除
+     * @description 删除商店的接口
+     * @method delete
+     * @header Authorization 必选 String token
+     * @url /store/delete
+     * @param id 必选 long 商店id
+     * @return {"code": 1,"message": "success","data": "null"}
+     * @remark 只允许管理员操作
+     */
     @Admin
     @ApiOperation("删除商店")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
@@ -42,6 +71,23 @@ public class StoreController {
         return ReturnMessageUtil.sucess();
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 更新
+     * @description 更新商店的接口
+     * @method post
+     * @header Authorization 必选 String token
+     * @url /store/update
+     * @param store.name 必选 string 商店名称
+     * @param store.serviceId 必选 long 商店服务id
+     * @param store.categoryId 必选 long 商店类别id
+     * @param store.image 必选 string 商店图片
+     * @param store.rate 必选 int 商店评分
+     * @param store.sales 必选 int 商店销量
+     * @return {"code": 1,"message": "success","data": "null"}
+     * @remark 只允许管理员操作
+     */
     @Admin
     @ApiOperation("更新商店")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -50,6 +96,27 @@ public class StoreController {
         return ReturnMessageUtil.sucess();
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 查询所有商店
+     * @description 查询所有商店的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @param pageNo 可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort 可选 string 排序
+     * @param order 可选 string 顺序(ASC/DESC)
+     * @url /store/findAll
+     * @return {"code": 1,"message": "success","data": "stores"}
+     * @return_param store.name 必选 string 商店名称
+     * @return_param store.serviceId 必选 long 商店服务id
+     * @return_param store.categoryId 必选 long 商店类别id
+     * @return_param store.image 必选 string 商店图片
+     * @return_param store.rate 必选 int 商店评分
+     * @return_param store.sales 必选 int 商店销量
+     * @remark 只允许管理员操作
+     */
     @LoginUser
     @ApiOperation("查询所有商店")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
@@ -57,6 +124,28 @@ public class StoreController {
         return ReturnMessageUtil.sucess(storeService.findAll(option));
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 根据serviceId查询商店
+     * @description 根据serviceId查询商店的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @param pageNo 可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort 可选 string 排序
+     * @param order 可选 string 顺序(ASC/DESC)
+     * @url /store/findByServiceId/{serviceId}
+     * @param serviceId 必选 long 商店id
+     * @return {"code": 1,"message": "success","data": "stores"}
+     * @return_param store.name 必选 string 商店名称
+     * @return_param store.serviceId 必选 long 商店服务id
+     * @return_param store.categoryId 必选 long 商店类别id
+     * @return_param store.image 必选 string 商店图片
+     * @return_param store.rate 必选 int 商店评分
+     * @return_param store.sales 必选 int 商店销量
+     * @remark 只允许管理员操作
+     */
     @LoginUser
     @ApiOperation("根据serviceId查询商店")
     @RequestMapping(value = "/findByServiceId/{serviceId}", method = RequestMethod.GET)
@@ -65,6 +154,28 @@ public class StoreController {
         return ReturnMessageUtil.sucess(storeService.findByServiceId(serviceId, option));
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 根据categoryId查询商店
+     * @description 根据categoryId查询商店的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @param pageNo 可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort 可选 string 排序
+     * @param order 可选 string 顺序(ASC/DESC)
+     * @url /store/findByCategoryId/{categoryId}
+     * @param categoryId 必选 long 类别id
+     * @return {"code": 1,"message": "success","data": "stores"}
+     * @return_param store.name 必选 string 商店名称
+     * @return_param store.serviceId 必选 long 商店服务id
+     * @return_param store.categoryId 必选 long 商店类别id
+     * @return_param store.image 必选 string 商店图片
+     * @return_param store.rate 必选 int 商店评分
+     * @return_param store.sales 必选 int 商店销量
+     * @remark 只允许管理员操作
+     */
     @LoginUser
     @ApiOperation("根据categoryId查询商店")
     @RequestMapping(value = "/findByCategoryId/{categoryId}", method = RequestMethod.GET)
@@ -72,6 +183,23 @@ public class StoreController {
         return ReturnMessageUtil.sucess(storeService.findByCategoryId(categoryId));
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 根据id查询商店
+     * @description 根据id查询商店的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @url /store/findById/{id}
+     * @return {"code": 1,"message": "success","data": "store"}
+     * @return_param store.name 必选 string 商店名称
+     * @return_param store.serviceId 必选 long 商店服务id
+     * @return_param store.categoryId 必选 long 商店类别id
+     * @return_param store.image 必选 string 商店图片
+     * @return_param store.rate 必选 int 商店评分
+     * @return_param store.sales 必选 int 商店销量
+     * @remark 只允许用户操作
+     */
     @LoginUser
     @ApiOperation("根据id查询商店")
     @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
@@ -79,6 +207,23 @@ public class StoreController {
         return ReturnMessageUtil.sucess(storeService.findById(id));
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 排行榜
+     * @description 商店排行榜的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @url /store/rank
+     * @return {"code": 1,"message": "success","data": "store"}
+     * @return_param store.name 必选 string 商店名称
+     * @return_param store.serviceId 必选 long 商店服务id
+     * @return_param store.categoryId 必选 long 商店类别id
+     * @return_param store.image 必选 string 商店图片
+     * @return_param store.rate 必选 int 商店评分
+     * @return_param store.sales 必选 int 商店销量
+     * @remark 只允许用户操作
+     */
     @LoginUser
     @ApiOperation("排行榜")
     @RequestMapping(value = "/rank", method = RequestMethod.GET)
@@ -86,6 +231,28 @@ public class StoreController {
         return ReturnMessageUtil.sucess(storeService.rank());
     }
 
+    /**
+     * showdoc
+     * @catalog 商店
+     * @title 搜索商店
+     * @description 搜索商店的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @param keyword 必选 string 关键词
+     * @param pageNo 可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort 可选 string 排序
+     * @param order 可选 string 顺序(ASC/DESC)
+     * @url /store/search/{keyword}
+     * @return {"code": 1,"message": "success","data": "stores"}
+     * @return_param store.name 必选 string 商店名称
+     * @return_param store.serviceId 必选 long 商店服务id
+     * @return_param store.categoryId 必选 long 商店类别id
+     * @return_param store.image 必选 string 商店图片
+     * @return_param store.rate 必选 int 商店评分
+     * @return_param store.sales 必选 int 商店销量
+     * @remark 只允许用户操作
+     */
     @LoginUser
     @ApiOperation("搜索")
     @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)

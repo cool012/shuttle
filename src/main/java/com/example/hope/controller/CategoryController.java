@@ -33,6 +33,19 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    /**
+     * showdoc
+     * @catalog 类别
+     * @title 添加
+     * @description 添加类别的接口
+     * @method post
+     * @header Authorization 必选 String token
+     * @url /service/insert
+     * @param category.name 必选 string 类别名称
+     * @param category.serviceId 必选 string 类别图标
+     * @return {"code": 1,"message": "success","data": "null"}
+     * @remark 只允许管理员操作
+     */
     @Admin
     @ApiOperation("添加类别")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
@@ -41,6 +54,18 @@ public class CategoryController {
         return ReturnMessageUtil.sucess();
     }
 
+    /**
+     * showdoc
+     * @catalog 类别
+     * @title 删除
+     * @description 删除类别的接口
+     * @method delete
+     * @header Authorization 必选 String token
+     * @url /service/delete
+     * @param id 必选 long 类别id
+     * @return {"code": 1,"message": "success","data": "null"}
+     * @remark 只允许管理员操作
+     */
     @Admin
     @ApiOperation("删除类别")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
@@ -49,6 +74,19 @@ public class CategoryController {
         return ReturnMessageUtil.sucess();
     }
 
+    /**
+     * showdoc
+     * @catalog 类别
+     * @title 修改
+     * @description 修改类别的接口
+     * @method post
+     * @header Authorization 必选 String token
+     * @url /service/update
+     * @param category.name 必选 string 类别名称
+     * @param category.serviceId 必选 string 类别图标
+     * @return {"code": 1,"message": "success","data": "null"}
+     * @remark 只允许管理员操作
+     */
     @Admin
     @ApiOperation("修改类别")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -57,6 +95,23 @@ public class CategoryController {
         return ReturnMessageUtil.sucess();
     }
 
+    /**
+     * showdoc
+     * @catalog 类别
+     * @title 查询全部
+     * @description 查询全部类别的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @url /service/findAll
+     * @param pageNo 可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort 可选 string 排序
+     * @param order 可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "categories"}
+     * @return_param category.name string 类别名称
+     * @return_param category.serviceId string 类别图标
+     * @remark 只允许管理员操作
+     */
     @Admin
     @ApiOperation("查询全部类别")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
@@ -64,6 +119,20 @@ public class CategoryController {
         return ReturnMessageUtil.sucess(categoryService.findAll(option));
     }
 
+    /**
+     * showdoc
+     * @catalog 类别
+     * @title 按服务id查询
+     * @description 按服务id查询类别的接口
+     * @method get
+     * @header Authorization 必选 String token
+     * @url /service/findAllByServiceId/{id}
+     * @param id 必选 long 类别id
+     * @return {"code": 1,"message": "success","data": "category"}
+     * @return_param category.name string 类别名称
+     * @return_param category.serviceId string 类别图标
+     * @remark 只允许用户操作
+     */
     @LoginUser
     @ApiOperation("按服务id查询全部类别")
     @RequestMapping(value = "/findAllByServiceId/{id}", method = RequestMethod.GET)

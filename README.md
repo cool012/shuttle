@@ -4,6 +4,20 @@ shuttle是一个综合性C2C校园服务平台，主要服务于移动端的单�
 
 平台集用户和服务者为一体，在该平台注册为用户后，可以自行根据相关需求，成为客户或服务者；客户以普通用户的身份对商品下单，获得便利的校园服务；服务者则可以选择性的接受订单获取佣金，在此过程中平台只作为数据中介，不参与与商家的金钱对接，一切金钱交易由客户与服务者线下完成，实现对财务的去中心化，减少系统的复杂性。
 
+## 功能
+
+* JWT 验证
+* 订单超时自动取消
+* Redis 排行榜
+* Websocket 实时推送订单
+* ElasticSearch 搜索
+* MongoDB 分页
+* 文件上传\下载
+* 基于 Log4j2 的日志系统
+* PageHelper 分页
+* Swagger API管理
+* 支付宝沙盒
+
 ## 依赖
 
 | Description | Version|
@@ -98,3 +112,21 @@ sudo docker-compose down
 sudo docker-compose stop
 ```
 
+## API
+
+项目接口文档：[showdoc](https://www.showdoc.com.cn/1290360650186390)
+
+使用程序注释自动生成
+
+```sh
+cd shuttle
+
+wget https://www.showdoc.cc/script/showdoc_api.sh
+
+# 编辑 api_key 和 api_token
+vi showdoc_api.sh
+
+chmod +x showdoc_api.sh
+
+./showdoc_api.sh
+```

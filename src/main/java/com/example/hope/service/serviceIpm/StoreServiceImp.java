@@ -19,6 +19,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
@@ -60,7 +61,7 @@ public class StoreServiceImp implements StoreService {
      * @param store 商店
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public void insert(Store store) {
         if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))
@@ -90,7 +91,7 @@ public class StoreServiceImp implements StoreService {
      * @param id 商店id
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public void delete(long id) {
         int res = storeMapper.delete(id, "id");
@@ -105,7 +106,7 @@ public class StoreServiceImp implements StoreService {
      *
      * @param categoryId 类别id
      */
-    @Transient
+    @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public void deleteByCategoryId(long categoryId) {
         for (Store store : findByCategoryId(categoryId)) productServiceIpm.deleteByStoreId(store.getId());
@@ -132,7 +133,7 @@ public class StoreServiceImp implements StoreService {
      * @param store 商店
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public void update(Store store) {
         if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))

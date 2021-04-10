@@ -2,7 +2,6 @@ package com.example.hope.service;
 
 import com.example.hope.model.entity.User;
 import com.github.pagehelper.PageInfo;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 
 import java.util.List;

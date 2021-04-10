@@ -21,6 +21,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
@@ -54,7 +55,7 @@ public class ProductServiceIpm implements ProductService {
      * @param product 产品
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public void insert(Product product) {
         if (!storeService.exist(product.getStoreId())) throw new BusinessException(0, "商店id不存在");
@@ -70,7 +71,7 @@ public class ProductServiceIpm implements ProductService {
      * @param id    产品id
      * @param sales 销量
      */
-    @Transient
+    @Transactional
     public void addSales(long id, int sales) {
         int res = productMapper.addSales(id, sales);
         log.info("product addSales -> " + id + " for -> " + sales + " -> res " + res);
@@ -86,7 +87,7 @@ public class ProductServiceIpm implements ProductService {
      * @param id 产品id
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public void delete(long id) {
         int res = productMapper.delete(id, "id");
@@ -101,7 +102,7 @@ public class ProductServiceIpm implements ProductService {
      *
      * @param storeId 商店id
      */
-    @Transient
+    @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public void deleteByStoreId(long storeId) {
         for (Product product : findByStoreId(storeId)) orderServiceIpm.deleteByPid(product.getId());
@@ -115,7 +116,7 @@ public class ProductServiceIpm implements ProductService {
      * @param product 产品
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public void update(Product product) {
         if (!storeService.exist(product.getStoreId())) throw new BusinessException(0, "商店id不存在");

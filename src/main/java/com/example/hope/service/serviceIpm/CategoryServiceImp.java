@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
@@ -44,7 +45,7 @@ public class CategoryServiceImp implements CategoryService {
      * @param category 类别
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "category", allEntries = true)
     public void insert(Category category) {
         if (!serviceService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");
@@ -59,7 +60,7 @@ public class CategoryServiceImp implements CategoryService {
      * @param id 类别id
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "category", allEntries = true)
     public void delete(long id) {
         int res = categoryMapper.delete(id, "id");
@@ -73,7 +74,7 @@ public class CategoryServiceImp implements CategoryService {
      *
      * @param serviceId 服务id
      */
-    @Transient
+    @Transactional
     @CacheEvict(value = "category", allEntries = true)
     public void deleteByServiceId(long serviceId) {
         for (Category category : findAllByServiceId(serviceId)) storeServiceImp.deleteByCategoryId(category.getId());
@@ -87,7 +88,7 @@ public class CategoryServiceImp implements CategoryService {
      * @param category 类别
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "category", allEntries = true)
     public void update(Category category) {
         if (!serviceService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");

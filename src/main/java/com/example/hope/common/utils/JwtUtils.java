@@ -1,7 +1,6 @@
 package com.example.hope.common.utils;
 
 import com.example.hope.config.exception.BusinessException;
-import com.example.hope.config.exception.UnauthorizedException;
 import com.example.hope.model.entity.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;

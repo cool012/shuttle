@@ -16,6 +16,7 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
@@ -57,7 +58,7 @@ public class OrderServiceIpm implements OrderService {
      * @param orderList 订单列表
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "order", allEntries = true)
     public void insert(List<Orders> orderList, boolean isExpired) {
         orderList.forEach(order -> {
@@ -83,7 +84,7 @@ public class OrderServiceIpm implements OrderService {
      * @param orders 订单列表
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "order", allEntries = true)
     public void delete(List<Orders> orders, String token) {
         long userId = JwtUtils.getUserId(token);
@@ -105,7 +106,7 @@ public class OrderServiceIpm implements OrderService {
      *
      * @param id 订单id
      */
-    @Transient
+    @Transactional
     @CacheEvict(value = "order", allEntries = true)
     public void delete(long id) {
         int res = orderMapper.delete(id, "id");
@@ -119,7 +120,7 @@ public class OrderServiceIpm implements OrderService {
      *
      * @param pid 产品id
      */
-    @Transient
+    @Transactional
     @CacheEvict(value = "order", allEntries = true)
     public void deleteByPid(long pid) {
         int res = orderMapper.delete(pid, "pid");
@@ -132,7 +133,7 @@ public class OrderServiceIpm implements OrderService {
      * @param order 订单id
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "order", allEntries = true)
     public void update(Orders order) {
         if (!userService.exist(order.getCid()) || !userService.exist(order.getSid()) || !productService.exist(order.getPid()))
@@ -299,7 +300,7 @@ public class OrderServiceIpm implements OrderService {
      * @param id 订单id
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "order", allEntries = true)
     public void receive(long id, long userId) {
         findById(id);

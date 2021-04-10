@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
@@ -38,7 +39,7 @@ public class AdsServiceImp implements AdsService {
      * @param expired 过期时间（单位：天）
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "ads", allEntries = true)
     public void insert(Ads ads, int expired) {
         int res = adsMapper.insert(ads);
@@ -54,7 +55,7 @@ public class AdsServiceImp implements AdsService {
      * @param id 广告id
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "ads", allEntries = true)
     public void delete(long id) {
         int res = adsMapper.delete(id,"id");
@@ -67,7 +68,7 @@ public class AdsServiceImp implements AdsService {
      *
      * @param storeId 商店id
      */
-    @Transient
+    @Transactional
     @CacheEvict(value = "ads", allEntries = true)
     public void deleteByStoreId(long storeId) {
         int res = adsMapper.delete(storeId,"storeId");
@@ -80,7 +81,7 @@ public class AdsServiceImp implements AdsService {
      * @param ads 广告
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "ads", allEntries = true)
     public void update(Ads ads) {
         int res = adsMapper.update(ads);

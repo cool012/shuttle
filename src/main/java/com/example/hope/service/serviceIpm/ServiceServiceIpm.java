@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
@@ -35,7 +36,7 @@ public class ServiceServiceIpm implements ServiceService {
      * @param services 服务
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "service", allEntries = true)
     public void insert(Services services) {
         int res = serviceMapper.insert(services);
@@ -49,7 +50,7 @@ public class ServiceServiceIpm implements ServiceService {
      * @param id 服务id
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "service", allEntries = true)
     public void delete(Long id) {
         categoryServiceImp.deleteByServiceId(id);
@@ -64,7 +65,7 @@ public class ServiceServiceIpm implements ServiceService {
      * @param services 服务
      */
     @Override
-    @Transient
+    @Transactional
     @CacheEvict(value = "service", allEntries = true)
     public void update(Services services) {
         int res = serviceMapper.update(services);

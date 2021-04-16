@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.beans.Transient;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -176,7 +177,7 @@ public class OrderServiceIpm implements OrderService {
     }
 
     /**
-     * 根据cid查询订单（分页）
+     * 根据cid查询全部的订单（分页）
      *
      * @param option 分页参数
      * @param cid    客户用户id
@@ -189,6 +190,54 @@ public class OrderServiceIpm implements OrderService {
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", null));
+    }
+
+    /**
+     * 根据cid查询已下单的订单（分页）
+     *
+     * @param option 分页参数
+     * @param cid    客户用户id
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
+    public PageInfo<Orders> findByCidOrOrder(long cid, Map<String, String> option) {
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", "-1"));
+    }
+
+    /**
+     * 根据cid查询配送中的订单（分页）
+     *
+     * @param option 分页参数
+     * @param cid    客户用户id
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
+    public PageInfo<Orders> findByCidOrPresent(long cid, Map<String, String> option) {
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", "0"));
+    }
+
+    /**
+     * 根据cid查询已完成的订单（分页）
+     *
+     * @param option 分页参数
+     * @param cid    客户用户id
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
+    public PageInfo<Orders> findByCidOrCompleted(long cid, Map<String, String> option) {
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", "1"));
     }
 
     /**

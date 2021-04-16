@@ -35,22 +35,23 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param orders.cid     必选 long 订单用户id
+     * @param orders.sid     必选 long 订单服务id
+     * @param orders.pid     必选 long 订单产品id
+     * @param orders.date    必选 string 订单时间
+     * @param orders.address 必选 string 订单地址
+     * @param orders.note    必选 string 订单备注
+     * @param orders.file    必选 string 订单文件
+     * @param orders.status  必选 string 订单状态
+     * @param isExpired      可选 bool 是否设置超时（15分钟）
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 订单
      * @title 添加
      * @description 添加订单的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param orders.cid 必选 long 订单用户id
-     * @param orders.sid 必选 long 订单服务id
-     * @param orders.pid 必选 long 订单产品id
-     * @param orders.date 必选 string 订单时间
-     * @param orders.address 必选 string 订单地址
-     * @param orders.note 必选 string 订单备注
-     * @param orders.file 必选 string 订单文件
-     * @param orders.status 必选 string 订单状态
-     * @param isExpired 可选 bool 是否设置超时（15分钟）
      * @url /orders/insert
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -63,21 +64,22 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param orders.cid     必选 long 订单用户id
+     * @param orders.sid     必选 long 订单服务id
+     * @param orders.pid     必选 long 订单产品id
+     * @param orders.date    必选 string 订单时间
+     * @param orders.address 必选 string 订单地址
+     * @param orders.note    必选 string 订单备注
+     * @param orders.file    必选 string 订单文件
+     * @param orders.status  必选 string 订单状态
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 订单
      * @title 删除
      * @description 删除订单的接口
      * @method delete
      * @header Authorization 必选 String token
-     * @param orders.cid 必选 long 订单用户id
-     * @param orders.sid 必选 long 订单服务id
-     * @param orders.pid 必选 long 订单产品id
-     * @param orders.date 必选 string 订单时间
-     * @param orders.address 必选 string 订单地址
-     * @param orders.note 必选 string 订单备注
-     * @param orders.file 必选 string 订单文件
-     * @param orders.status 必选 string 订单状态
      * @url /orders/delete
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -90,21 +92,22 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param orders.cid     必选 long 订单用户id
+     * @param orders.sid     必选 long 订单服务id
+     * @param orders.pid     必选 long 订单产品id
+     * @param orders.date    必选 string 订单时间
+     * @param orders.address 必选 string 订单地址
+     * @param orders.note    必选 string 订单备注
+     * @param orders.file    必选 string 订单文件
+     * @param orders.status  必选 string 订单状态
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 订单
      * @title 修改
      * @description 修改订单的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param orders.cid 必选 long 订单用户id
-     * @param orders.sid 必选 long 订单服务id
-     * @param orders.pid 必选 long 订单产品id
-     * @param orders.date 必选 string 订单时间
-     * @param orders.address 必选 string 订单地址
-     * @param orders.note 必选 string 订单备注
-     * @param orders.file 必选 string 订单文件
-     * @param orders.status 必选 string 订单状态
      * @url /orders/update
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -117,15 +120,16 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param ordersId 必选 long 订单id
+     * @param userId   必选 long 用户id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 订单
      * @title 接单
      * @description 接单的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param ordersId 必选 long 订单id
-     * @param userId 必选 long 用户id
      * @url /orders/receive
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -138,17 +142,18 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 修改
      * @description 修改订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findAll
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
@@ -168,18 +173,19 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param id       必选 long 产品id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 根据pid查询订单
      * @description 根据pid查询订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findByPid/{id}
-     * @param id 必选 long 产品id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
@@ -199,19 +205,20 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param id       必选 long 用户id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 根据cid查询订单
      * @description 根据cid查询订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findByCid/{id}
-     * @param id 必选 long 用户id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
-     * @return_param  orders.cid 必选 long 订单用户id
+     * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
      * @return_param orders.date 必选 string 订单时间
@@ -222,26 +229,48 @@ public class OrderController {
      * @remark 只允许用户操作
      */
     @LoginUser
-    @ApiOperation("根据cid查询订单")
+    @ApiOperation("根据cid查询全部的订单")
     @RequestMapping(value = "/findByCid/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByCid(@PathVariable long id, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByCid(id, option));
     }
 
+    @LoginUser
+    @ApiOperation("根据cid查询未下单的订单")
+    @RequestMapping(value = "/findByCidOrOrder/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByCidOrOrder(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByCidOrOrder(id, option));
+    }
+
+    @LoginUser
+    @ApiOperation("根据cid查询配送中的订单")
+    @RequestMapping(value = "/findByCidOrPresent/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByCidOrPresent(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByCidOrPresent(id, option));
+    }
+
+    @LoginUser
+    @ApiOperation("根据cid查询已完成的订单")
+    @RequestMapping(value = "/findByCidOrCompleted/{id}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByCidOrCompleted(@PathVariable long id, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.findByCidOrCompleted(id, option));
+    }
+
     /**
      * showdoc
+     *
+     * @param id       必选 long 服务id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 查询用户完成的订单
      * @description 查询用户完成的订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findBySidOrCompleted/{id}
-     * @param id 必选 long 服务id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
@@ -261,18 +290,19 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param id       必选 long 服务id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 查询用户配送中的订单
      * @description 查询用户配送中的订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findBySidOrPresent/{id}
-     * @param id 必选 long 服务id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
@@ -292,18 +322,19 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param id       必选 long 订单id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "order"}
      * @catalog 订单
      * @title 按订单id查询订单
      * @description 按订单id查询订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findById/{id}
-     * @param id 必选 long 订单id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "order"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
@@ -323,21 +354,22 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param orders.cid     必选 long 订单用户id
+     * @param orders.sid     必选 long 订单服务id
+     * @param orders.pid     必选 long 订单产品id
+     * @param orders.date    必选 string 订单时间
+     * @param orders.address 必选 string 订单地址
+     * @param orders.note    必选 string 订单备注
+     * @param orders.file    必选 string 订单文件
+     * @param orders.status  必选 string 订单状态
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 订单
      * @title 完成订单
      * @description 完成订单的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param orders.cid 必选 long 订单用户id
-     * @param orders.sid 必选 long 订单服务id
-     * @param orders.pid 必选 long 订单产品id
-     * @param orders.date 必选 string 订单时间
-     * @param orders.address 必选 string 订单地址
-     * @param orders.note 必选 string 订单备注
-     * @param orders.file 必选 string 订单文件
-     * @param orders.status 必选 string 订单状态
      * @url /orders/completed
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -350,17 +382,18 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 查询全部未接单订单
      * @description 查询全部未接单订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findByReceive
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
@@ -380,17 +413,18 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 查询全部完成订单
      * @description 查询全部完成订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findByCompleted
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id
@@ -410,17 +444,18 @@ public class OrderController {
 
     /**
      * showdoc
+     *
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "orders"}
      * @catalog 订单
      * @title 查询全部配送订单
      * @description 查询全部配送订单的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /orders/findByPresent
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "orders"}
      * @return_param orders.cid 必选 long 订单用户id
      * @return_param orders.sid 必选 long 订单服务id
      * @return_param orders.pid 必选 long 订单产品id

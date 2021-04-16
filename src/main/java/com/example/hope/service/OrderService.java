@@ -24,6 +24,12 @@ public interface OrderService {
 
     PageInfo<Orders> findByCid(long cid, Map<String, String> option);
 
+    PageInfo<Orders> findByCidOrOrder(long cid, Map<String, String> option);
+
+    PageInfo<Orders> findByCidOrPresent(long cid, Map<String, String> option);
+
+    PageInfo<Orders> findByCidOrCompleted(long cid, Map<String, String> option);
+
     PageInfo<Orders> findBySidOrCompleted(long sid, Map<String, String> option);
 
     PageInfo<Orders> findBySidOrPresent(long sid, Map<String, String> option);

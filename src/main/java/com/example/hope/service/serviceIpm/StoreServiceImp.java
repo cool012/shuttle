@@ -1,6 +1,7 @@
 package com.example.hope.service.serviceIpm;
 
 import com.example.hope.common.logger.LoggerHelper;
+import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.beans.Transient;
 import java.util.*;
 
 /**
@@ -63,13 +63,18 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
-    public void insert(Store store) {
+    public void insert(Store store, String token) {
+        boolean isAdmin = JwtUtils.is_admin(token);
         if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))
             throw new BusinessException(0, "类别或服务id不存在");
-        int res = storeMapper.insert(store);
-        log.info(LoggerHelper.logger(store, res));
-        BusinessException.check(res, "添加失败");
-        storeRepository.save(store);
+        if (isAdmin) {
+            int res = storeMapper.insert(store);
+            log.info(LoggerHelper.logger(store, res));
+            BusinessException.check(res, "添加失败");
+            storeRepository.save(store);
+        }else{
+            // todo 管理端同意
+        }
     }
 
     /**

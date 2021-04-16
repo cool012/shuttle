@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface StoreService {
 
-    void insert(Store store);
+    void insert(Store store, String token);
 
     void delete(long id);
 

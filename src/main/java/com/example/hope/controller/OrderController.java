@@ -472,4 +472,14 @@ public class OrderController {
     public ReturnMessage<Object> findByPresent(@RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.findByPresent(option));
     }
+
+    @LoginUser
+    @ApiOperation("根据条件搜索cid全部的订单")
+    @RequestMapping(value = "/searchByCid/{userId}", method = RequestMethod.GET)
+    public ReturnMessage<Object> searchByCid(@RequestParam String start, @RequestParam String end,
+                                             @RequestParam Long productId, @RequestParam Long serverId,
+                                             @RequestParam int status, @PathVariable long userId,
+                                             @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.searchByCid(userId, start, end, productId, serverId, status, option));
+    }
 }

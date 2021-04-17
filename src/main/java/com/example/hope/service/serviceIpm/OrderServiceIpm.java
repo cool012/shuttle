@@ -251,6 +251,22 @@ public class OrderServiceIpm implements OrderService {
         return orderMapper.select(String.valueOf(cid), "cid", null);
     }
 
+    /**
+     * 根据条件搜索cid全部的订单（分页）
+     *
+     * @param option 分页参数
+     * @param cid    客户用户id
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #userId.toString() + #option.toString()")
+    public PageInfo<Orders> searchByCid(long userId, String start, String end, Long productId, Long serverId, int status, Map<String, String> option) {
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(orderMapper.searchByCid(userId, start, end, productId, serverId, status));
+    }
+
 
     /**
      * 根据sid查询订单(已完成)

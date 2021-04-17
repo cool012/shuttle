@@ -43,4 +43,7 @@ public interface OrderService {
     PageInfo<Orders> findByPresent(Map<String, String> option);
 
     boolean exist(long id);
+
+    PageInfo<Orders> searchByCid(long userId, String start, String end, Long productId, Long serverId, int status,
+                                 Map<String, String> option);
 }

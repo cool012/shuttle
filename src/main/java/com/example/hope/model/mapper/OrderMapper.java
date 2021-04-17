@@ -48,4 +48,6 @@ public interface OrderMapper {
 
     @Update("update orders set status = 1 where id = #{id}")
     int completed(long id);
+
+    List<Orders> searchByCid(long userId, String start, String end, long productId, long serverId, int status);
 }

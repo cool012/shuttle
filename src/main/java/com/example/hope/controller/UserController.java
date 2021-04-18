@@ -54,8 +54,8 @@ public class UserController {
      */
     @ApiOperation("用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ReturnMessage<Object> login(String phone, String password, int expired) {
-        return ReturnMessageUtil.sucess(userService.login(phone, password, expired));
+    public ReturnMessage<Object> login(String account, String password, int expired) {
+        return ReturnMessageUtil.sucess(userService.login(account, password, expired));
     }
 
     /**

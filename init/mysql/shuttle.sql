@@ -9,7 +9,7 @@ create table user(
 	address varchar(255) comment '地址',
 	score int(255) unsigned default 0 comment '点数',
 	admin tinyint(1) default 0 comment '管理员',
-	name varchar(255) not null comment '昵称',
+	name varchar(255) comment '昵称',
 	primary key(id),
 	unique(phone),
 	unique(name)

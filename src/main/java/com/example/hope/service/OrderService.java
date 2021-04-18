@@ -46,4 +46,6 @@ public interface OrderService {
 
     PageInfo<Orders> searchByCid(long userId, String start, String end, Long productId, Long serverId, int status,
                                  Map<String, String> option);
+
+    PageInfo<Orders> searchByReceive(String start, String end, long serviceId, String address, Map<String, String> option);
 }

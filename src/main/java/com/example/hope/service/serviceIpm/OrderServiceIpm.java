@@ -330,6 +330,22 @@ public class OrderServiceIpm implements OrderService {
     }
 
     /**
+     * 根据条件搜索全部未接单的订单（分页）
+     *
+     * @param option 分页参数
+     * @param cid    客户用户id
+     * @return 分页包装数据
+     */
+    @Override
+    @Cacheable(value = "order", key = "methodName + #option.toString()")
+    public PageInfo<Orders> searchByReceive(String start, String end, long serviceId, String address, Map<String, String> option) {
+        Utils.checkOption(option, Orders.class);
+        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(orderMapper.searchByReceive(start, end, serviceId, address));
+    }
+
+    /**
      * 查询全部已接单订单
      *
      * @param option 分页参数

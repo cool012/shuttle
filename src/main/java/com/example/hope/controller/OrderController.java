@@ -482,4 +482,14 @@ public class OrderController {
                                              @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(orderService.searchByCid(userId, start, end, productId, serverId, status, option));
     }
+
+
+    @LoginUser
+    @ApiOperation("根据条件搜索全部未接单的订单")
+    @RequestMapping(value = "/searchByReceive", method = RequestMethod.GET)
+    public ReturnMessage<Object> searchByReceive(@RequestParam String start, @RequestParam String end,
+                                                 @RequestParam long serviceId, @RequestParam String address,
+                                                 @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(orderService.searchByReceive(start, end, serviceId, address, option));
+    }
 }

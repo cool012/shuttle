@@ -75,4 +75,42 @@
             and orders.pid = #{productId}
         </if>
     </select>
+
+    <select id="searchByReceive" resultMap="orderList">
+        select
+        orders.*,
+        client.name as clientName,
+        client.phone as clientPhone,
+        client.address as ClientAddress,
+        service.name as serviceName,
+        service.phone as servicePhone,
+        product.name as productName,
+        product.image as productImage,
+        product.price as productPrice,
+        round(product.rate,1) as productRate,
+        product.sales as productSales,
+        store.name as storeName,
+        store.serviceId as serviceId,
+        store.id as storeId
+        from orders,
+        user as client,
+        user as service,
+        product
+        left join
+        store
+        on
+        product.storeId = store.id
+        where
+        orders.cid = client.id and orders.sid = service.id and orders.pid = product.id and
+        orders.status = -1
+        <if test="start != null and end != null">
+            and orders.date between #{start} and #{end}
+        </if>
+        <if test="serviceId != 0">
+            and store.serviceId = #{serviceId}
+        </if>
+        <if test="address != null">
+            and orders.address like CONCAT('%',#{address},'%')
+        </if>
+    </select>
 </mapper>

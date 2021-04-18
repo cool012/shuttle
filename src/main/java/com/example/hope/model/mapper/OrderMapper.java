@@ -50,4 +50,8 @@ public interface OrderMapper {
     int completed(long id);
 
     List<Orders> searchByCid(long userId, String start, String end, long productId, long serverId, int status);
+
+
+    List<Orders> searchByReceive(@Param("start") String start, @Param("end") String end,
+                                 @Param("serviceId") long serviceId, @Param("address") String address);
 }

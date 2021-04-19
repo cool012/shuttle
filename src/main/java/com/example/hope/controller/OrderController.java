@@ -22,7 +22,7 @@ import java.util.Map;
  * @created: 2020/10/25 14:20
  */
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 @Api(tags = "订单相关接口")
 public class OrderController {
 

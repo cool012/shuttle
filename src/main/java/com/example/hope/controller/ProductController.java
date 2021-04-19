@@ -26,19 +26,20 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @param product.name    必选 string 商品名称
+     * @param product.price   必选 int 商品价格
+     * @param product.image   必选 string 商品图片
+     * @param product.sales   必选 int 商品销量
+     * @param product.rate    必选 int 商品评分
+     * @param product.storeId 必选 long 商店id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 产品
      * @title 添加
      * @description 添加商店的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param product.name 必选 string 商品名称
-     * @param product.price 必选 int 商品价格
-     * @param product.image 必选 string 商品图片
-     * @param product.sales 必选 int 商品销量
-     * @param product.rate 必选 int 商品评分
-     * @param product.storeId 必选 long 商店id
      * @url /product/insert
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许管理员操作
      */
     @Admin
@@ -51,14 +52,15 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @param id 必选 long 商品id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 产品
      * @title 删除
      * @description 删除商店的接口
      * @method delete
      * @header Authorization 必选 String token
-     * @param id 必选 long 商品id
      * @url /product/delete
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许管理员操作
      */
     @Admin
@@ -71,19 +73,20 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @param product.name    必选 string 商品名称
+     * @param product.price   必选 int 商品价格
+     * @param product.image   必选 string 商品图片
+     * @param product.sales   必选 int 商品销量
+     * @param product.rate    必选 int 商品评分
+     * @param product.storeId 必选 long 商店id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 产品
      * @title 修改
      * @description 修改商店的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param product.name 必选 string 商品名称
-     * @param product.price 必选 int 商品价格
-     * @param product.image 必选 string 商品图片
-     * @param product.sales 必选 int 商品销量
-     * @param product.rate 必选 int 商品评分
-     * @param product.storeId 必选 long 商店id
      * @url /product/update
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许管理员操作
      */
     @Admin
@@ -96,18 +99,19 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "product"}
      * @catalog 产品
      * @title 查找全部
      * @description 查找全部产品的接口
      * @method get
      * @header Authorization 必选 String token
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
      * @url /product/findAll
-     * @return {"code": 1,"message": "success","data": "product"}
-     * @return_param  product.name 必选 string 商品名称
+     * @return_param product.name 必选 string 商品名称
      * @return_param product.price 必选 int 商品价格
      * @return_param product.image 必选 string 商品图片
      * @return_param product.sales 必选 int 商品销量
@@ -124,19 +128,20 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @param storeId  必选 long 商店id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "products"}
      * @catalog 产品
      * @title 根据storeId查找产品
      * @description 根据storeId查找产品的接口
      * @method get
      * @header Authorization 必选 String token
-     * @param storeId 必选 long 商店id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
      * @url /product/findByStoreId/{storeId}
-     * @return {"code": 1,"message": "success","data": "products"}
-     * @return_param  product.name 必选 string 商品名称
+     * @return_param product.name 必选 string 商品名称
      * @return_param product.price 必选 int 商品价格
      * @return_param product.image 必选 string 商品图片
      * @return_param product.sales 必选 int 商品销量
@@ -151,21 +156,29 @@ public class ProductController {
         return ReturnMessageUtil.sucess(productService.findByStoreId(storeId));
     }
 
+    @LoginUser
+    @ApiOperation("根据storeId查找产品（分页）")
+    @RequestMapping(value = "/findByStoreIdByPagination/{storeId}", method = RequestMethod.GET)
+    public ReturnMessage<Object> findByStoreId(@PathVariable("storeId") long storeId, @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(productService.findByStoreId(storeId, option));
+    }
+
     /**
      * showdoc
+     *
+     * @param id       必选 long 产品id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "product"}
      * @catalog 产品
      * @title 根据id查找产品
      * @description 根据id查找产品的接口
      * @method get
      * @header Authorization 必选 String token
-     * @param id 必选 long 产品id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
      * @url /product/findById/{id}
-     * @return {"code": 1,"message": "success","data": "product"}
-     * @return_param  product.name 必选 string 商品名称
+     * @return_param product.name 必选 string 商品名称
      * @return_param product.price 必选 int 商品价格
      * @return_param product.image 必选 string 商品图片
      * @return_param product.sales 必选 int 商品销量
@@ -182,19 +195,20 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @param product.name    必选 string 商品名称
+     * @param product.price   必选 int 商品价格
+     * @param product.image   必选 string 商品图片
+     * @param product.sales   必选 int 商品销量
+     * @param product.rate    必选 int 商品评分
+     * @param product.storeId 必选 long 商店id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 产品
      * @title 更新产品评分
      * @description 更新产品评分的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param product.name 必选 string 商品名称
-     * @param product.price 必选 int 商品价格
-     * @param product.image 必选 string 商品图片
-     * @param product.sales 必选 int 商品销量
-     * @param product.rate 必选 int 商品评分
-     * @param product.storeId 必选 long 商店id
      * @url /product/review
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -207,14 +221,15 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @return {"code": 1,"message": "success","data": "product"}
      * @catalog 产品
      * @title 排行榜
      * @description 商店排行榜的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /product/rank
-     * @return {"code": 1,"message": "success","data": "product"}
-     * @return_param  product.name 必选 string 商品名称
+     * @return_param product.name 必选 string 商品名称
      * @return_param product.price 必选 int 商品价格
      * @return_param product.image 必选 string 商品图片
      * @return_param product.sales 必选 int 商品销量
@@ -231,19 +246,20 @@ public class ProductController {
 
     /**
      * showdoc
+     *
+     * @param keyword  必选 string 关键词
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "products"}
      * @catalog 产品
      * @title 搜索
      * @description 商店搜索的接口
      * @method post
      * @header Authorization 必选 String token
-     * @param keyword 必选 string 关键词
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
      * @url /product/update
-     * @return {"code": 1,"message": "success","data": "products"}
-     * @return_param  product.name 必选 string 商品名称
+     * @return_param product.name 必选 string 商品名称
      * @return_param product.price 必选 int 商品价格
      * @return_param product.image 必选 string 商品图片
      * @return_param product.sales 必选 int 商品销量

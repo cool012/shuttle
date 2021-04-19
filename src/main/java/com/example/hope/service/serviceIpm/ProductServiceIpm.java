@@ -181,6 +181,21 @@ public class ProductServiceIpm implements ProductService {
     }
 
     /**
+     * 根据storeId查询产品（分页）
+     *
+     * @param storeId 商店id
+     * @return 产品列表
+     */
+    @Override
+    @Cacheable(value = "product", key = "methodName + #storeId + #option.toString()")
+    public PageInfo<Product> findByStoreId(long storeId, Map<String, String> option) {
+        Utils.checkOption(option, Product.class);
+        String orderBy = String.format("product.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(productMapper.select(String.valueOf(storeId), "storeId"));
+    }
+
+    /**
      * 根据id查询产品
      *
      * @param id 产品id

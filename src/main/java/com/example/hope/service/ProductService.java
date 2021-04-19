@@ -25,6 +25,8 @@ public interface ProductService {
 
     List<Product> findByStoreId(long storeId);
 
+    PageInfo<Product> findByStoreId(long storeId, Map<String, String> option);
+
     Product findById(long id);
 
     boolean exist(long id);

@@ -244,4 +244,17 @@ public class UserServiceIpm implements UserService {
     public boolean exist(long userId) {
         return findById(userId).size() != 0;
     }
+
+    /**
+     * 检查token
+     *
+     * @param token token
+     * @return user
+     */
+    @Cacheable(value = "user", key = "#token")
+    @Override
+    public User check(String token) {
+        long userId = JwtUtils.getUserId(token);
+        return findById(userId).get(0);
+    }
 }

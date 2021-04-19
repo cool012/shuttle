@@ -36,4 +36,6 @@ public interface UserService {
     void admin(long userId);
 
     boolean exist(long userId);
+
+    User check(String token);
 }

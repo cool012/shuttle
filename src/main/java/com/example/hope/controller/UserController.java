@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -72,8 +73,8 @@ public class UserController {
     @LoginUser
     @ApiOperation("检查token")
     @RequestMapping(value = "/check", method = RequestMethod.GET)
-    public ReturnMessage<Object> check() {
-        return ReturnMessageUtil.sucess();
+    public ReturnMessage<Object> check(HttpServletRequest request) {
+        return ReturnMessageUtil.sucess(userService.check(request.getHeader("Authorization")));
     }
 
     /**

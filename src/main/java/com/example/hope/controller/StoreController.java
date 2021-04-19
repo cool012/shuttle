@@ -20,7 +20,7 @@ import java.util.Map;
  * @created: 2021/02/03 19:56
  */
 @RestController
-@RequestMapping("/store")
+@RequestMapping("/major/store")
 @Api(tags = "商店相关接口")
 public class StoreController {
 

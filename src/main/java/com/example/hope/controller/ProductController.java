@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/major/product")
 @Api(tags = "产品相关接口")
 public class ProductController {
 

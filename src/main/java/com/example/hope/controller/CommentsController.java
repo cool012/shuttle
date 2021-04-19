@@ -21,7 +21,7 @@ import java.util.Map;
  * @created: 2021/02/17 13:57
  */
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/major/comments")
 @Api(tags = "评论相关接口")
 public class CommentsController {
 

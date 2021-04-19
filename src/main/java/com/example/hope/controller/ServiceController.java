@@ -19,7 +19,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/service")
+@RequestMapping("/major/service")
 @Api(tags = "服务相关接口")
 public class ServiceController {
 

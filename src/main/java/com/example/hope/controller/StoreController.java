@@ -186,8 +186,9 @@ public class StoreController {
     @LoginUser
     @ApiOperation("根据categoryId查询商店")
     @RequestMapping(value = "/findByCategoryId/{categoryId}", method = RequestMethod.GET)
-    public ReturnMessage<Object> findByCategoryId(@PathVariable("categoryId") long categoryId) {
-        return ReturnMessageUtil.sucess(storeService.findByCategoryId(categoryId));
+    public ReturnMessage<Object> findByCategoryId(@PathVariable("categoryId") long categoryId,
+                                                  @RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(storeService.findByCategoryId(categoryId, option));
     }
 
     /**

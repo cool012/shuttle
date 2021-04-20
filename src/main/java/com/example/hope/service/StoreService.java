@@ -27,6 +27,8 @@ public interface StoreService {
 
     List<Store> findByCategoryId(long categoryId);
 
+    PageInfo<Store> findByCategoryId(long categoryId, Map<String, String> option);
+
     List<Store> findById(long id);
 
     void review(long id, float rate);

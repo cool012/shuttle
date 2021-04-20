@@ -30,6 +30,7 @@ import java.util.*;
  * @author: DHY
  * @created: 2021/02/03 19:48
  */
+
 @Service
 @Log4j2
 public class StoreServiceImp implements StoreService {
@@ -72,7 +73,7 @@ public class StoreServiceImp implements StoreService {
             log.info(LoggerHelper.logger(store, res));
             BusinessException.check(res, "添加失败");
             storeRepository.save(store);
-        }else{
+        } else {
             // todo 管理端同意
         }
     }
@@ -188,6 +189,21 @@ public class StoreServiceImp implements StoreService {
     @Cacheable(value = "store", key = "methodName + #categoryId")
     public List<Store> findByCategoryId(long categoryId) {
         return storeMapper.select(String.valueOf(categoryId), "categoryId");
+    }
+
+    /**
+     * 根据categoryId查询商店（分页）
+     *
+     * @param categoryId 类别id
+     * @return 商店列表
+     */
+    @Override
+    @Cacheable(value = "store", key = "methodName + #categoryId + #option.toString()")
+    public PageInfo<Store> findByCategoryId(long categoryId, Map<String, String> option) {
+        Utils.checkOption(option, Store.class);
+        String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
+        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
+        return PageInfo.of(storeMapper.select(String.valueOf(categoryId), "categoryId"));
     }
 
     /**

@@ -17,7 +17,7 @@ public interface ProductService {
 
     void review(Product product, String token);
 
-    List<Product> rank();
+    List<Product> rank(Map<String, String> option);
 
     SearchHits<Product> search(String keyword, Map<String, String> option);
 

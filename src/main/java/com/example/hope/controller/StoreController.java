@@ -237,8 +237,8 @@ public class StoreController {
     @LoginUser
     @ApiOperation("排行榜")
     @RequestMapping(value = "/rank", method = RequestMethod.GET)
-    public ReturnMessage<Object> rank() {
-        return ReturnMessageUtil.sucess(storeService.rank());
+    public ReturnMessage<Object> rank(@RequestParam Map<String, String> option) {
+        return ReturnMessageUtil.sucess(storeService.rank(option));
     }
 
     /**

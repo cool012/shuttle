@@ -224,15 +224,18 @@ public class StoreServiceImp implements StoreService {
      * @return 商店列表
      */
     @Override
-    public List<Store> rank() {
-        Set<String> range = redisService.range("store_rank", 0, 9);
+    @Cacheable(value = "store", key = "methodName + #option.toString()")
+    public List<Store> rank(Map<String, String> option) {
+        Utils.checkQuantity(option);
+        int quantity = Integer.parseInt(option.get("quantity"));
+        Set<String> range = redisService.range("store_rank", 0, (quantity - 1));
         // 如果排行榜为空，将所有商店加入进去，分数为0
         if (range.size() == 0) {
             List<Store> stores = findAll(new HashMap<>()).getList();
             for (Store store : stores) {
                 redisService.incrScore("store_rank", String.valueOf(store.getId()), 0);
             }
-            range = redisService.range("store_rank", 0, 9);
+            range = redisService.range("store_rank", 0, (quantity - 1));
         }
         List<Store> stores = new ArrayList<>();
         for (String id : range) {

@@ -108,4 +108,15 @@ public class Utils {
         return null;
     }
 
+    /**
+     * 检查rank quantity
+     *
+     * @param quantity
+     * @return option
+     */
+    public static Map<String, String> checkQuantity(Map<String, String> option) {
+        if (!option.containsKey("quantity") || Integer.parseInt(option.get("quantity")) <= 0)
+            option.put("quantity", "9");
+        return option;
+    }
 }

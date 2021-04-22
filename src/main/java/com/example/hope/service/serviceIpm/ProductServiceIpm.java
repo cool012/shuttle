@@ -213,15 +213,18 @@ public class ProductServiceIpm implements ProductService {
      * @return 产品列表
      */
     @Override
-    public List<Product> rank() {
-        Set<String> rank = redisService.range("product_rank", 0, 9);
+    @Cacheable(value = "product", key = "methodName + #option.toString()")
+    public List<Product> rank(Map<String, String> option) {
+        Utils.checkQuantity(option);
+        int quantity = Integer.parseInt(option.get("quantity"));
+        Set<String> rank = redisService.range("product_rank", 0, (quantity - 1));
         // 如果排行榜为空，将所有产品加入进去，分数为0
         if (rank.size() == 0) {
             List<Product> stores = findAll(new HashMap<>()).getList();
             for (Product product : stores) {
                 redisService.incrScore("product_rank", String.valueOf(product.getId()), 0);
             }
-            rank = redisService.range("product_rank", 0, 9);
+            rank = redisService.range("product_rank", 0, (quantity - 1));
         }
         List<Product> products = new ArrayList<>();
         for (String id : rank) {

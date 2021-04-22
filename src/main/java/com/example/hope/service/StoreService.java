@@ -15,7 +15,7 @@ public interface StoreService {
 
     void update(Store store);
 
-    List<Store> rank();
+    List<Store> rank(Map<String, String> option);
 
     void sales(long id, int quantity);
 

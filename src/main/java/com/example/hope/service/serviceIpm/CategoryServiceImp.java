@@ -131,7 +131,7 @@ public class CategoryServiceImp implements CategoryService {
      */
     @Override
     public boolean exist(long id) {
-        return findById(id).size() == 0;
+        return findById(id).size() != 0;
     }
 
     /**
@@ -143,6 +143,6 @@ public class CategoryServiceImp implements CategoryService {
     @Override
     @Cacheable(value = "category", key = "methodName + #id")
     public List<Category> findById(long id) {
-        return categoryMapper.select("id", String.valueOf(id));
+        return categoryMapper.select(String.valueOf(id), "id");
     }
 }

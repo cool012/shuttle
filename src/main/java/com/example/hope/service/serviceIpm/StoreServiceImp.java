@@ -259,7 +259,7 @@ public class StoreServiceImp implements StoreService {
      * 是否存在商店
      *
      * @param id 商店id
-     * @return boolean
+     * @return boolean true存在，false不存在
      */
     @Override
     public boolean exist(long id) {

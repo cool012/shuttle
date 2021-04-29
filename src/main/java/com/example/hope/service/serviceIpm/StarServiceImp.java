@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -114,13 +115,13 @@ public class StarServiceImp implements StarService {
      *
      * @param token   Token
      * @param storeId 商店id
-     * @return true 被收藏，false 没有被收藏
+     * @return List 收藏列表
      */
     @Override
     @Transactional
     @Cacheable(value = "star", key = "methodName + #storeId")
-    public boolean isStarByStoreId(String token, long storeId) {
-        return starMapper.isStarByStoreId(JwtUtils.getUserId(token), storeId).size() != 0;
+    public List<Star> isStarByStoreId(String token, long storeId) {
+        return starMapper.isStarByStoreId(JwtUtils.getUserId(token), storeId);
     }
 
     /**
@@ -128,12 +129,12 @@ public class StarServiceImp implements StarService {
      *
      * @param token     Token
      * @param productId 产品id
-     * @return true 被收藏，false 没有被收藏
+     * @return List 收藏列表
      */
     @Override
     @Transactional
     @Cacheable(value = "star", key = "methodName + #productId")
-    public boolean isStarByProductId(String token, long productId) {
-        return starMapper.isStarByProductId(JwtUtils.getUserId(token), productId).size() != 0;
+    public List<Star> isStarByProductId(String token, long productId) {
+        return starMapper.isStarByProductId(JwtUtils.getUserId(token), productId);
     }
 }

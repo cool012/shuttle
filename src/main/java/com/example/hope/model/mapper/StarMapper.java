@@ -37,7 +37,10 @@ public interface StarMapper {
             @Result(column = "productImage", property = "product.image"),
             @Result(column = "productRate", property = "product.rate"),
             @Result(column = "productSales", property = "product.sales"),
-            @Result(column = "productStoreId", property = "product.storeId")
+            @Result(column = "productStoreId", property = "product.storeId"),
+            @Result(column = "storeName", property = "product.store.name"),
+            @Result(column = "storeServiceId", property = "product.store.serviceId"),
+            @Result(column = "storeId", property = "product.store.id")
     })
     List<Star> findByProduct(@Param("userId") long userId);
 

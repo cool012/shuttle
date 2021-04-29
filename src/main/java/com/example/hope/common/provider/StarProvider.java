@@ -35,11 +35,15 @@ public class StarProvider {
             "product.image as productImage," +
             "product.rate as productRate," +
             "product.sales as productSales," +
-            "product.storeId as productStoreId " +
+            "product.storeId as productStoreId," +
+            "store.name as storeName," +
+            "store.serviceId as StoreServiceId," +
+            "store.id as storeId " +
             "from star " +
             "left join product " +
             "on " +
             "star.pid = product.id " +
+            "left join store on product.storeId = store.id " +
             "where " +
             "uid = %s" +
             "and " +

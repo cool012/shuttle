@@ -17,7 +17,7 @@ public interface UserService {
 
     void update(User user);
 
-    void updatePassword(long id,String password);
+    void updatePassword(long id, String password, String token);
 
     void addScore(long id, int quantity);
 
@@ -38,4 +38,8 @@ public interface UserService {
     boolean exist(long userId);
 
     User check(String token);
+
+    void forget(String token, String newPassword);
+
+    void sendEmail(String email);
 }

@@ -3,7 +3,10 @@
 <mapper namespace="com.example.hope.model.mapper.UserMapper">
 
     <insert id="insert">
-        insert into user(phone,password
+        insert into user(email,password
+        <if test="phone != null">
+            ,phone
+        </if>
         <if test="address != null">
             ,address
         </if>
@@ -12,7 +15,10 @@
         </if>
         )
 
-        values (#{phone},#{password}
+        values (#{email},#{password}
+        <if test="phone != null">
+            ,#{phone}
+        </if>
         <if test="address != null">
             ,#{address}
         </if>

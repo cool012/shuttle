@@ -15,7 +15,7 @@ public interface UserMapper {
     @Delete("delete from user where id = #{id}")
     int delete(long id);
 
-    @Update("update user set address = #{address},name = #{name},phone = #{phone} where id = #{id}")
+    @Update("update user set address = #{address},name = #{name},phone = #{phone},email = #{email} where id = #{id}")
     int update(User user);
 
     @Update("update user set password = #{password} where id = #{id}")
@@ -27,25 +27,28 @@ public interface UserMapper {
     @Update("update user set score = score - 1 where id = #{id}")
     int reduceScore(long id);
 
-    @Select("select id,phone,address,admin,score,name from user where id = #{id}")
+    @Select("select id,phone,address,admin,score,name,email from user where id = #{id}")
     List<User> findUserById(long id);
 
-    @Select("select id,phone,address,admin,score,name from user")
+    @Select("select id,phone,address,admin,score,name,email from user")
     List<User> findAll();
 
-    @Select("select id,phone,address,score,name,admin from user where (phone = #{account} or name = #{account}) and" +
-            " password = #{encryption_password}")
+    @Select("select id,phone,address,admin,score,name,email from user where (phone = #{account} or email = #{account})" +
+            " and password = #{encryption_password}")
     User login(String account, String encryption_password);
 
-    @Select("select id,phone,address,admin,score,name from user where phone = #{phone}")
+    @Select("select id,phone,address,admin,score,name,email from user where phone = #{phone}")
     List<User> findByPhone(String phone);
 
     @Select("select score from user where id = #{id}")
     int findByScore(long id);
 
-    @Select("select * from user where phone like #{keyword} or name like #{keyword}")
+    @Select("select id,phone,address,admin,score,name,email from user where phone like #{keyword} or name like #{keyword}")
     List<User> search(String keyword);
 
     @Update("update user set admin = 1 where id = #{id}")
     int admin(long id);
+
+    @Select("select id,phone,address,admin,score,name from user where email = #{email}")
+    User findByEmail(String email);
 }

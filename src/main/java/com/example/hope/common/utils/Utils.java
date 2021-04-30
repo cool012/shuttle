@@ -74,8 +74,8 @@ public class Utils {
     }
 
     public static void check_user(User user) {
-        if (!Validator.isMobile(user.getPhone())) {
-            throw new BusinessException(1, "手机号格式不正确");
+        if (!Validator.isEmail(user.getEmail())) {
+            throw new BusinessException(1, "邮件格式不正确");
         }
     }
 

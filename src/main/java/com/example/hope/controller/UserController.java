@@ -35,15 +35,16 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param phone    必选 string 账户（手机号/昵称）
+     * @param password 必选 string 密码
+     * @param expired  必选 int 过期时间（分钟）
+     * @return {"code": 1,"message": "success","data": { "user": "","token": "" } }
      * @catalog 用户
      * @title 登录
      * @description 用户登录的接口
      * @method post
      * @url /user/login
-     * @param phone 必选 string 账户（手机号/昵称）
-     * @param password 必选 string 密码
-     * @param expired 必选 int 过期时间（分钟）
-     * @return {"code": 1,"message": "success","data": { "user": "","token": "" } }
      * @return_param user.id int 用户id
      * @return_param user.password string 用户密码
      * @return_param user.phone string 用户电话号
@@ -61,13 +62,14 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 用户
      * @title 检查token
      * @description 检查token的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /user/check
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -79,16 +81,17 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param user.phone    必选 string 用户电话号
+     * @param user.password 必选 string 用户密码
+     * @param user.address  必选 string 用户地址
+     * @param user.name     必选 string 昵称
+     * @return {"code": 1,"message": "success","data": "null" }
      * @catalog 用户
      * @title 注册
      * @description 用户注册的接口
      * @method post
      * @url /user/register
-     * @param user.phone 必选 string 用户电话号
-     * @param user.password 必选 string 用户密码
-     * @param user.address 必选 string 用户地址
-     * @param user.name 必选 string 昵称
-     * @return {"code": 1,"message": "success","data": "null" }
      */
     @ApiOperation("用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -99,37 +102,39 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param user.phone    必选 string 用户电话号
+     * @param user.password 必选 string 用户密码
+     * @param user.address  必选 string 用户地址
+     * @param user.name     必选 string 昵称
+     * @return {"code": 1,"message": "success","data": "null" }
      * @catalog 用户
      * @title 重置密码
      * @description 用户重置密码的接口
      * @method post
      * @header Authorization 必选 String token
      * @url /user/resetPassword
-     * @param user.phone 必选 string 用户电话号
-     * @param user.password 必选 string 用户密码
-     * @param user.address 必选 string 用户地址
-     * @param user.name 必选 string 昵称
-     * @return {"code": 1,"message": "success","data": "null" }
      * @remark 只允许用户操作
      */
     @LoginUser
     @ApiOperation("重置密码")
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-    public ReturnMessage<Object> resetPassword(long id, String password) {
-        userService.updatePassword(id, password);
+    public ReturnMessage<Object> resetPassword(long id, String password, HttpServletRequest request) {
+        userService.updatePassword(id, password, request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 
     /**
      * showdoc
+     *
+     * @param id 必选 long 用户id
+     * @return {"code": 1,"message": "success","data": "null" }
      * @catalog 用户
      * @title 删除
      * @description 用户删除的接口
      * @method delete
      * @header Authorization 必选 String token
      * @url /user/delete
-     * @param id 必选 long 用户id
-     * @return {"code": 1,"message": "success","data": "null" }
      * @remark 只允许管理员操作
      */
     @Admin
@@ -142,17 +147,18 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param user.phone    必选 string 用户电话号
+     * @param user.password 必选 string 用户密码
+     * @param user.address  必选 string 用户地址
+     * @param user.name     必选 string 昵称
+     * @return {"code": 1,"message": "success","data": "null" }
      * @catalog 用户
      * @title 更新
      * @description 用户更新的接口
      * @method post
      * @header Authorization 必选 String token
      * @url /user/update
-     * @param user.phone 必选 string 用户电话号
-     * @param user.password 必选 string 用户密码
-     * @param user.address 必选 string 用户地址
-     * @param user.name 必选 string 昵称
-     * @return {"code": 1,"message": "success","data": "null" }
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -165,14 +171,15 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param id 必选 long 用户id
+     * @return {"code": 1,"message": "success","data": "user" }
      * @catalog 用户
      * @title 根据id查询用户
      * @description 根据id查询用户的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /user/findById/{id}
-     * @param id 必选 long 用户id
-     * @return {"code": 1,"message": "success","data": "user" }
      * @return_param user.id int 用户id
      * @return_param user.password string 用户密码
      * @return_param user.phone string 用户电话号
@@ -191,17 +198,18 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "users" }
      * @catalog 用户
      * @title 查询全部用户
      * @description 查询全部用户的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /user/findAll
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "users" }
      * @return_param total 总数
      * @return_param pageNum 当前页数
      * @return_param pageSize 每页的数据条数
@@ -223,18 +231,19 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param phone    必选 String 电话号
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "users" }
      * @catalog 用户
      * @title 根据手机号查询用户
      * @description 根据手机号查询用户的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /user/findByPhone/{phone}
-     * @param phone 必选 String 电话号
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "users" }
      * @return_param total 总数
      * @return_param pageNum 当前页数
      * @return_param pageSize 每页的数据条数
@@ -256,14 +265,15 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param id 必选 int 用户id
+     * @return {"code": 1,"message": "success","data": "score" }
      * @catalog 用户
      * @title 查询点数
      * @description 查询点数的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /user/findSore/{id}
-     * @param id 必选 int 用户id
-     * @return {"code": 1,"message": "success","data": "score" }
      * @return_param score 点数
      * @remark 只允许用户操作
      */
@@ -277,13 +287,14 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param userId 必选 long 用户id
+     * @param total  必选 int 充值的数量
      * @catalog 用户
      * @title 充值
      * @description 充值的接口
      * @method post
      * @url /user/recharge
-     * @param userId 必选 long 用户id
-     * @param total 必选 int 充值的数量
      * @remark 跳转到支付宝支付界面
      */
     @ApiOperation("充值")
@@ -294,16 +305,17 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param keyword  必选 string 关键词
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @return {"code": 1,"message": "success","data": "users" }
      * @catalog 用户
      * @title 搜索
      * @description 搜索用户的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /user/search/{keyword}
-     * @param keyword 必选 string 关键词
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @return {"code": 1,"message": "success","data": "users" }
      * @return_param total 总数
      * @return_param pageNum 当前页数
      * @return_param pageSize 每页的数据条数
@@ -325,14 +337,15 @@ public class UserController {
 
     /**
      * showdoc
+     *
+     * @param userId 必选 long 用户id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 用户
      * @title 设置管理员
      * @description 设置管理员的接口
      * @method post
      * @header Authorization 必选 String token
      * @url /user/admin
-     * @param userId 必选 long 用户id
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许管理员操作
      */
     @Admin
@@ -340,6 +353,20 @@ public class UserController {
     @RequestMapping(value = "/admin", method = RequestMethod.POST)
     public ReturnMessage<Object> admin(long userId) {
         userService.admin(userId);
+        return ReturnMessageUtil.sucess();
+    }
+
+    @ApiOperation("发送邮箱")
+    @RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
+    public ReturnMessage<Object> sendEmail(String email) {
+        userService.sendEmail(email);
+        return ReturnMessageUtil.sucess();
+    }
+
+    @ApiOperation("忘记密码")
+    @RequestMapping(value = "/forget", method = RequestMethod.POST)
+    public ReturnMessage<Object> forget(String token, String newPassword) {
+        userService.forget(token, newPassword);
         return ReturnMessageUtil.sucess();
     }
 }

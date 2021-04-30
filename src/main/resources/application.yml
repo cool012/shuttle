@@ -80,6 +80,20 @@ spring:
     mongodb:
       uri: mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/?authSource=admin
       database: shuttle
+  mail:
+    host: smtp.163.com #SMTP服务器地址
+    username: touwaerioe #登陆账号
+    password: OUWBDRKFVWGKLQUT #登陆密码（或授权码）
+    from: touwaerioe@163.com #邮件发信人（即真实邮箱）
+    port: 465
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
 
 logging:
   config: classpath:log4j2.xml

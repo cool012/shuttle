@@ -15,7 +15,7 @@ public interface UserService {
 
     void delete(long id);
 
-    void update(User user);
+    void update(User user, String token);
 
     void updatePassword(long id, String password, String token);
 

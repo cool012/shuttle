@@ -14,6 +14,8 @@ public interface CommentsService {
 
     void update(Comments comments, String token);
 
+    void updateByUserId(long userId, String newName);
+
     Page<Comments> findByStoreId(long storeId, Map<String, String> option);
 
     Page<Comments> findAll(Map<String, String> option);

@@ -7,6 +7,7 @@ import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.UserRepository;
+import com.example.hope.service.CommentsService;
 import com.example.hope.service.MailService;
 import com.example.hope.service.UserService;
 import com.github.pagehelper.PageHelper;
@@ -46,6 +47,9 @@ public class UserServiceIpm implements UserService {
 
     @Resource
     private MailService mailService;
+
+    @Resource
+    private CommentsService commentsService;
 
     /**
      * 用户注册
@@ -107,7 +111,9 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void update(User user) {
+    public void update(User user, String token) {
+        if(user.getId() != JwtUtils.getUserId(token)) throw new BusinessException(1,"只能修改当前用户的信息");
+        if (user.getName() != null) commentsService.updateByUserId(user.getId(), user.getName());
         int res = userMapper.update(user);
         log.info(LoggerHelper.logger(user, res));
         BusinessException.check(res, "更新失败");

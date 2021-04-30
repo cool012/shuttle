@@ -6,6 +6,7 @@ import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.User;
+import com.example.hope.service.CommentsService;
 import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
 import io.swagger.annotations.Api;
@@ -164,8 +165,8 @@ public class UserController {
     @LoginUser
     @ApiOperation("用户更新")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ReturnMessage<Object> update(User user) {
-        userService.update(user);
+    public ReturnMessage<Object> update(User user, HttpServletRequest request) {
+        userService.update(user,request.getHeader("Authorization"));
         return ReturnMessageUtil.sucess();
     }
 

@@ -34,18 +34,19 @@ public class CommentsController {
 
     /**
      * showdoc
+     *
+     * @param comments.content 必选 string 评论内容
+     * @param comments.name    必选 string 评论用户昵称
+     * @param comments.storeId 必选 long 评论商店id
+     * @param comments.date    必选 string 评论时间
+     * @param comments.userId  必选 long 评论用户id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 评论
      * @title 添加评论
      * @description 添加评论的接口
      * @method post
      * @header Authorization 必选 String token
      * @url /comments/insert
-     * @param comments.content 必选 string 评论内容
-     * @param comments.name 必选 string 评论用户昵称
-     * @param comments.storeId 必选 long 评论商店id
-     * @param comments.date 必选 string 评论时间
-     * @param comments.userId 必选 long 评论用户id
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -58,18 +59,19 @@ public class CommentsController {
 
     /**
      * showdoc
+     *
+     * @param comments.content 必选 string 评论内容
+     * @param comments.name    必选 string 评论用户昵称
+     * @param comments.storeId 必选 long 评论商店id
+     * @param comments.date    必选 string 评论时间
+     * @param comments.userId  必选 long 评论用户id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 评论
      * @title 删除评论
      * @description 删除评论的接口
      * @method delete
      * @header Authorization 必选 String token
      * @url /comments/delete
-     * @param comments.content 必选 string 评论内容
-     * @param comments.name 必选 string 评论用户昵称
-     * @param comments.storeId 必选 long 评论商店id
-     * @param comments.date 必选 string 评论时间
-     * @param comments.userId 必选 long 评论用户id
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -82,18 +84,19 @@ public class CommentsController {
 
     /**
      * showdoc
+     *
+     * @param comments.content 必选 string 评论内容
+     * @param comments.name    必选 string 评论用户昵称
+     * @param comments.storeId 必选 long 评论商店id
+     * @param comments.date    必选 string 评论时间
+     * @param comments.userId  必选 long 评论用户id
+     * @return {"code": 1,"message": "success","data": "null"}
      * @catalog 评论
      * @title 修改评论
      * @description 修改评论的接口
      * @method post
      * @header Authorization 必选 String token
      * @url /comments/update
-     * @param comments.content 必选 string 评论内容
-     * @param comments.name 必选 string 评论用户昵称
-     * @param comments.storeId 必选 long 评论商店id
-     * @param comments.date 必选 string 评论时间
-     * @param comments.userId 必选 long 评论用户id
-     * @return {"code": 1,"message": "success","data": "null"}
      * @remark 只允许用户操作
      */
     @LoginUser
@@ -106,17 +109,18 @@ public class CommentsController {
 
     /**
      * showdoc
+     *
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "comments"}
      * @catalog 评论
      * @title 查询全部评论
      * @description 查询全部评论的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /comments/findAll
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "comments"}
      * @return_param comments.content 必选 string 评论内容
      * @return_param comments.name 必选 string 评论用户昵称
      * @return_param comments.storeId 必选 long 评论商店id
@@ -133,18 +137,19 @@ public class CommentsController {
 
     /**
      * showdoc
+     *
+     * @param storeId  必选 long 商店id
+     * @param pageNo   可选 int 页数
+     * @param pageSize 可选 int 每页数据条数
+     * @param sort     可选 string 排序
+     * @param order    可选 string 顺序(ASC/DESC)
+     * @return {"code": 1,"message": "success","data": "comments"}
      * @catalog 评论
      * @title 按商店id查询全部评论
      * @description 按商店id查询全部评论的接口
      * @method get
      * @header Authorization 必选 String token
      * @url /comments/findByStoreId/{storeId}
-     * @param storeId 必选 long 商店id
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "comments"}
      * @return_param comments.content 必选 string 评论内容
      * @return_param comments.name 必选 string 评论用户昵称
      * @return_param comments.storeId 必选 long 评论商店id
@@ -157,5 +162,11 @@ public class CommentsController {
     @RequestMapping(value = "/findByStoreId/{storeId}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByStoreId(@PathVariable long storeId, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(commentsService.findByStoreId(storeId, option));
+    }
+
+    @RequestMapping(value = "/updateByUserId", method = RequestMethod.POST)
+    public ReturnMessage<Object> updateByUserId(long userId, String newName) {
+        commentsService.updateByUserId(userId, newName);
+        return ReturnMessageUtil.sucess();
     }
 }

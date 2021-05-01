@@ -44,7 +44,7 @@ create table store(
 	serviceId bigint not null comment '服务id',
 	categoryId bigint not null comment '类别id',
 	image varchar(255) not null comment  '商店图片',
-	rate int(2) not null comment '商店评分',
+	rate float not null comment '商店评分',
 	sales int(3) not null comment  '商店销量',
 	primary key(id),
 	unique(name)
@@ -59,7 +59,7 @@ create table product(
 	image varchar(255) not null comment '产品图片',
 	quantity int(10) not null comment '数量',
 	sales int(10) default 0,
-	rate int(10) default 5 comment '评分',
+	rate float default 5 comment '评分',
 	storeId bigint not null comment '商店id',
 	primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

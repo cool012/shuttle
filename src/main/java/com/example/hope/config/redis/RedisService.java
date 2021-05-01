@@ -1,5 +1,6 @@
 package com.example.hope.config.redis;
 
+import com.example.hope.common.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -72,8 +73,8 @@ public class RedisService {
      * @param score score
      * @return score
      */
-    public double incrScore(String key, String value, double score) {
-        return stringRedisTemplate.opsForZSet().incrementScore(key, value, score);
+    public void incrScore(String key, String value, double score) {
+        stringRedisTemplate.opsForZSet().incrementScore(key, value, score);
     }
 
     /**
@@ -86,5 +87,18 @@ public class RedisService {
      */
     public Set<String> range(String key, long start, long end) {
         return stringRedisTemplate.opsForZSet().reverseRange(key, start, end);
+    }
+
+    /**
+     * 基于hacker news的排行算法
+     *
+     * @param rate  评分
+     * @param sales 销量
+     * @param key   key
+     * @param value value
+     */
+    public void review(double rate, double sales, String key, String value) {
+        double score = Utils.changeRate(rate, sales);
+        incrScore(key, value, score);
     }
 }

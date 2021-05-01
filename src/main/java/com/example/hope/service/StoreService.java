@@ -31,7 +31,7 @@ public interface StoreService {
 
     List<Store> findById(long id);
 
-    void review(long id, float rate);
+    void review(long id, float rate, String token);
 
     boolean exist(long id);
 }

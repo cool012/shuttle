@@ -270,4 +270,12 @@ public class StoreController {
     public ReturnMessage<Object> search(@PathVariable("keyword") String keyword, @RequestParam Map<String, String> option) {
         return ReturnMessageUtil.sucess(storeService.search(keyword, option));
     }
+
+    @LoginUser
+    @ApiOperation("评分")
+    @RequestMapping(value = "/review", method = RequestMethod.POST)
+    public ReturnMessage<Object> review(long id, float rate, HttpServletRequest request) {
+        storeService.review(id, rate, request.getHeader("Authorization"));
+        return ReturnMessageUtil.sucess();
+    }
 }

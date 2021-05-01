@@ -246,6 +246,7 @@ public class OrderServiceIpm implements OrderService {
      * @param cid 客户用户id
      * @return 分页包装数据
      */
+    @Override
     @Cacheable(value = "order", key = "methodName + #cid.toString() + 'override'")
     public List<Orders> findByCid(long cid) {
         return orderMapper.select(String.valueOf(cid), "cid", null);

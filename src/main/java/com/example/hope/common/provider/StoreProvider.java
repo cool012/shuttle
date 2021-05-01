@@ -13,8 +13,7 @@ public class StoreProvider {
             "store.*," +
             "service.name as serviceName," +
             "service.color as serviceColor," +
-            "category.name as categoryName," +
-            "round(store.rate,1) as newRate " +
+            "category.name as categoryName " +
             "from store " +
             "left join " +
             "service " +

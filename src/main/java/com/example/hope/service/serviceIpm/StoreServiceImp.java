@@ -5,11 +5,13 @@ import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
+import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.StoreRepository;
 import com.example.hope.service.CategoryService;
+import com.example.hope.service.OrderService;
 import com.example.hope.service.ServiceService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
@@ -56,6 +58,9 @@ public class StoreServiceImp implements StoreService {
     @Resource
     private EsPageHelper<Store> esPageHelper;
 
+    @Resource
+    private OrderService orderService;
+
     /**
      * 添加商店
      *
@@ -88,7 +93,8 @@ public class StoreServiceImp implements StoreService {
     public void sales(long id, int quantity) {
         int res = storeMapper.sales(id, quantity);
         BusinessException.check(res, "增加商店销量失败");
-        redisService.incrScore("store_rank", String.valueOf(id), quantity);
+        Store store = findById(id).get(0);
+        redisService.review(store.getRate(), store.getSales(), "store_rank", String.valueOf(id));
     }
 
     /**
@@ -123,14 +129,28 @@ public class StoreServiceImp implements StoreService {
     /**
      * 更新商店评分
      *
-     * @param id   商店id
-     * @param rate 评分
+     * @param id    商店id
+     * @param rate  评分
+     * @param token Token
      */
     @Override
-    public void review(long id, float rate) {
+    @CacheEvict(value = "store", allEntries = true)
+    public void review(long id, float rate, String token) {
+        long userId = JwtUtils.getUserId(token);
+        List<Orders> list = orderService.findByCid(userId);
+        boolean status = false;
+        for (Orders orders : list) {
+            if (orders.getStoreId() == id) {
+                status = true;
+                break;
+            }
+        }
+        if (!JwtUtils.is_admin(token) || !status) throw new BusinessException(1, "只允许管理员或在此商店消费过的用户可以评分");
         int res = storeMapper.review(id, rate);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "更新失败");
+        Store store = findById(id).get(0);
+        redisService.review(store.getRate(), store.getSales(), "store_rank", String.valueOf(id));
     }
 
     /**
@@ -162,6 +182,16 @@ public class StoreServiceImp implements StoreService {
         String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(storeMapper.select(null, null));
+    }
+
+    /**
+     * 查询全部商店
+     *
+     * @return 分页包装类
+     */
+    @Cacheable(value = "store", key = "methodName")
+    public List<Store> findAll() {
+        return storeMapper.select(null, null);
     }
 
     /**
@@ -231,9 +261,10 @@ public class StoreServiceImp implements StoreService {
         Set<String> range = redisService.range("store_rank", 0, (quantity - 1));
         // 如果排行榜为空，将所有商店加入进去，分数为0
         if (range.size() == 0) {
-            List<Store> stores = findAll(new HashMap<>()).getList();
+            List<Store> stores = findAll();
             for (Store store : stores) {
-                redisService.incrScore("store_rank", String.valueOf(store.getId()), 0);
+                double score = Utils.changeRate(store.getRate(), store.getSales());
+                redisService.incrScore("store_rank", String.valueOf(store.getId()), score);
             }
             range = redisService.range("store_rank", 0, (quantity - 1));
         }

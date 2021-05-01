@@ -10,7 +10,7 @@ import java.util.Map;
 public class ProductProvider {
 
     private static final String SQL = "select " +
-            "product.*,store.name as storeName,store.serviceId as serviceId, round(product.rate,1) as newRate " +
+            "product.*,store.name as storeName,store.serviceId as serviceId " +
             "from " +
             "product " +
             "left join " +

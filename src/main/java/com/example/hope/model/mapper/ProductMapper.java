@@ -22,7 +22,6 @@ public interface ProductMapper {
 
     @SelectProvider(type = ProductProvider.class, method = "selectByKey")
     @Results(value = {
-            @Result(column = "newRate", property = "rate"),
             @Result(column = "storeName", property = "store.name"),
             @Result(column = "serviceId", property = "store.serviceId")
 

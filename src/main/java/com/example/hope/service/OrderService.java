@@ -24,6 +24,8 @@ public interface OrderService {
 
     PageInfo<Orders> findByCid(long cid, Map<String, String> option);
 
+    List<Orders> findByCid(long cid);
+
     PageInfo<Orders> findByCidOrOrder(long cid, Map<String, String> option);
 
     PageInfo<Orders> findByCidOrPresent(long cid, Map<String, String> option);

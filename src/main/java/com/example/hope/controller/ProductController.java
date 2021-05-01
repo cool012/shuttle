@@ -212,8 +212,8 @@ public class ProductController {
     @LoginUser
     @ApiOperation("更新产品评分")
     @RequestMapping(value = "/review", method = RequestMethod.POST)
-    public ReturnMessage<Object> review(Product product, HttpServletRequest request) {
-        productService.review(product, request.getHeader("Authorization"));
+    public ReturnMessage<Object> review(Product product, long orderId, HttpServletRequest request) {
+        productService.review(product, request.getHeader("Authorization"), orderId);
         return ReturnMessageUtil.sucess();
     }
 

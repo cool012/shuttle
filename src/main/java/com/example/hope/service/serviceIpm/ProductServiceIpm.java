@@ -75,7 +75,8 @@ public class ProductServiceIpm implements ProductService {
         int res = productMapper.addSales(id, sales);
         log.info("product addSales -> " + id + " for -> " + sales + " -> res " + res);
         BusinessException.check(res, "更新销量失败");
-        redisService.incrScore("product_rank", String.valueOf(id), sales);
+        Product product = findById(id);
+        redisService.review(product.getRate(), product.getSales(), "product_rank", String.valueOf(id));
         // 增加商店销量
         storeService.sales(findById(id).getStoreId(), sales);
     }
@@ -133,24 +134,18 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @CacheEvict(value = "product", allEntries = true)
-    public void review(Product product, String token) {
+    public void review(Product product, String token, long orderId) {
         long userId = JwtUtils.getUserId(token);
-        int res = 0;
-        boolean status = false;
         // 只允许下单此产品的用户或管理员对产品评分
-        List<Orders> orders = orderServiceIpm.findByCid(userId);
-        for (Orders order : orders) {
-            System.out.println(order);
-            if ((order.getStatus() == 0 && order.getPid() == product.getId()) || JwtUtils.is_admin(token)) {
-                res = productMapper.review(product.getId(), product.getRate());
-                storeService.review(product.getStoreId(), product.getRate());
-                status = true;
-                break;
-            }
-        }
-        if (!status) throw new BusinessException(0, "只允许下单此产品的用户对产品评分");
-        log.info(LoggerHelper.logger(product, res));
-        BusinessException.check(res, "更新评分失败");
+        Orders orders = orderServiceIpm.findById(orderId);
+        if ((orders.getStatus() == 0 && orders.getPid() == product.getId() && orders.getCid() == userId) || JwtUtils.is_admin(token)) {
+            int res = productMapper.review(product.getId(), product.getRate());
+            product = findById(product.getId());
+            redisService.review(product.getRate(), product.getSales(), "product_rank", String.valueOf(product.getId()));
+            log.info(LoggerHelper.logger(product, res));
+            BusinessException.check(res, "更新评分失败");
+        }else throw new BusinessException(0, "只允许下单此产品的用户对产品评分");
+
     }
 
     /**
@@ -165,6 +160,16 @@ public class ProductServiceIpm implements ProductService {
         String orderBy = String.format("product.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
         return PageInfo.of(productMapper.select(null, null));
+    }
+
+    /**
+     * 查询全部产品
+     *
+     * @return 产品列表
+     */
+    @Cacheable(value = "product", key = "methodName")
+    public List<Product> findAll() {
+        return productMapper.select(null, null);
     }
 
     /**
@@ -212,16 +217,16 @@ public class ProductServiceIpm implements ProductService {
      * @return 产品列表
      */
     @Override
-    @Cacheable(value = "product", key = "methodName + #option.toString()")
     public List<Product> rank(Map<String, String> option) {
         Utils.checkQuantity(option);
         int quantity = Integer.parseInt(option.get("quantity"));
         Set<String> rank = redisService.range("product_rank", 0, (quantity - 1));
         // 如果排行榜为空，将所有产品加入进去，分数为0
         if (rank.size() == 0) {
-            List<Product> stores = findAll(new HashMap<>()).getList();
-            for (Product product : stores) {
-                redisService.incrScore("product_rank", String.valueOf(product.getId()), 0);
+            List<Product> products = findAll();
+            for (Product product : products) {
+                double score = Utils.changeRate(product.getRate(), product.getSales());
+                redisService.incrScore("product_rank", String.valueOf(product.getId()), score);
             }
             rank = redisService.range("product_rank", 0, (quantity - 1));
         }

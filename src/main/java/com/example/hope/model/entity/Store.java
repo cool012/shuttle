@@ -29,7 +29,7 @@ public class Store implements Serializable {
     private long serviceId;
     private long categoryId;
     private String image;
-    private int rate;
+    private float rate;
     private int sales;
     private Services services;
     private Category category;

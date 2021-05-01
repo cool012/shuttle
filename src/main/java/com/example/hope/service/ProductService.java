@@ -15,7 +15,7 @@ public interface ProductService {
 
     void update(Product product);
 
-    void review(Product product, String token);
+    void review(Product product, String token, long orderId);
 
     List<Product> rank(Map<String, String> option);
 

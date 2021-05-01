@@ -22,7 +22,6 @@ public interface StoreMapper {
 
     @SelectProvider(type = StoreProvider.class, method = "selectByKey")
     @Results(value = {
-            @Result(column = "newRate", property = "rate"),
             @Result(column = "serviceName", property = "services.name"),
             @Result(column = "serviceColor", property = "services.color"),
             @Result(column = "categoryName", property = "category.name")

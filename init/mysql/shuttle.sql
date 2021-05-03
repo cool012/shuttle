@@ -87,3 +87,27 @@ create table ads(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `ads` VALUES (1,'https://www.foodiesfeed.com/wp-content/uploads/2019/02/messy-pizza-on-a-black-table-768x512.jpg',2),(2,'https://www.foodiesfeed.com/wp-content/uploads/2017/05/juicy-burger-in-a-vibrant-interior.jpg',3);
+
+create table store_approve(
+    id bigint not null auto_increment,
+    status tinyint(1) not null comment '状态',
+    uid bigint not null comment '用户id',
+    name varchar(255) not null comment '商店名称',
+    image varchar(255) not null comment '商店图片',
+    serviceId bigint not null comment '服务id',
+    categoryId bigint not null comment '类别id',
+    primary key(id),
+    key(uid) USING BTREE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table product_approve(
+    id bigint not null auto_increment,
+    status tinyint(1) not null comment '状态',
+    uid bigint not null comment '用户id',
+    name varchar(255) not null comment '产品名称',
+    image varchar(255) not null comment '产品图片',
+    price int(10) not null comment '产品价格',
+    storeId bigint not null comment '商店id',
+    primary key(id),
+    key(uid) USING BTREE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

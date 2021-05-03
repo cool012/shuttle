@@ -51,7 +51,7 @@ public class CategoryController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public ReturnMessage<Object> insert(Category category) {
         categoryService.insert(category);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -71,7 +71,7 @@ public class CategoryController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ReturnMessage<Object> delete(long id) {
         categoryService.delete(id);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -92,7 +92,7 @@ public class CategoryController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(Category category) {
         categoryService.update(category);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -116,7 +116,7 @@ public class CategoryController {
     @ApiOperation("查询全部类别")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(Map<String, String> option) {
-        return ReturnMessageUtil.sucess(categoryService.findAll(option));
+        return ReturnMessageUtil.success(categoryService.findAll(option));
     }
 
     /**
@@ -137,6 +137,6 @@ public class CategoryController {
     @ApiOperation("按服务id查询全部类别")
     @RequestMapping(value = "/findAllByServiceId/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findAllByServiceId(@PathVariable long id) {
-        return ReturnMessageUtil.sucess(categoryService.findAllByServiceId(id));
+        return ReturnMessageUtil.success(categoryService.findAllByServiceId(id));
     }
 }

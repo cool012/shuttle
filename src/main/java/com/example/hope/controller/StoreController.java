@@ -48,9 +48,9 @@ public class StoreController {
     @LoginUser
     @ApiOperation("添加商店")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(Store store, HttpServletRequest request) {
-        storeService.insert(store, request.getHeader("Authorization"));
-        return ReturnMessageUtil.sucess();
+    public ReturnMessage<Object> insert(Store store) {
+        storeService.insert(store);
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -71,7 +71,7 @@ public class StoreController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ReturnMessage<Object> delete(long id) {
         storeService.delete(id);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -97,7 +97,7 @@ public class StoreController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(Store store) {
         storeService.update(store);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -126,7 +126,7 @@ public class StoreController {
     @ApiOperation("查询所有商店")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(storeService.findAll(option));
+        return ReturnMessageUtil.success(storeService.findAll(option));
     }
 
     /**
@@ -157,7 +157,7 @@ public class StoreController {
     @RequestMapping(value = "/findByServiceId/{serviceId}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByServiceId(@PathVariable("serviceId") long serviceId,
                                                  @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(storeService.findByServiceId(serviceId, option));
+        return ReturnMessageUtil.success(storeService.findByServiceId(serviceId, option));
     }
 
     /**
@@ -188,7 +188,7 @@ public class StoreController {
     @RequestMapping(value = "/findByCategoryId/{categoryId}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByCategoryId(@PathVariable("categoryId") long categoryId,
                                                   @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(storeService.findByCategoryId(categoryId, option));
+        return ReturnMessageUtil.success(storeService.findByCategoryId(categoryId, option));
     }
 
     /**
@@ -213,7 +213,7 @@ public class StoreController {
     @ApiOperation("根据id查询商店")
     @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findById(@PathVariable("id") long id) {
-        return ReturnMessageUtil.sucess(storeService.findById(id));
+        return ReturnMessageUtil.success(storeService.findById(id));
     }
 
     /**
@@ -238,7 +238,7 @@ public class StoreController {
     @ApiOperation("排行榜")
     @RequestMapping(value = "/rank", method = RequestMethod.GET)
     public ReturnMessage<Object> rank(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(storeService.rank(option));
+        return ReturnMessageUtil.success(storeService.rank(option));
     }
 
     /**
@@ -268,7 +268,7 @@ public class StoreController {
     @ApiOperation("搜索")
     @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
     public ReturnMessage<Object> search(@PathVariable("keyword") String keyword, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(storeService.search(keyword, option));
+        return ReturnMessageUtil.success(storeService.search(keyword, option));
     }
 
     @LoginUser
@@ -276,6 +276,6 @@ public class StoreController {
     @RequestMapping(value = "/review", method = RequestMethod.POST)
     public ReturnMessage<Object> review(long id, float rate, HttpServletRequest request) {
         storeService.review(id, rate, request.getHeader("Authorization"));
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 }

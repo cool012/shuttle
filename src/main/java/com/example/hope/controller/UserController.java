@@ -6,7 +6,6 @@ import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.User;
-import com.example.hope.service.CommentsService;
 import com.example.hope.service.PayService;
 import com.example.hope.service.UserService;
 import io.swagger.annotations.Api;
@@ -58,7 +57,7 @@ public class UserController {
     @ApiOperation("用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ReturnMessage<Object> login(String account, String password, int expired) {
-        return ReturnMessageUtil.sucess(userService.login(account, password, expired));
+        return ReturnMessageUtil.success(userService.login(account, password, expired));
     }
 
     /**
@@ -77,7 +76,7 @@ public class UserController {
     @ApiOperation("检查token")
     @RequestMapping(value = "/check", method = RequestMethod.GET)
     public ReturnMessage<Object> check(HttpServletRequest request) {
-        return ReturnMessageUtil.sucess(userService.check(request.getHeader("Authorization")));
+        return ReturnMessageUtil.success(userService.check(request.getHeader("Authorization")));
     }
 
     /**
@@ -98,7 +97,7 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ReturnMessage<Object> register(User user) {
         userService.register(user);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -122,7 +121,7 @@ public class UserController {
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     public ReturnMessage<Object> resetPassword(long id, String password, HttpServletRequest request) {
         userService.updatePassword(id, password, request.getHeader("Authorization"));
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -143,7 +142,7 @@ public class UserController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ReturnMessage<Object> login(long id) {
         userService.delete(id);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -167,7 +166,7 @@ public class UserController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(User user, HttpServletRequest request) {
         userService.update(user,request.getHeader("Authorization"));
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -194,7 +193,7 @@ public class UserController {
     @ApiOperation("根据id查询用户")
     @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findById(@PathVariable("id") long id) {
-        return ReturnMessageUtil.sucess(userService.findById(id).get(0));
+        return ReturnMessageUtil.success(userService.findById(id).get(0));
     }
 
     /**
@@ -227,7 +226,7 @@ public class UserController {
     @ApiOperation("查询全部用户")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(userService.findAll(option));
+        return ReturnMessageUtil.success(userService.findAll(option));
     }
 
     /**
@@ -261,7 +260,7 @@ public class UserController {
     @ApiOperation("根据手机号查询用户")
     @RequestMapping(value = "/findByPhone/{phone}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByPhone(@PathVariable("phone") String phone) {
-        return ReturnMessageUtil.sucess(userService.findByPhone(phone).get(0));
+        return ReturnMessageUtil.success(userService.findByPhone(phone).get(0));
     }
 
     /**
@@ -283,7 +282,7 @@ public class UserController {
     @RequestMapping(value = "/findSore/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findScore(@PathVariable("id") long id) {
         int score = userService.findByScore(id);
-        return ReturnMessageUtil.sucess(score);
+        return ReturnMessageUtil.success(score);
     }
 
     /**
@@ -333,7 +332,7 @@ public class UserController {
     @ApiOperation("搜索")
     @RequestMapping(value = "/search/{keyword}", method = RequestMethod.GET)
     public ReturnMessage<Object> search(@PathVariable("keyword") String keyword, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(userService.search(keyword, option));
+        return ReturnMessageUtil.success(userService.search(keyword, option));
     }
 
     /**
@@ -354,20 +353,20 @@ public class UserController {
     @RequestMapping(value = "/admin", method = RequestMethod.POST)
     public ReturnMessage<Object> admin(long userId) {
         userService.admin(userId);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     @ApiOperation("发送邮箱")
     @RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
     public ReturnMessage<Object> sendEmail(String email) {
         userService.sendEmail(email);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     @ApiOperation("忘记密码")
     @RequestMapping(value = "/forget", method = RequestMethod.POST)
     public ReturnMessage<Object> forget(String token, String newPassword) {
         userService.forget(token, newPassword);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 }

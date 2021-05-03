@@ -49,7 +49,7 @@ public class AdsController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public ReturnMessage<Object> insert(Ads ads, int expired) {
         adsService.insert(ads, expired);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -69,7 +69,7 @@ public class AdsController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ReturnMessage<Object> delete(long id) {
         adsService.delete(id);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -90,7 +90,7 @@ public class AdsController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(Ads ads) {
         adsService.update(ads);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -110,6 +110,6 @@ public class AdsController {
     @ApiOperation("查询全部广告")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll() {
-        return ReturnMessageUtil.sucess(adsService.findAll());
+        return ReturnMessageUtil.success(adsService.findAll());
     }
 }

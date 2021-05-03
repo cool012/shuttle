@@ -47,7 +47,7 @@ public class FileController {
     @ApiOperation("上传")
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ReturnMessage<Object> upload(MultipartFile file) {
-        return ReturnMessageUtil.sucess(fileService.upload(file));
+        return ReturnMessageUtil.success(fileService.upload(file));
     }
 
     /**

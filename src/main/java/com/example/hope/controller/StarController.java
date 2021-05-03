@@ -32,7 +32,7 @@ public class StarController {
     @ApiOperation("添加收藏")
     public ReturnMessage<Object> insert(Star star,HttpServletRequest request) {
         starService.insert(star,request.getHeader("Authorization"));
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     @LoginUser
@@ -40,34 +40,34 @@ public class StarController {
     @ApiOperation("删除收藏")
     public ReturnMessage<Object> delete(Star star, HttpServletRequest request) {
         starService.delete(star, request.getHeader("Authorization"));
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     @LoginUser
     @RequestMapping(value = "/findByStore", method = RequestMethod.GET)
     @ApiOperation("查询用户的所有商店收藏")
     public ReturnMessage<Object> findByStore(HttpServletRequest request, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(starService.findByStore(request.getHeader("Authorization"), option));
+        return ReturnMessageUtil.success(starService.findByStore(request.getHeader("Authorization"), option));
     }
 
     @LoginUser
     @RequestMapping(value = "/findByProduct", method = RequestMethod.GET)
     @ApiOperation("查询用户的所有产品收藏")
     public ReturnMessage<Object> findByProduct(HttpServletRequest request, @RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(starService.findByProduct(request.getHeader("Authorization"), option));
+        return ReturnMessageUtil.success(starService.findByProduct(request.getHeader("Authorization"), option));
     }
 
     @LoginUser
     @RequestMapping(value = "/isStarByStoreId/{storeId}", method = RequestMethod.GET)
     @ApiOperation("用户的商店是否被收藏")
     public ReturnMessage<Object> isStarByStoreId(@PathVariable long storeId, HttpServletRequest request) {
-        return ReturnMessageUtil.sucess(starService.isStarByStoreId(request.getHeader("Authorization"), storeId));
+        return ReturnMessageUtil.success(starService.isStarByStoreId(request.getHeader("Authorization"), storeId));
     }
 
     @LoginUser
     @RequestMapping(value = "/isStarByProductId/{productId}", method = RequestMethod.GET)
     @ApiOperation("用户的产品是否被收藏")
     public ReturnMessage<Object> isStarByProductId(@PathVariable long productId, HttpServletRequest request) {
-        return ReturnMessageUtil.sucess(starService.isStarByProductId(request.getHeader("Authorization"), productId));
+        return ReturnMessageUtil.success(starService.isStarByProductId(request.getHeader("Authorization"), productId));
     }
 }

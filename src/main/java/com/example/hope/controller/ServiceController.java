@@ -49,7 +49,7 @@ public class ServiceController {
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public ReturnMessage<Object> insert(Services services) {
         serviceService.insert(services);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -69,7 +69,7 @@ public class ServiceController {
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ReturnMessage<Object> delete(long id) {
         serviceService.delete(id);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -91,7 +91,7 @@ public class ServiceController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(Services services) {
         serviceService.update(services);
-        return ReturnMessageUtil.sucess();
+        return ReturnMessageUtil.success();
     }
 
     /**
@@ -116,6 +116,6 @@ public class ServiceController {
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.sucess(serviceService.findAll(option));
+        return ReturnMessageUtil.success(serviceService.findAll(option));
     }
 }

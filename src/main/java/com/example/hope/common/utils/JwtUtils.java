@@ -47,6 +47,7 @@ public class JwtUtils {
                     .claim("admin", user.isAdmin())
                     .claim("score", user.getScore())
                     .claim("name", user.getName())
+                    .claim("email", user.getEmail())
                     .setSubject(user.getPhone())// 代表这个JWT的主体，即它的所有人
                     .setAudience(user.getPhone())// 代表这个JWT的接收对象；
                     .setIssuedAt(now)// 是一个时间戳，代表这个JWT的签发时间；
@@ -84,6 +85,16 @@ public class JwtUtils {
      */
     public static String getUserName(String token) {
         return parseJWT(token).get("name", String.class);
+    }
+
+    /**
+     * 获取email
+     *
+     * @param token Token
+     * @return 邮箱
+     */
+    public static String getUserEmail(String token) {
+        return parseJWT(token).get("email", String.class);
     }
 
     /**

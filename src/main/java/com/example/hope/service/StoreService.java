@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface StoreService {
 
-    void insert(Store store, String token);
+    void insert(Store store);
 
     void delete(long id);
 
@@ -34,4 +34,6 @@ public interface StoreService {
     void review(long id, float rate, String token);
 
     boolean exist(long id);
+
+    List<Store> findByName(String name);
 }

@@ -21,7 +21,7 @@ public class ExceptionHandle {
         // 唯一性约束
         if (exception instanceof DuplicateKeyException) {
             log.error(exception.getMessage());
-            return ReturnMessageUtil.error(0, "用户已经存在");
+            return ReturnMessageUtil.error(0, "数据已经存在");
         }
 
         log.error(exception.getMessage());

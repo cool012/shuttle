@@ -33,4 +33,7 @@ public interface StoreMapper {
 
     @Update("update store set rate = (rate * sales + #{rate}) / (sales + 1) where id = #{id}")
     int review(long id, float rate);
+
+    @Select("select * from store where name = #{name}")
+    List<Store> findByName(String name);
 }

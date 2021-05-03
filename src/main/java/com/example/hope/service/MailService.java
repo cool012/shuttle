@@ -20,13 +20,13 @@ public class MailService {
     private JavaMailSender javaMailSender;
 
     @Async("taskExecutor")
-    public void sendTokenMail(String to, String text) {
+    public void sendTokenMail(String to, String text, String subject) {
         try {
             Thread.sleep(1000);
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("touwaerioe@163.com");
             message.setTo(to);
-            message.setSubject("shuttle重置密码链接");
+            message.setSubject(subject);
             message.setText(text);
             javaMailSender.send(message);
         } catch (Exception e) {

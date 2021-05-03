@@ -112,7 +112,7 @@ public class UserServiceIpm implements UserService {
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
     public void update(User user, String token) {
-        if(user.getId() != JwtUtils.getUserId(token)) throw new BusinessException(1,"只能修改当前用户的信息");
+        if (user.getId() != JwtUtils.getUserId(token)) throw new BusinessException(1, "只能修改当前用户的信息");
         if (user.getName() != null) commentsService.updateByUserId(user.getId(), user.getName());
         int res = userMapper.update(user);
         log.info(LoggerHelper.logger(user, res));
@@ -315,6 +315,6 @@ public class UserServiceIpm implements UserService {
         // 加密生成邮箱token
         String token = JwtUtils.createToken(user, 60);
         // 发送邮箱
-        mailService.sendTokenMail(email, token);
+        mailService.sendTokenMail(email, token, "shuttle重置密码链接");
     }
 }

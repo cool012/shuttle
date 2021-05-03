@@ -69,18 +69,13 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
-    public void insert(Store store, String token) {
-        boolean isAdmin = JwtUtils.is_admin(token);
+    public void insert(Store store) {
         if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))
             throw new BusinessException(0, "类别或服务id不存在");
-        if (isAdmin) {
-            int res = storeMapper.insert(store);
-            log.info(LoggerHelper.logger(store, res));
-            BusinessException.check(res, "添加失败");
-            storeRepository.save(store);
-        } else {
-            // todo 管理端同意
-        }
+        int res = storeMapper.insert(store);
+        log.info(LoggerHelper.logger(store, res));
+        BusinessException.check(res, "添加失败");
+        storeRepository.save(store);
     }
 
     /**
@@ -295,5 +290,17 @@ public class StoreServiceImp implements StoreService {
     @Override
     public boolean exist(long id) {
         return findById(id).size() != 0;
+    }
+
+    /**
+     * 根据名字查询商店
+     *
+     * @param name 名字
+     * @return 商店列表
+     */
+    @Override
+    @Cacheable(value = "store", key = "methodName + #name")
+    public List<Store> findByName(String name) {
+        return storeMapper.findByName(name);
     }
 }

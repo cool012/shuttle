@@ -23,8 +23,6 @@ import java.util.Map;
  */
 public class Utils {
 
-    private final static double gravityPower = 1.8;
-
     public static Map<String, String> checkOption(Map<String, String> option, Class clazz) {
 
         if (clazz != null) {
@@ -122,13 +120,13 @@ public class Utils {
     }
 
     /**
-     * 基于hacker news的排行算法
+     * 排行榜算法
      *
      * @param rate  评分
      * @param sales 销量
      */
     public static double changeRate(double rate, double sales) {
-        if(sales == 0) sales = 1;
-        return sales / Math.pow((rate + 2), gravityPower);
+        if (sales == 0) sales = 1;
+        return (sales + rate) / 2;
     }
 }

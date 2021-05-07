@@ -127,6 +127,6 @@ public class Utils {
      */
     public static double changeRate(double rate, double sales) {
         if (sales == 0) sales = 1;
-        return (sales + rate) / 2;
+        return sales * rate;
     }
 }

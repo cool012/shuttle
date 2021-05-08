@@ -12,6 +12,8 @@ public interface CategoryService {
 
     void delete(long id);
 
+    void deleteByServiceId(long serviceId);
+
     void update(Category category);
 
     PageInfo<Category> findAll(Map<String, String> option);

@@ -7,6 +7,7 @@ import com.example.hope.model.entity.Category;
 import com.example.hope.model.mapper.CategoryMapper;
 import com.example.hope.service.CategoryService;
 import com.example.hope.service.ServiceService;
+import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
@@ -34,7 +35,7 @@ public class CategoryServiceImp implements CategoryService {
     private CategoryMapper categoryMapper;
 
     @Resource
-    private StoreServiceImp storeServiceImp;
+    private StoreService storeService;
 
     @Resource
     private ServiceService serviceService;
@@ -64,7 +65,7 @@ public class CategoryServiceImp implements CategoryService {
     @CacheEvict(value = "category", allEntries = true)
     public void delete(long id) {
         int res = categoryMapper.delete(id, "id");
-        storeServiceImp.deleteByCategoryId(id);
+        storeService.deleteByCategoryId(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
     }
@@ -74,10 +75,11 @@ public class CategoryServiceImp implements CategoryService {
      *
      * @param serviceId 服务id
      */
+    @Override
     @Transactional
     @CacheEvict(value = "category", allEntries = true)
     public void deleteByServiceId(long serviceId) {
-        for (Category category : findAllByServiceId(serviceId)) storeServiceImp.deleteByCategoryId(category.getId());
+        for (Category category : findAllByServiceId(serviceId)) storeService.deleteByCategoryId(category.getId());
         int res = categoryMapper.delete(serviceId, "serviceId");
         log.info(LoggerHelper.logger(serviceId, res));
     }

@@ -121,6 +121,7 @@ public class OrderServiceIpm implements OrderService {
      *
      * @param pid 产品id
      */
+    @Override
     @Transactional
     @CacheEvict(value = "order", allEntries = true)
     public void deleteByPid(long pid) {

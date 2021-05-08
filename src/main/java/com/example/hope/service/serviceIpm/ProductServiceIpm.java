@@ -10,6 +10,7 @@ import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.ProductRepository;
+import com.example.hope.service.OrderService;
 import com.example.hope.service.ProductService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
@@ -40,7 +41,7 @@ public class ProductServiceIpm implements ProductService {
     private RedisService redisService;
 
     @Resource
-    private OrderServiceIpm orderServiceIpm;
+    private OrderService orderService;
 
     @Resource
     private ProductRepository productRepository;
@@ -91,7 +92,7 @@ public class ProductServiceIpm implements ProductService {
     @CacheEvict(value = "product", allEntries = true)
     public void delete(long id) {
         int res = productMapper.delete(id, "id");
-        orderServiceIpm.deleteByPid(id);
+        orderService.deleteByPid(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
         productRepository.deleteById(id);
@@ -102,10 +103,11 @@ public class ProductServiceIpm implements ProductService {
      *
      * @param storeId 商店id
      */
+    @Override
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public void deleteByStoreId(long storeId) {
-        for (Product product : findByStoreId(storeId)) orderServiceIpm.deleteByPid(product.getId());
+        for (Product product : findByStoreId(storeId)) orderService.deleteByPid(product.getId());
         int res = productMapper.delete(storeId, "StoreId");
         log.info(LoggerHelper.logger(storeId, res));
     }
@@ -137,7 +139,7 @@ public class ProductServiceIpm implements ProductService {
     public void review(Product product, String token, long orderId) {
         long userId = JwtUtils.getUserId(token);
         // 只允许下单此产品的用户或管理员对产品评分
-        Orders orders = orderServiceIpm.findById(orderId);
+        Orders orders = orderService.findById(orderId);
         if ((orders.getStatus() == 0 && orders.getPid() == product.getId() && orders.getCid() == userId) || JwtUtils.is_admin(token)) {
             int res = productMapper.review(product.getId(), product.getRate());
             product = findById(product.getId());

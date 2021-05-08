@@ -5,6 +5,7 @@ import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Services;
 import com.example.hope.model.mapper.ServiceMapper;
+import com.example.hope.service.CategoryService;
 import com.example.hope.service.ServiceService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -28,7 +29,7 @@ public class ServiceServiceIpm implements ServiceService {
     private ServiceMapper serviceMapper;
 
     @Resource
-    private CategoryServiceImp categoryServiceImp;
+    private CategoryService categoryService;
 
     /**
      * 添加服务
@@ -53,7 +54,7 @@ public class ServiceServiceIpm implements ServiceService {
     @Transactional
     @CacheEvict(value = "service", allEntries = true)
     public void delete(Long id) {
-        categoryServiceImp.deleteByServiceId(id);
+        categoryService.deleteByServiceId(id);
         int res = serviceMapper.delete(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "服务删除失败");

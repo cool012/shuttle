@@ -12,6 +12,8 @@ public interface OrderService {
 
     void delete(List<Orders> orders, String token);
 
+    void deleteByPid(long pid);
+
     void update(Orders order);
 
     void receive(long id, long userId);

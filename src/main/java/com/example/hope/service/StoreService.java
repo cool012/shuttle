@@ -13,6 +13,8 @@ public interface StoreService {
 
     void delete(long id);
 
+    void deleteByCategoryId(long categoryId);
+
     void update(Store store);
 
     List<Store> rank(Map<String, String> option);

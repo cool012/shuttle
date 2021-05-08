@@ -10,10 +10,7 @@ import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.StoreRepository;
-import com.example.hope.service.CategoryService;
-import com.example.hope.service.OrderService;
-import com.example.hope.service.ServiceService;
-import com.example.hope.service.StoreService;
+import com.example.hope.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
@@ -44,7 +41,7 @@ public class StoreServiceImp implements StoreService {
     private RedisService redisService;
 
     @Resource
-    private ProductServiceIpm productServiceIpm;
+    private ProductService productService;
 
     @Resource
     private StoreRepository storeRepository;
@@ -102,7 +99,7 @@ public class StoreServiceImp implements StoreService {
     @CacheEvict(value = "store", allEntries = true)
     public void delete(long id) {
         int res = storeMapper.delete(id, "id");
-        productServiceIpm.deleteByStoreId(id);
+        productService.deleteByStoreId(id);
         log.info(LoggerHelper.logger(id, res));
         BusinessException.check(res, "删除失败");
         storeRepository.deleteById(id);
@@ -113,10 +110,11 @@ public class StoreServiceImp implements StoreService {
      *
      * @param categoryId 类别id
      */
+    @Override
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public void deleteByCategoryId(long categoryId) {
-        for (Store store : findByCategoryId(categoryId)) productServiceIpm.deleteByStoreId(store.getId());
+        for (Store store : findByCategoryId(categoryId)) productService.deleteByStoreId(store.getId());
         int res = storeMapper.delete(categoryId, "categoryId");
         log.info(LoggerHelper.logger(categoryId, res));
     }

@@ -13,6 +13,8 @@ public interface ProductService {
 
     void delete(long id);
 
+    void deleteByStoreId(long storeId);
+
     void update(Product product);
 
     void review(Product product, String token, long orderId);

@@ -90,7 +90,7 @@ services:
       mongoUser: ${mongoUser}
       mongoPassword: ${mongoPassword}
       mongoHost: mongodb
-    command: mvn clean spring-boot:run
+    command: mvn clean spring-boot:run -Dspring-boot.run.jvmArguments="-Xms128m -Xmx128m"
     depends_on:
       - mysql
       - redis

@@ -105,6 +105,10 @@ pagehelper:
   supportMethodsArguments: true
 server:
   port: ${port}
+  tomcat:
+    threads:
+      min-spare: 20
+      max: 100
 jwt:
   key: ${key}
 alipay:

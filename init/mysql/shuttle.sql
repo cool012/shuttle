@@ -111,3 +111,13 @@ create table product_approve(
     primary key(id),
     key(uid) USING BTREE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table product_approve(
+    id bigint not null auto_increment,
+    sid bigint not null,
+    pid bigint not null,
+    uid bigint not null,
+    type tinyint(1) not null,
+    primary key(id),
+    key(uid) USING BTREE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

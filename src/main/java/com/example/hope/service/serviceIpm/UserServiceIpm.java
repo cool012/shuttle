@@ -1,6 +1,11 @@
 package com.example.hope.service.serviceIpm;
 
-import com.example.hope.common.logger.LoggerHelper;
+import cn.hutool.core.lang.Validator;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.User;
@@ -23,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +38,7 @@ import java.util.Map;
 
 @Log4j2
 @Service
-public class UserServiceIpm implements UserService {
+public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements UserService {
 
     @Resource
     private UserMapper userMapper;
@@ -59,14 +63,14 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void register(User user) {
+    public boolean register(User user) {
         // 检查输入合法
-        Utils.check_user(user);
+        boolean isLegal = Validator.isEmail(user.getEmail());
+        BusinessException.check(!isLegal, "邮件格式不正确");
         // 用户密码加密
         user.setPassword(Utils.encode(user.getPassword()));
-        int res = userMapper.insert(user);
-        BusinessException.check(res, "注册失败");
         userRepository.save(user);
+        return this.save(user);
     }
 
     /**
@@ -79,9 +83,14 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     public Map<String, Object> login(String account, String password, int expired) {
-        String encryption_password = Utils.encode(password);
-        User user = userMapper.login(account, encryption_password);
-        BusinessException.check(user != null ? 1 : 0, "登录失败，用户名或密码错误");
+        String enPassword = Utils.encode(password);
+        Wrapper<User> wrapper = new LambdaQueryWrapper<User>()
+                .eq(User::getEmail, account)
+                .or()
+                .eq(User::getName, account)
+                .eq(User::getPassword, enPassword);
+        User user = this.getOne(wrapper, false);
+        BusinessException.check(user == null, "登录失败，用户名或密码错误");
         Map<String, Object> map = new HashMap<>();
         map.put("token", JwtUtils.createToken(user, expired));
         map.put("user", user);
@@ -96,11 +105,10 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void delete(long id) {
-        int res = userMapper.delete(id);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "删除失败");
+    public boolean delete(long id) {
+//        log.info(LoggerHelper.logger(id, res));
         userRepository.deleteById(id);
+        return this.removeById(id);
     }
 
     /**
@@ -111,13 +119,14 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void update(User user, String token) {
-        if (user.getId() != JwtUtils.getUserId(token)) throw new BusinessException(1, "只能修改当前用户的信息");
+    public boolean update(User user, String token) {
+        BusinessException.check(user.getId() != JwtUtils.getUserId(token), "只能修改当前用户的信息");
+        // 修改对应评论的用户信息
         if (user.getName() != null) commentsService.updateByUserId(user.getId(), user.getName());
-        int res = userMapper.update(user);
-        log.info(LoggerHelper.logger(user, res));
-        BusinessException.check(res, "更新失败");
+//        log.info(LoggerHelper.logger(user, res));
+//        BusinessException.check(res, "更新失败");
         userRepository.save(user);
+        return this.updateById(user);
     }
 
     /**
@@ -129,11 +138,11 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void updatePassword(long id, String password, String token) {
-        if (JwtUtils.getUserId(token) != id) throw new BusinessException(1, "只能修改当前用户的密码");
-        int res = userMapper.updatePassword(id, Utils.encode(password));
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "修改密码失败");
+    public boolean updatePassword(long id, String password, String token) {
+        BusinessException.check(JwtUtils.getUserId(token) != id, "只能修改当前用户的密码");
+        User user = this.getById(id, "用户不存在");
+        user.setPassword(Utils.encode(password));
+        return this.updateById(user);
     }
 
     /**
@@ -144,10 +153,13 @@ public class UserServiceIpm implements UserService {
      */
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void resetPassword(long id, String password) {
-        int res = userMapper.updatePassword(id, Utils.encode(password));
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "修改密码失败");
+    public boolean resetPassword(long id, String password) {
+//        log.info(LoggerHelper.logger(id, res));
+//        BusinessException.check(res, "修改密码失败");
+        Wrapper<User> wrapper = new LambdaUpdateWrapper<User>()
+                .set(User::getPassword, Utils.encode(password))
+                .eq(User::getId, id);
+        return this.update(wrapper);
     }
 
     /**
@@ -159,10 +171,13 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void addScore(long id, int quantity) {
-        int res = userMapper.addScore(id, quantity);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "增加点数失败");
+    public boolean addScore(long id, int quantity) {
+//        int res = userMapper.addScore(id, quantity);
+//        log.info(LoggerHelper.logger(id, res));
+//        BusinessException.check(res, "增加点数失败");
+        User user = this.getById(id, "用户不存在");
+        user.setScore(user.getScore() + quantity);
+        return this.updateById(user);
     }
 
     /**
@@ -173,13 +188,11 @@ public class UserServiceIpm implements UserService {
     @Override
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
-    public void reduceScore(long id) {
+    public boolean reduceScore(long id) {
         if (findByScore(id) == 0) {
             throw new BusinessException(-1, "用户点数为0");
         }
-        int res = userMapper.reduceScore(id);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "减少点数失败");
+        return this.addScore(id, -1);
     }
 
     /**
@@ -189,20 +202,20 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #phone")
-    public List<User> findByPhone(String phone) {
-        return userMapper.findByPhone(phone);
+    public User findByPhone(String phone) {
+        return this.getOne(this.buildWrapper(User::getPhone, phone), false);
     }
 
     /**
      * 根据id查询用户
      *
      * @param id 用户id
-     * @return 用户列表
+     * @return 用户
      */
     @Override
     @Cacheable(value = "user", key = "methodName + #id")
-    public List<User> findById(long id) {
-        return userMapper.findUserById(id);
+    public User findById(long id) {
+        return this.getById(id);
     }
 
     /**
@@ -216,7 +229,7 @@ public class UserServiceIpm implements UserService {
         Utils.checkOption(option, User.class);
         String orderBy = String.format("%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(userMapper.findAll());
+        return PageInfo.of(this.list());
     }
 
 
@@ -229,7 +242,8 @@ public class UserServiceIpm implements UserService {
     @Override
     @Cacheable(value = "user", key = "methodName + #id")
     public int findByScore(long id) {
-        return userMapper.findByScore(id);
+        User user = this.getById(id, "用户不存在");
+        return user.getScore();
     }
 
     /**
@@ -255,10 +269,14 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     @CacheEvict(value = "user", allEntries = true)
-    public void admin(long id) {
-        int res = userMapper.admin(id);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "设置管理员失败");
+    public boolean admin(long id) {
+//        int res = userMapper.admin(id);
+//        log.info(LoggerHelper.logger(id, res));
+//        BusinessException.check(res, "设置管理员失败");
+        Wrapper<User> wrapper = new LambdaUpdateWrapper<User>()
+                .set(User::getAdmin, 1)
+                .eq(User::getId, id);
+        return this.update(wrapper);
     }
 
     /**
@@ -269,7 +287,7 @@ public class UserServiceIpm implements UserService {
      */
     @Override
     public boolean exist(long userId) {
-        return findById(userId).size() != 0;
+        return findById(userId) == null;
     }
 
     /**
@@ -282,23 +300,22 @@ public class UserServiceIpm implements UserService {
     @Override
     public User check(String token) {
         long userId = JwtUtils.getUserId(token);
-        return findById(userId).get(0);
+        return findById(userId);
     }
 
     /**
      * 重置密码 -> 输入邮箱，点击发送邮件 -> 根据user加密生成token -> 邮箱发送成功，跳转到（前端）重置密码界面 ->
      * 用户获取邮箱中的token，提交新密码 -> 重置密码（输入新密码） -> /user/restPassword
      *
-     * @param password 新密码
+     * @param token       token
+     * @param newPassword 新密码
      */
     @Override
     public void forget(String token, String newPassword) {
         // 检查token是否有效
         long id = JwtUtils.getUserId(token);
-
-        System.out.println(id);
-        List<User> list = findById(id);
-        BusinessException.check(list.size() != 0 ? 1 : 0, "用户不存在");
+        User User = findById(id);
+        BusinessException.check(User == null, "用户不存在");
         resetPassword(id, newPassword);
     }
 
@@ -316,5 +333,16 @@ public class UserServiceIpm implements UserService {
         String token = JwtUtils.createToken(user, 60);
         // 发送邮箱
         mailService.sendTokenMail(email, token, "shuttle重置密码链接");
+    }
+
+    /**
+     * 构建 wrapper
+     *
+     * @param function function
+     * @param val      val
+     * @return Wrapper<User>
+     */
+    private Wrapper<User> buildWrapper(SFunction<User, ?> function, Object val) {
+        return new LambdaQueryWrapper<User>().eq(function, val);
     }
 }

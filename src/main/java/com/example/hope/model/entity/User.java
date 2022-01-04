@@ -1,5 +1,7 @@
 package com.example.hope.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,14 +26,19 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     @Id
+    @TableId(type = IdType.ASSIGN_ID)
     private long id;
+
     private String password;
 
     @Field(type = FieldType.Text)
     private String phone;
+
     private String address;
+
     private int score;
-    private boolean admin;
+
+    private int admin;
 
     @Field(type = FieldType.Text)
     private String name;

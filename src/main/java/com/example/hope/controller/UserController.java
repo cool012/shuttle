@@ -165,7 +165,7 @@ public class UserController {
     @ApiOperation("用户更新")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ReturnMessage<Object> update(User user, HttpServletRequest request) {
-        userService.update(user,request.getHeader("Authorization"));
+        userService.update(user, request.getHeader("Authorization"));
         return ReturnMessageUtil.success();
     }
 
@@ -193,7 +193,7 @@ public class UserController {
     @ApiOperation("根据id查询用户")
     @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findById(@PathVariable("id") long id) {
-        return ReturnMessageUtil.success(userService.findById(id).get(0));
+        return ReturnMessageUtil.success(userService.findById(id));
     }
 
     /**
@@ -260,7 +260,7 @@ public class UserController {
     @ApiOperation("根据手机号查询用户")
     @RequestMapping(value = "/findByPhone/{phone}", method = RequestMethod.GET)
     public ReturnMessage<Object> findByPhone(@PathVariable("phone") String phone) {
-        return ReturnMessageUtil.success(userService.findByPhone(phone).get(0));
+        return ReturnMessageUtil.success(userService.findByPhone(phone));
     }
 
     /**

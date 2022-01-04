@@ -18,4 +18,10 @@ public class BusinessException extends RuntimeException {
             throw new BusinessException(0,message);
         }
     }
+
+    public static void check(boolean res,String message){
+        if(res){
+            throw new BusinessException(0,message);
+        }
+    }
 }

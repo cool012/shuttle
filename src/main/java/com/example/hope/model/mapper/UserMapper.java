@@ -1,5 +1,6 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.hope.model.entity.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Component
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
 
     int insert(User user);
 

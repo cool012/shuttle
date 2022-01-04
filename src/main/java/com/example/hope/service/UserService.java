@@ -1,5 +1,7 @@
 package com.example.hope.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.User;
 import com.github.pagehelper.PageInfo;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -7,33 +9,33 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import java.util.List;
 import java.util.Map;
 
-public interface UserService {
+public interface UserService extends BaseService<User> {
 
-    void register(User user);
+    boolean register(User user);
 
     Map<String, Object> login(String account, String password, int expired);
 
-    void delete(long id);
+    boolean delete(long id);
 
-    void update(User user, String token);
+    boolean update(User user, String token);
 
-    void updatePassword(long id, String password, String token);
+    boolean updatePassword(long id, String password, String token);
 
-    void addScore(long id, int quantity);
+    boolean addScore(long id, int quantity);
 
-    void reduceScore(long id);
+    boolean reduceScore(long id);
 
     int findByScore(long id);
 
-    List<User> findByPhone(String phone);
+    User findByPhone(String phone);
 
-    List<User> findById(long id);
+    User findById(long id);
 
     PageInfo<User> findAll(Map<String, String> option);
 
     SearchHits search(String keyword, Map<String, String> option);
 
-    void admin(long userId);
+    boolean admin(long userId);
 
     boolean exist(long userId);
 

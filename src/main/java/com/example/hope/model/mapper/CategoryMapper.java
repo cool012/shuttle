@@ -1,5 +1,6 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.hope.common.provider.CategoryProvider;
 import com.example.hope.model.entity.Category;
 import org.apache.ibatis.annotations.*;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Component
 @Mapper
-public interface CategoryMapper {
+public interface CategoryMapper extends BaseMapper<Category> {
 
     @Insert("insert into category(name,serviceId) values(#{name},#{serviceId})")
     int insert(Category category);

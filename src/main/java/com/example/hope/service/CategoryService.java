@@ -1,26 +1,27 @@
 package com.example.hope.service;
 
+import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.Category;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 import java.util.Map;
 
-public interface CategoryService {
+public interface CategoryService extends BaseService<Category> {
 
-    void insert(Category category);
+    boolean insert(Category category);
 
-    void delete(long id);
+    boolean delete(long id);
 
-    void deleteByServiceId(long serviceId);
+    boolean deleteByServiceId(long serviceId);
 
-    void update(Category category);
+    boolean update(Category category);
 
-    PageInfo<Category> findAll(Map<String, String> option);
+    PageInfo<Category> page(Map<String, String> option);
 
     List<Category> findAllByServiceId(long serviceId);
 
     boolean exist(long id);
 
-    List<Category> findById(long id);
+    Category detail(long id);
 }

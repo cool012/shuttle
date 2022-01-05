@@ -116,7 +116,7 @@ public class CategoryController {
     @ApiOperation("查询全部类别")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(Map<String, String> option) {
-        return ReturnMessageUtil.success(categoryService.findAll(option));
+        return ReturnMessageUtil.success(categoryService.page(option));
     }
 
     /**

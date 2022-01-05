@@ -1,5 +1,7 @@
 package com.example.hope.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,16 +19,24 @@ import java.io.Serializable;
 public class Product implements Serializable {
 
     @Id
+    @TableId(type = IdType.ASSIGN_ID)
     private long id;
 
     @Field(type = FieldType.Text)
     private String name;
+
     private int price;
+
     private String image;
+
     private int sales;
+
     private float rate;
+
     private long storeId;
+
     private Store store;
+
     private int quantity;
 
 }

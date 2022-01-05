@@ -1,6 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
-import com.example.hope.common.logger.LoggerHelper;
+import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
@@ -29,10 +29,7 @@ import java.util.*;
 
 @Log4j2
 @Service
-public class ProductServiceIpm implements ProductService {
-
-    @Resource
-    private ProductMapper productMapper;
+public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> implements ProductService {
 
     @Resource
     private StoreService storeService;
@@ -57,12 +54,10 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
-    public void insert(Product product) {
-        if (!storeService.exist(product.getStoreId())) throw new BusinessException(0, "商店id不存在");
-        int res = productMapper.insert(product);
-        log.info(LoggerHelper.logger(product, res));
-        BusinessException.check(res, "添加失败");
+    public boolean insert(Product product) {
+        BusinessException.check(!storeService.exist(product.getStoreId()), "商店不存在");
         productRepository.save(product);
+        return this.save(product);
     }
 
     /**
@@ -71,15 +66,15 @@ public class ProductServiceIpm implements ProductService {
      * @param id    产品id
      * @param sales 销量
      */
+    @Override
     @Transactional
-    public void addSales(long id, int sales) {
-        int res = productMapper.addSales(id, sales);
-        log.info("product addSales -> " + id + " for -> " + sales + " -> res " + res);
-        BusinessException.check(res, "更新销量失败");
-        Product product = findById(id);
+    public boolean addSales(long id, int sales) {
+        Product product = getById(id, "产品不存在");
+        product.setSales(product.getSales() + sales);
         redisService.review(product.getRate(), product.getSales(), "product_rank", String.valueOf(id));
         // 增加商店销量
         storeService.sales(findById(id).getStoreId(), sales);
+        return this.updateById(product);
     }
 
     /**
@@ -90,12 +85,10 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
-    public void delete(long id) {
-        int res = productMapper.delete(id, "id");
+    public boolean delete(long id) {
         orderService.deleteByPid(id);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "删除失败");
         productRepository.deleteById(id);
+        return this.removeById(id);
     }
 
     /**
@@ -106,10 +99,12 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
-    public void deleteByStoreId(long storeId) {
-        for (Product product : findByStoreId(storeId)) orderService.deleteByPid(product.getId());
-        int res = productMapper.delete(storeId, "StoreId");
-        log.info(LoggerHelper.logger(storeId, res));
+    public boolean deleteByStoreId(long storeId) {
+        // todo 返回布尔值
+        for (Product product : findByStoreId(storeId)) {
+            orderService.deleteByPid(product.getId());
+        }
+        return this.remove(this.getQueryWrapper(Product::getStoreId, storeId));
     }
 
     /**
@@ -120,12 +115,10 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
-    public void update(Product product) {
-        if (!storeService.exist(product.getStoreId())) throw new BusinessException(0, "商店id不存在");
-        int res = productMapper.update(product);
-        log.info(LoggerHelper.logger(product, res));
-        BusinessException.check(res, "更新失败");
+    public boolean update(Product product) {
+        BusinessException.check(!storeService.exist(product.getStoreId()), "商店id不存在");
         productRepository.save(product);
+        return this.updateById(product);
     }
 
     /**
@@ -136,18 +129,18 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @CacheEvict(value = "product", allEntries = true)
-    public void review(Product product, String token, long orderId) {
+    public boolean review(Product product, String token, long orderId) {
         long userId = JwtUtils.getUserId(token);
         // 只允许下单此产品的用户或管理员对产品评分
         Orders orders = orderService.findById(orderId);
+        boolean res;
         if ((orders.getStatus() == 0 && orders.getPid() == product.getId() && orders.getCid() == userId) || JwtUtils.is_admin(token)) {
-            int res = productMapper.review(product.getId(), product.getRate());
-            product = findById(product.getId());
+            product = this.getById(product.getId(), "产品不存在");
+            product.setRate(Utils.composeScore(product.getRate(), product.getSales()));
+            res = this.updateById(product);
             redisService.review(product.getRate(), product.getSales(), "product_rank", String.valueOf(product.getId()));
-            log.info(LoggerHelper.logger(product, res));
-            BusinessException.check(res, "更新评分失败");
-        }else throw new BusinessException(0, "只允许下单此产品的用户对产品评分");
-
+        } else throw new BusinessException(0, "只允许下单此产品的用户对产品评分");
+        return res;
     }
 
     /**
@@ -157,11 +150,11 @@ public class ProductServiceIpm implements ProductService {
      */
     @Override
     @Cacheable(value = "product", key = "methodName + #option.toString()")
-    public PageInfo<Product> findAll(Map<String, String> option) {
+    public PageInfo<Product> page(Map<String, String> option) {
         Utils.checkOption(option, Product.class);
         String orderBy = String.format("product.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(productMapper.select(null, null));
+        return PageInfo.of(getList());
     }
 
     /**
@@ -170,8 +163,8 @@ public class ProductServiceIpm implements ProductService {
      * @return 产品列表
      */
     @Cacheable(value = "product", key = "methodName")
-    public List<Product> findAll() {
-        return productMapper.select(null, null);
+    public List<Product> getList() {
+        return this.list();
     }
 
     /**
@@ -183,7 +176,7 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Cacheable(value = "product", key = "methodName + #storeId")
     public List<Product> findByStoreId(long storeId) {
-        return productMapper.select(String.valueOf(storeId), "storeId");
+        return this.list(this.getQueryWrapper(Product::getStoreId, storeId));
     }
 
     /**
@@ -198,7 +191,7 @@ public class ProductServiceIpm implements ProductService {
         Utils.checkOption(option, Product.class);
         String orderBy = String.format("product.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(productMapper.select(String.valueOf(storeId), "storeId"));
+        return PageInfo.of(findByStoreId(storeId));
     }
 
     /**
@@ -210,7 +203,7 @@ public class ProductServiceIpm implements ProductService {
     @Override
     @Cacheable(value = "product", key = "methodName + #id")
     public Product findById(long id) {
-        return productMapper.select(String.valueOf(id), "id").get(0);
+        return this.getById(id);
     }
 
     /**
@@ -225,7 +218,7 @@ public class ProductServiceIpm implements ProductService {
         Set<String> rank = redisService.range("product_rank", 0, (quantity - 1));
         // 如果排行榜为空，将所有产品加入进去，分数为0
         if (rank.size() == 0) {
-            List<Product> products = findAll();
+            List<Product> products = getList();
             for (Product product : products) {
                 double score = Utils.changeRate(product.getRate(), product.getSales());
                 redisService.incrScore("product_rank", String.valueOf(product.getId()), score);

@@ -142,7 +142,7 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
         }
         if (!JwtUtils.is_admin(token) || !status) throw new BusinessException(1, "只允许管理员或在此商店消费过的用户可以评分");
         Store store = this.getById(id, "商店不存在");
-        store.setRate(this.composeScore(rate, store.getSales()));
+        store.setRate(Utils.composeScore(rate, store.getSales()));
         redisService.review(store.getRate(), store.getSales(), "store_rank", String.valueOf(id));
         return this.updateById(store);
     }
@@ -301,16 +301,5 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
     @Cacheable(value = "store", key = "methodName + #name")
     public List<Store> findByName(String name) {
         return storeMapper.findByName(name);
-    }
-
-    /**
-     * 计算评分
-     *
-     * @param rate  评分
-     * @param sales 销量
-     * @return float
-     */
-    private float composeScore(float rate, float sales) {
-        return (rate * sales + rate) / (sales + 1);
     }
 }

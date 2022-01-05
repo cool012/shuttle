@@ -121,7 +121,7 @@ public class ProductController {
     @ApiOperation("查找全部产品")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.success(productService.findAll(option));
+        return ReturnMessageUtil.success(productService.page(option));
     }
 
     /**

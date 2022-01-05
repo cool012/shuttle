@@ -129,4 +129,15 @@ public class Utils {
         if (sales == 0) sales = 1;
         return sales * rate;
     }
+
+    /**
+     * 计算评分
+     *
+     * @param rate  评分
+     * @param sales 销量
+     * @return float
+     */
+    public static float composeScore(float rate, float sales) {
+        return (rate * sales + rate) / (sales + 1);
+    }
 }

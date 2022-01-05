@@ -1,5 +1,6 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.hope.common.provider.ProductProvider;
 import com.example.hope.model.entity.Product;
 import org.apache.ibatis.annotations.*;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Component
 @Mapper
-public interface ProductMapper {
+public interface ProductMapper extends BaseMapper<Product> {
 
     @Insert("insert into product(name,price,image,quantity,rate,storeId) values(#{name},#{price},#{image},#{quantity},#{rate},#{storeId})")
     int insert(Product product);

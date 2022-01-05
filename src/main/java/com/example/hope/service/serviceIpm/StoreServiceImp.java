@@ -50,7 +50,7 @@ public class StoreServiceImp implements StoreService {
     private CategoryService categoryService;
 
     @Resource
-    private ServiceService serviceService;
+    private BusinessService businessService;
 
     @Resource
     private EsPageHelper<Store> esPageHelper;
@@ -67,7 +67,7 @@ public class StoreServiceImp implements StoreService {
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public void insert(Store store) {
-        if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))
+        if (!categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getServiceId()))
             throw new BusinessException(0, "类别或服务id不存在");
         int res = storeMapper.insert(store);
         log.info(LoggerHelper.logger(store, res));
@@ -155,7 +155,7 @@ public class StoreServiceImp implements StoreService {
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public void update(Store store) {
-        if (!categoryService.exist(store.getCategoryId()) || !serviceService.exist(store.getServiceId()))
+        if (!categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getServiceId()))
             throw new BusinessException(0, "类别或服务id不存在");
         int res = storeMapper.update(store);
         log.info(LoggerHelper.logger(store, res));

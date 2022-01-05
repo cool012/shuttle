@@ -1,12 +1,11 @@
 package com.example.hope.service.serviceIpm;
 
-import com.example.hope.common.logger.LoggerHelper;
+import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.Utils;
-import com.example.hope.config.exception.BusinessException;
-import com.example.hope.model.entity.Services;
-import com.example.hope.model.mapper.ServiceMapper;
+import com.example.hope.model.entity.Business;
+import com.example.hope.model.mapper.BusinessMapper;
 import com.example.hope.service.CategoryService;
-import com.example.hope.service.ServiceService;
+import com.example.hope.service.BusinessService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
@@ -17,16 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.beans.Transient;
 import java.util.List;
 import java.util.Map;
 
 @Log4j2
 @Service
-public class ServiceServiceIpm implements ServiceService {
-
-    @Resource
-    private ServiceMapper serviceMapper;
+public class BusinessServiceIpm extends BaseServiceImp<Business, BusinessMapper> implements BusinessService {
 
     @Resource
     private CategoryService categoryService;
@@ -34,15 +29,13 @@ public class ServiceServiceIpm implements ServiceService {
     /**
      * 添加服务
      *
-     * @param services 服务
+     * @param business 服务
      */
     @Override
     @Transactional
     @CacheEvict(value = "service", allEntries = true)
-    public void insert(Services services) {
-        int res = serviceMapper.insert(services);
-        log.info(LoggerHelper.logger(services, res));
-        BusinessException.check(res, "添加失败");
+    public boolean insert(Business business) {
+        return this.save(business);
     }
 
     /**
@@ -53,25 +46,22 @@ public class ServiceServiceIpm implements ServiceService {
     @Override
     @Transactional
     @CacheEvict(value = "service", allEntries = true)
-    public void delete(Long id) {
+    public boolean delete(Long id) {
+        // todo 删除成功判断
         categoryService.deleteByServiceId(id);
-        int res = serviceMapper.delete(id);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "服务删除失败");
+        return this.removeById(id);
     }
 
     /**
      * 修改服务
      *
-     * @param services 服务
+     * @param business 服务
      */
     @Override
     @Transactional
     @CacheEvict(value = "service", allEntries = true)
-    public void update(Services services) {
-        int res = serviceMapper.update(services);
-        log.info(LoggerHelper.logger(services, res));
-        BusinessException.check(res, "修改失败");
+    public boolean update(Business business) {
+        return this.updateById(business);
     }
 
     /**
@@ -81,12 +71,11 @@ public class ServiceServiceIpm implements ServiceService {
      */
     @Override
     @Cacheable(value = "service", key = "methodName + #option.toString()")
-    public PageInfo<Services> findAll(Map<String, String> option) {
-        Utils.checkOption(option, Services.class);
-
+    public PageInfo<Business> page(Map<String, String> option) {
+        Utils.checkOption(option, Business.class);
         String orderBy = String.format("%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(serviceMapper.findAll());
+        return PageInfo.of(this.list());
     }
 
     /**
@@ -97,7 +86,12 @@ public class ServiceServiceIpm implements ServiceService {
      */
     @Override
     public boolean exist(long id) {
-        return findById(id).size() != 0;
+        return get(id) != null;
+    }
+
+    @Override
+    public List<Business> getList() {
+        return this.list();
     }
 
     /**
@@ -108,7 +102,7 @@ public class ServiceServiceIpm implements ServiceService {
      */
     @Override
     @Cacheable(value = "service", key = "methodName + #id")
-    public List<Services> findById(long id) {
-        return serviceMapper.findById(id);
+    public Business get(long id) {
+        return this.getById(id);
     }
 }

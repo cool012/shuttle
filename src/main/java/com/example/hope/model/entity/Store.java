@@ -31,6 +31,6 @@ public class Store implements Serializable {
     private String image;
     private float rate;
     private int sales;
-    private Services services;
+    private Business business;
     private Category category;
 }

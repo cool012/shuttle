@@ -4,9 +4,9 @@ import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.ReturnMessage;
-import com.example.hope.model.entity.Services;
-import com.example.hope.service.ServiceService;
-import com.example.hope.service.serviceIpm.ServiceServiceIpm;
+import com.example.hope.model.entity.Business;
+import com.example.hope.service.BusinessService;
+import com.example.hope.service.serviceIpm.BusinessServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +21,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/major/service")
 @Api(tags = "服务相关接口")
-public class ServiceController {
+public class BusinessController {
 
-    private ServiceService serviceService;
+    private BusinessService businessService;
 
     @Autowired
-    public ServiceController(ServiceServiceIpm serviceService) {
-        this.serviceService = serviceService;
+    public BusinessController(BusinessServiceIpm serviceService) {
+        this.businessService = serviceService;
     }
 
     /**
@@ -47,8 +47,8 @@ public class ServiceController {
     @Admin
     @ApiOperation("添加服务")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public ReturnMessage<Object> insert(Services services) {
-        serviceService.insert(services);
+    public ReturnMessage<Object> insert(Business business) {
+        businessService.insert(business);
         return ReturnMessageUtil.success();
     }
 
@@ -68,7 +68,7 @@ public class ServiceController {
     @ApiOperation("删除服务")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ReturnMessage<Object> delete(long id) {
-        serviceService.delete(id);
+        businessService.delete(id);
         return ReturnMessageUtil.success();
     }
 
@@ -89,8 +89,8 @@ public class ServiceController {
     @Admin
     @ApiOperation("修改服务")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ReturnMessage<Object> update(Services services) {
-        serviceService.update(services);
+    public ReturnMessage<Object> update(Business business) {
+        businessService.update(business);
         return ReturnMessageUtil.success();
     }
 
@@ -116,6 +116,6 @@ public class ServiceController {
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.success(serviceService.findAll(option));
+        return ReturnMessageUtil.success(businessService.page(option));
     }
 }

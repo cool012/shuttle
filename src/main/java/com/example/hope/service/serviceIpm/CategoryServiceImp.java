@@ -6,7 +6,7 @@ import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Category;
 import com.example.hope.model.mapper.CategoryMapper;
 import com.example.hope.service.CategoryService;
-import com.example.hope.service.ServiceService;
+import com.example.hope.service.BusinessService;
 import com.example.hope.service.StoreService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.beans.Transient;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +36,7 @@ public class CategoryServiceImp implements CategoryService {
     private StoreService storeService;
 
     @Resource
-    private ServiceService serviceService;
+    private BusinessService businessService;
 
     /**
      * 添加类别
@@ -49,7 +47,7 @@ public class CategoryServiceImp implements CategoryService {
     @Transactional
     @CacheEvict(value = "category", allEntries = true)
     public void insert(Category category) {
-        if (!serviceService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");
+        if (!businessService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");
         int res = categoryMapper.insert(category);
         log.info(LoggerHelper.logger(category, res));
         BusinessException.check(res, "添加失败");
@@ -93,7 +91,7 @@ public class CategoryServiceImp implements CategoryService {
     @Transactional
     @CacheEvict(value = "category", allEntries = true)
     public void update(Category category) {
-        if (!serviceService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");
+        if (!businessService.exist(category.getServiceId())) throw new BusinessException(0, "serviceId不存在");
         int res = categoryMapper.update(category);
         log.info(LoggerHelper.logger(category, res));
         BusinessException.check(res, "更新失败");

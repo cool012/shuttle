@@ -1,26 +1,27 @@
 package com.example.hope.service;
 
+import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.Orders;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 import java.util.Map;
 
-public interface OrderService {
+public interface OrderService extends BaseService<Orders> {
 
-    void insert(List<Orders> orderList, boolean isExpired);
+    boolean insert(List<Orders> orderList, boolean isExpired);
 
-    void delete(List<Orders> orders, String token);
+    boolean delete(List<Orders> orders, String token);
 
-    void deleteByPid(long pid);
+    boolean deleteByPid(long pid);
 
-    void update(Orders order);
+    boolean update(Orders order);
 
-    void receive(long id, long userId);
+    boolean receive(long id, long userId);
 
-    void completed(Orders orders, String token);
+    boolean completed(Orders orders, String token);
 
-    PageInfo<Orders> findAll(Map<String, String> option);
+    PageInfo<Orders> page(Map<String, String> option);
 
     PageInfo<Orders> findByPid(long pid, Map<String, String> option);
 

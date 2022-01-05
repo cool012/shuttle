@@ -1,11 +1,16 @@
 package com.example.hope.service.serviceIpm;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.logger.LoggerHelper;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
+import com.example.hope.enums.OrdersState;
 import com.example.hope.model.entity.Orders;
+import com.example.hope.model.entity.Product;
+import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.OrderMapper;
 import com.example.hope.service.FileService;
 import com.example.hope.service.OrderService;
@@ -24,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @description: 订单服务实现类
@@ -33,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 @Log4j2
 @Service
-public class OrderServiceIpm implements OrderService {
+public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> implements OrderService {
 
     @Resource
     private OrderMapper orderMapper;
@@ -61,14 +67,16 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transactional
     @CacheEvict(value = "order", allEntries = true)
-    public void insert(List<Orders> orderList, boolean isExpired) {
-        orderList.forEach(order -> {
-            if (!userService.exist(order.getCid()) || !userService.exist(order.getSid()) || !productService.exist(order.getPid()))
-                throw new BusinessException(1, "客户或服务者或产品不存在");
-        });
-        int res = orderMapper.insertBatch(orderList);
-        log.info(LoggerHelper.logger(orderList, res));
-        BusinessException.check(res, "添加失败");
+    public boolean insert(List<Orders> orderList, boolean isExpired) {
+        List<Long> cidList = orderList.stream().map(Orders::getCid).distinct().collect(Collectors.toList());
+        List<Long> sidList = orderList.stream().map(Orders::getSid).distinct().collect(Collectors.toList());
+        List<Long> pidList = orderList.stream().map(Orders::getPid).distinct().collect(Collectors.toList());
+        int cidSize = userService.list(new LambdaQueryWrapper<User>().in(User::getId, cidList)).size();
+        int sidSize = userService.list(new LambdaQueryWrapper<User>().in(User::getId, cidList)).size();
+        int pidSize = productService.list(new LambdaQueryWrapper<Product>().in(Product::getId, pidList)).size();
+        BusinessException.check(cidSize != cidList.size(), "客户不存在");
+        BusinessException.check(sidSize != sidList.size(), "服务者不存在");
+        BusinessException.check(pidSize != pidList.size(), "产品不存在");
         for (Orders order : orderList) {
             // 通过mq发送消息到websocket
             amqpTemplate.convertAndSend("order.exchange", "order.created", order);
@@ -77,6 +85,7 @@ public class OrderServiceIpm implements OrderService {
                 redisService.expire("order_" + order.getId(), "expire", 10, TimeUnit.MINUTES);
             }
         }
+        return this.saveBatch(orderList);
     }
 
     /**
@@ -87,19 +96,13 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transactional
     @CacheEvict(value = "order", allEntries = true)
-    public void delete(List<Orders> orders, String token) {
+    public boolean delete(List<Orders> orders, String token) {
         long userId = JwtUtils.getUserId(token);
         boolean isAdmin = JwtUtils.is_admin(token);
         // 只允许下单用户或管理员在订单为未接单或已完成的状态下删除订单
-        for (Orders order : orders) {
-            if ((order.getCid() != userId || !isAdmin) && order.getStatus() == 0)
-                BusinessException.check(0, "删除无效");
-        }
-        int res = orderMapper.deleteBatch(orders);
-        for (Orders order : orders) {
-            log.info(LoggerHelper.logger(order, res));
-        }
-        BusinessException.check(res, "删除失败");
+        boolean state = orders.stream().anyMatch(x -> (x.getCid() != userId || !isAdmin) && x.getStatus() == 0);
+        BusinessException.check(state, "删除无效");
+        return this.removeBatchByIds(orders);
     }
 
     /**
@@ -109,10 +112,8 @@ public class OrderServiceIpm implements OrderService {
      */
     @Transactional
     @CacheEvict(value = "order", allEntries = true)
-    public void delete(long id) {
-        int res = orderMapper.delete(id, "id");
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "删除失败");
+    public boolean delete(long id) {
+        return this.removeById(id);
     }
 
 
@@ -124,9 +125,8 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transactional
     @CacheEvict(value = "order", allEntries = true)
-    public void deleteByPid(long pid) {
-        int res = orderMapper.delete(pid, "pid");
-        log.info(LoggerHelper.logger(pid, res));
+    public boolean deleteByPid(long pid) {
+        return this.remove(this.getQueryWrapper(Orders::getPid, pid));
     }
 
     /**
@@ -137,13 +137,12 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transactional
     @CacheEvict(value = "order", allEntries = true)
-    public void update(Orders order) {
-        if (!userService.exist(order.getCid()) || !userService.exist(order.getSid()) || !productService.exist(order.getPid()))
-            throw new BusinessException(1, "客户或服务者或产品不存在");
+    public boolean update(Orders order) {
+        BusinessException.check(!userService.exist(order.getCid()), "客户不存在");
+        BusinessException.check(!userService.exist(order.getSid()), "服务员不存在");
+        BusinessException.check(!productService.exist(order.getPid()), "产品不存在");
         if (order.getFile().equals("")) order.setFile(null);
-        int res = orderMapper.update(order);
-        log.info(LoggerHelper.logger(order, res));
-        BusinessException.check(res, "更新失败");
+        return this.updateById(order);
     }
 
     /**
@@ -154,7 +153,7 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<Orders> findAll(Map<String, String> option) {
+    public PageInfo<Orders> page(Map<String, String> option) {
         Utils.checkOption(option, Orders.class);
         String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
@@ -385,16 +384,15 @@ public class OrderServiceIpm implements OrderService {
     @Override
     @Transactional
     @CacheEvict(value = "order", allEntries = true)
-    public void receive(long id, long userId) {
-        findById(id);
+    public boolean receive(long id, long userId) {
+        Orders orders = findById(id);
+        orders.setSid(userId);
         // 减少点数
         userService.reduceScore(userId);
-        // 更新订单状态
-        int res = orderMapper.receive(id, userId);
         redisService.del("order_" + id);
         // 下单1小时后自动更新为完成状态
         redisService.expire("completed_" + id, "expire", 1, TimeUnit.HOURS);
-        BusinessException.check(res, "接单失败");
+        return this.updateById(orders);
     }
 
     /**
@@ -405,17 +403,17 @@ public class OrderServiceIpm implements OrderService {
      */
     @Override
     @CacheEvict(value = "order", allEntries = true)
-    public void completed(Orders orders, String token) {
+    public boolean completed(Orders orders, String token) {
         long userId = JwtUtils.getUserId(token);
         // 只允许订单用户或管理员修改订单为完成状态
-        if (userId != orders.getCid() || !JwtUtils.is_admin(token))
-            BusinessException.check(0, "非订单用户或管理员操作");
+        boolean state = userId != orders.getCid() || !JwtUtils.is_admin(token);
+        BusinessException.check(state, "非订单用户或管理员操作");
         // 如果存在文件，完成订单时删除文件
         if (orders.getFile() != null && !orders.getFile().equals("")) fileService.remove(orders.getFile());
         // 增加产品销量
         productService.addSales(orders.getPid(), 1);
-        int res = orderMapper.completed(orders.getId());
-        BusinessException.check(res, "完成订单失败");
+        orders.setStatus(OrdersState.COMPLETE.getCode());
+        return this.updateById(orders);
     }
 
     /**
@@ -424,14 +422,14 @@ public class OrderServiceIpm implements OrderService {
      * @param orderId 订单id
      */
     @CacheEvict(value = "order", allEntries = true)
-    public void completed(long orderId) {
+    public boolean completed(long orderId) {
         Orders orders = findById(orderId);
         // 如果存在文件，完成订单时删除文件
         if (orders.getFile() != null) fileService.remove(orders.getFile());
         // 增加产品销量
         productService.addSales(orders.getPid(), 1);
-        int res = orderMapper.completed(orders.getId());
-        BusinessException.check(res, "完成订单失败");
+        orders.setStatus(OrdersState.COMPLETE.getCode());
+        return this.updateById(orders);
     }
 
     /**

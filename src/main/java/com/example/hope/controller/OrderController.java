@@ -168,7 +168,7 @@ public class OrderController {
     @ApiOperation("查询全部订单")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.success(orderService.findAll(option));
+        return ReturnMessageUtil.success(orderService.page(option));
     }
 
     /**

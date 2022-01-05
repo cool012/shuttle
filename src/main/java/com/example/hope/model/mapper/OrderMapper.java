@@ -1,5 +1,6 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.hope.common.provider.OrdersProvider;
 import com.example.hope.model.entity.Orders;
 import org.apache.ibatis.annotations.*;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Component
 @Mapper
-public interface OrderMapper {
+public interface OrderMapper extends BaseMapper<Orders> {
 
     // 批量添加订单
     int insertBatch(List<Orders> orderList);

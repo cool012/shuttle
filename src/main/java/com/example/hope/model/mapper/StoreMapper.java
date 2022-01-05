@@ -1,5 +1,6 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.hope.common.provider.StoreProvider;
 import com.example.hope.model.entity.Store;
 import org.apache.ibatis.annotations.*;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Component
 @Mapper
-public interface StoreMapper {
+public interface StoreMapper extends BaseMapper<Store> {
 
     @Insert("insert into store(name,serviceId,categoryId,image,rate,sales) values(#{name},#{serviceId},#{categoryId},#{image},#{rate},#{sales})")
     int insert(Store store);

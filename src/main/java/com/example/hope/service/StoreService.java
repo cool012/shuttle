@@ -1,5 +1,6 @@
 package com.example.hope.service;
 
+import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.Store;
 import com.github.pagehelper.PageInfo;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -7,23 +8,23 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import java.util.List;
 import java.util.Map;
 
-public interface StoreService {
+public interface StoreService extends BaseService<Store> {
 
-    void insert(Store store);
+    boolean insert(Store store);
 
-    void delete(long id);
+    boolean delete(long id);
 
-    void deleteByCategoryId(long categoryId);
+    boolean deleteByCategoryId(long categoryId);
 
-    void update(Store store);
+    boolean update(Store store);
 
     List<Store> rank(Map<String, String> option);
 
-    void sales(long id, int quantity);
+    boolean sales(long id, int quantity);
 
     SearchHits search(String keyword, Map<String, String> option);
 
-    PageInfo<Store> findAll(Map<String, String> option);
+    PageInfo<Store> page(Map<String, String> option);
 
     PageInfo<Store> findByServiceId(long serviceId, Map<String, String> option);
 
@@ -31,9 +32,9 @@ public interface StoreService {
 
     PageInfo<Store> findByCategoryId(long categoryId, Map<String, String> option);
 
-    List<Store> findById(long id);
+    Store detail(long id);
 
-    void review(long id, float rate, String token);
+    boolean review(long id, float rate, String token);
 
     boolean exist(long id);
 

@@ -126,7 +126,7 @@ public class StoreController {
     @ApiOperation("查询所有商店")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.success(storeService.findAll(option));
+        return ReturnMessageUtil.success(storeService.page(option));
     }
 
     /**
@@ -213,7 +213,7 @@ public class StoreController {
     @ApiOperation("根据id查询商店")
     @RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
     public ReturnMessage<Object> findById(@PathVariable("id") long id) {
-        return ReturnMessageUtil.success(storeService.findById(id));
+        return ReturnMessageUtil.success(storeService.delete(id));
     }
 
     /**

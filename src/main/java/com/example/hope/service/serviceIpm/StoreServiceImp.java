@@ -1,6 +1,8 @@
 package com.example.hope.service.serviceIpm;
 
-import com.example.hope.common.logger.LoggerHelper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.JwtUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
@@ -32,7 +34,7 @@ import java.util.*;
 
 @Service
 @Log4j2
-public class StoreServiceImp implements StoreService {
+public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implements StoreService {
 
     @Resource
     private StoreMapper storeMapper;
@@ -66,13 +68,11 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
-    public void insert(Store store) {
-        if (!categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getServiceId()))
-            throw new BusinessException(0, "类别或服务id不存在");
-        int res = storeMapper.insert(store);
-        log.info(LoggerHelper.logger(store, res));
-        BusinessException.check(res, "添加失败");
+    public boolean insert(Store store) {
+        if (!categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getBusinessId()))
+            throw new BusinessException(0, "类别或业务id不存在");
         storeRepository.save(store);
+        return this.save(store);
     }
 
     /**
@@ -82,11 +82,11 @@ public class StoreServiceImp implements StoreService {
      * @param quantity 数量
      */
     @Override
-    public void sales(long id, int quantity) {
-        int res = storeMapper.sales(id, quantity);
-        BusinessException.check(res, "增加商店销量失败");
-        Store store = findById(id).get(0);
+    public boolean sales(long id, int quantity) {
+        Store store = this.getById(id, "商店不存在");
         redisService.review(store.getRate(), store.getSales(), "store_rank", String.valueOf(id));
+        store.setSales(store.getSales() + quantity);
+        return this.updateById(store);
     }
 
     /**
@@ -97,12 +97,10 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
-    public void delete(long id) {
-        int res = storeMapper.delete(id, "id");
+    public boolean delete(long id) {
         productService.deleteByStoreId(id);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "删除失败");
         storeRepository.deleteById(id);
+        return this.removeById(id);
     }
 
     /**
@@ -113,10 +111,14 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
-    public void deleteByCategoryId(long categoryId) {
-        for (Store store : findByCategoryId(categoryId)) productService.deleteByStoreId(store.getId());
-        int res = storeMapper.delete(categoryId, "categoryId");
-        log.info(LoggerHelper.logger(categoryId, res));
+    public boolean deleteByCategoryId(long categoryId) {
+        // todo 删除返回布尔
+        for (Store store : findByCategoryId(categoryId)) {
+            productService.deleteByStoreId(store.getId());
+        }
+        Wrapper<Store> wrapper = new LambdaQueryWrapper<Store>()
+                .eq(Store::getCategoryId, categoryId);
+        return this.remove(wrapper);
     }
 
     /**
@@ -128,7 +130,7 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     @CacheEvict(value = "store", allEntries = true)
-    public void review(long id, float rate, String token) {
+    public boolean review(long id, float rate, String token) {
         long userId = JwtUtils.getUserId(token);
         List<Orders> list = orderService.findByCid(userId);
         boolean status = false;
@@ -139,11 +141,10 @@ public class StoreServiceImp implements StoreService {
             }
         }
         if (!JwtUtils.is_admin(token) || !status) throw new BusinessException(1, "只允许管理员或在此商店消费过的用户可以评分");
-        int res = storeMapper.review(id, rate);
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "更新失败");
-        Store store = findById(id).get(0);
+        Store store = this.getById(id, "商店不存在");
+        store.setRate(this.composeScore(rate, store.getSales()));
         redisService.review(store.getRate(), store.getSales(), "store_rank", String.valueOf(id));
+        return this.updateById(store);
     }
 
     /**
@@ -154,13 +155,11 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
-    public void update(Store store) {
-        if (!categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getServiceId()))
-            throw new BusinessException(0, "类别或服务id不存在");
-        int res = storeMapper.update(store);
-        log.info(LoggerHelper.logger(store, res));
-        BusinessException.check(res, "更新失败");
+    public boolean update(Store store) {
+        boolean res = !categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getBusinessId());
+        BusinessException.check(res, "类别或业务id不存在");
         storeRepository.save(store);
+        return this.updateById(store);
     }
 
     /**
@@ -170,36 +169,38 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #option.toString()")
-    public PageInfo<Store> findAll(Map<String, String> option) {
+    public PageInfo<Store> page(Map<String, String> option) {
         Utils.checkOption(option, Store.class);
         String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(storeMapper.select(null, null));
+        return PageInfo.of(this.getList());
     }
 
     /**
      * 查询全部商店
      *
-     * @return 分页包装类
+     * @return List<Store>
      */
     @Cacheable(value = "store", key = "methodName")
-    public List<Store> findAll() {
-        return storeMapper.select(null, null);
+    public List<Store> getList() {
+        return this.list();
     }
 
     /**
-     * 根据serviceId查询商店
+     * 根据businessId查询商店
      *
-     * @param serviceId 服务id
+     * @param businessId 业务id
      * @return 商店列表
      */
     @Override
-    @Cacheable(value = "store", key = "methodName + #serviceId + #option.toString()")
-    public PageInfo<Store> findByServiceId(long serviceId, Map<String, String> option) {
+    @Cacheable(value = "store", key = "methodName + #businessId + #option.toString()")
+    public PageInfo<Store> findByServiceId(long businessId, Map<String, String> option) {
         Utils.checkOption(option, Store.class);
         String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(storeMapper.select(String.valueOf(serviceId), "serviceId"));
+        Wrapper<Store> wrapper = new LambdaQueryWrapper<Store>()
+                .eq(Store::getBusiness, businessId);
+        return PageInfo.of(this.list(wrapper));
     }
 
     /**
@@ -211,7 +212,7 @@ public class StoreServiceImp implements StoreService {
     @Override
     @Cacheable(value = "store", key = "methodName + #categoryId")
     public List<Store> findByCategoryId(long categoryId) {
-        return storeMapper.select(String.valueOf(categoryId), "categoryId");
+        return this.list(this.getQueryWrapper(Store::getCategoryId, categoryId));
     }
 
     /**
@@ -226,7 +227,7 @@ public class StoreServiceImp implements StoreService {
         Utils.checkOption(option, Store.class);
         String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
         PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(storeMapper.select(String.valueOf(categoryId), "categoryId"));
+        return PageInfo.of(this.findByCategoryId(categoryId));
     }
 
     /**
@@ -237,8 +238,8 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #id")
-    public List<Store> findById(long id) {
-        return storeMapper.select(String.valueOf(id), "id");
+    public Store detail(long id) {
+        return this.getById(id);
     }
 
     /**
@@ -254,7 +255,7 @@ public class StoreServiceImp implements StoreService {
         Set<String> range = redisService.range("store_rank", 0, (quantity - 1));
         // 如果排行榜为空，将所有商店加入进去，分数为0
         if (range.size() == 0) {
-            List<Store> stores = findAll();
+            List<Store> stores = getList();
             for (Store store : stores) {
                 double score = Utils.changeRate(store.getRate(), store.getSales());
                 redisService.incrScore("store_rank", String.valueOf(store.getId()), score);
@@ -263,7 +264,7 @@ public class StoreServiceImp implements StoreService {
         }
         List<Store> stores = new ArrayList<>();
         for (String id : range) {
-            stores.add(findById(Long.parseLong(id)).get(0));
+            stores.add(detail(Long.parseLong(id)));
         }
         return stores;
     }
@@ -287,7 +288,7 @@ public class StoreServiceImp implements StoreService {
      */
     @Override
     public boolean exist(long id) {
-        return findById(id).size() != 0;
+        return detail(id) != null;
     }
 
     /**
@@ -300,5 +301,16 @@ public class StoreServiceImp implements StoreService {
     @Cacheable(value = "store", key = "methodName + #name")
     public List<Store> findByName(String name) {
         return storeMapper.findByName(name);
+    }
+
+    /**
+     * 计算评分
+     *
+     * @param rate  评分
+     * @param sales 销量
+     * @return float
+     */
+    private float composeScore(float rate, float sales) {
+        return (rate * sales + rate) / (sales + 1);
     }
 }

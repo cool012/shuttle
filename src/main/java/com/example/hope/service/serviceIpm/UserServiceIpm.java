@@ -85,8 +85,8 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      *
      * @param account  账户
      * @param password 密码
-     * @param expired  token过期时间，单位：分钟
-     * @return 用户信息和Token
+     * @param expired  token 过期时间，单位：分钟
+     * @return 用户信息和 token
      */
     @Override
     public Map<String, Object> login(String account, String password, int expired) {
@@ -97,10 +97,16 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
                 .eq(User::getName, account)
                 .eq(User::getPassword, enPassword);
         User user = this.getOne(wrapper, false);
-        user.setPassword(null);
         BusinessException.check(user == null, "登录失败，用户名或密码错误");
+        user.setPassword(null);
         Map<String, Object> map = new HashMap<>();
-        map.put("token", JwtUtils.createToken(user, expired));
+        String key = String.valueOf(user.getId());
+        String token = redisService.get(key);
+        if (token == null) {
+            token = JwtUtils.createToken(user, expired);
+            redisService.expire(String.valueOf(user.getId()), token, expired, TimeUnit.HOURS);
+        }
+        map.put("token", token);
         map.put("user", user);
         return map;
     }

@@ -20,7 +20,7 @@ public class Product implements Serializable {
 
     @Id
     @TableId(type = IdType.ASSIGN_ID)
-    private long id;
+    private Long id;
 
     @Field(type = FieldType.Text)
     private String name;

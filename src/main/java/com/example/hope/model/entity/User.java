@@ -2,7 +2,6 @@ package com.example.hope.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,9 +24,9 @@ import java.io.Serializable;
 @Document(indexName = "user")
 public class User implements Serializable {
 
-    @Id
     @TableId(type = IdType.ASSIGN_ID)
-    private long id;
+    @Id
+    private Long id;
 
     private String password;
 

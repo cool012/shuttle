@@ -25,43 +25,43 @@ import java.util.List;
 @Component
 public class ElasticSearchRunner implements ApplicationRunner {
 
-    @Resource
-    private ProductRepository productRepository;
-
-    @Resource
-    private UserRepository userRepository;
-
-    @Resource
-    private StoreRepository storeRepository;
-
-    @Resource
-    private ProductService productService;
-
-    @Resource
-    private StoreService StoreService;
-
-    @Resource
-    private UserService userService;
+//    @Resource
+//    private ProductRepository productRepository;
+//
+//    @Resource
+//    private UserRepository userRepository;
+//
+//    @Resource
+//    private StoreRepository storeRepository;
+//
+//    @Resource
+//    private ProductService productService;
+//
+//    @Resource
+//    private StoreService StoreService;
+//
+//    @Resource
+//    private UserService userService;
 
     @Override
     public void run(ApplicationArguments args) {
-        productImportAll();
-        StoreImportAll();
-        userImportAll();
+//        productImportAll();
+//        StoreImportAll();
+//        userImportAll();
     }
 
-    public void productImportAll() {
-        List<Product> products = productService.findAll(new HashMap<>()).getList();
-        productRepository.saveAll(products);
-    }
-
-    public void StoreImportAll() {
-        List<Store> Stores = StoreService.findAll(new HashMap<>()).getList();
-        storeRepository.saveAll(Stores);
-    }
-
-    public void userImportAll() {
-        List<User> products = userService.findAll(new HashMap<>()).getList();
-        userRepository.saveAll(products);
-    }
+//    public void productImportAll() {
+//        List<Product> products = productService.list();
+//        productRepository.saveAll(products);
+//    }
+//
+//    public void StoreImportAll() {
+//        List<Store> Stores = StoreService.list();
+//        storeRepository.saveAll(Stores);
+//    }
+//
+//    public void userImportAll() {
+//        List<User> products = userService.findAll(new HashMap<>()).getList();
+//        userRepository.saveAll(products);
+//    }
 }

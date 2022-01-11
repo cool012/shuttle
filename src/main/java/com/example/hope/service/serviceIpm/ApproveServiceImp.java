@@ -85,13 +85,13 @@ public class ApproveServiceImp implements ApproveService {
             if (approveStore.getCategoryId() == 0 || !categoryService.exist(approveStore.getCategoryId())) {
                 Category category = new Category();
                 category.setName(approveStore.getCategoryName());
-                category.setServiceId(approveStore.getServiceId());
+                category.setBusinessId(approveStore.getServiceId());
                 categoryService.insert(category);
             }
             Store store = new Store();
             store.setName(approveStore.getName());
             store.setImage(approveStore.getImage());
-            store.setServiceId(approveStore.getServiceId());
+            store.setBusinessId(approveStore.getServiceId());
             store.setCategoryId(approveStore.getCategoryId());
             storeService.insert(store);
             content = String.format("%s，已通过后台审批", approveStore.toString());
@@ -124,9 +124,8 @@ public class ApproveServiceImp implements ApproveService {
     }
 
     private void notify(long uid, String content) {
-        List<User> list = userService.findById(uid);
-        if (list.size() == 0) throw new BusinessException(1, "用户不存在");
-        User user = list.get(0);
+        User user = userService.findById(uid);
+        BusinessException.check(user == null, "用户不存在");
         mailService.sendTokenMail(user.getEmail(), content, "shuttle审批结果通知");
     }
 

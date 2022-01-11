@@ -19,7 +19,7 @@ import java.io.Serializable;
 public class Star implements Serializable {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private long id;
+    private Long id;
 
     private long sid;
 

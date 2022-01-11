@@ -4,7 +4,6 @@ import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.Star;
 import com.github.pagehelper.PageInfo;
 
-import java.util.List;
 import java.util.Map;
 
 public interface StarService extends BaseService<Star> {

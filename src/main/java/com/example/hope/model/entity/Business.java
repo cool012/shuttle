@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class Business implements Serializable {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private long id;
+    private Long id;
 
     private String name;
 

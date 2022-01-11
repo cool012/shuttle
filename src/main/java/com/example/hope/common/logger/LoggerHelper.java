@@ -12,4 +12,8 @@ public class LoggerHelper {
     public static String logger(Object object, int res) {
         return String.format(logTemplate, Thread.currentThread().getStackTrace()[2].getMethodName(), object.toString(), res);
     }
+
+    public static String logger(String description) {
+        return String.format("%s -> %s", Thread.currentThread().getStackTrace()[2].getMethodName(), description);
+    }
 }

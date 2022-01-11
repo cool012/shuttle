@@ -23,6 +23,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,11 +53,14 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
     @Resource
     private MailService mailService;
 
-    @Resource
     private CommentsService commentsService;
 
-    @Resource
     private RedisService redisService;
+
+    public UserServiceIpm(@Lazy RedisService redisService, @Lazy CommentsService commentsService) {
+        this.redisService = redisService;
+        this.commentsService = commentsService;
+    }
 
     /**
      * 用户注册
@@ -93,6 +97,7 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
                 .eq(User::getName, account)
                 .eq(User::getPassword, enPassword);
         User user = this.getOne(wrapper, false);
+        user.setPassword(null);
         BusinessException.check(user == null, "登录失败，用户名或密码错误");
         Map<String, Object> map = new HashMap<>();
         map.put("token", JwtUtils.createToken(user, expired));

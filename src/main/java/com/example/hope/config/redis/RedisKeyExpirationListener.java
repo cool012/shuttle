@@ -3,6 +3,7 @@ package com.example.hope.config.redis;
 import com.example.hope.service.AdsService;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -20,8 +21,8 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     private AdsService adsService;
 
     @Autowired
-    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer, OrderServiceIpm orderService,
-                                      AdsService adsService) {
+    public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer, @Lazy OrderServiceIpm orderService,
+                                      @Lazy AdsService adsService) {
         super(listenerContainer);
         this.orderServiceIpm = orderService;
         this.adsService = adsService;

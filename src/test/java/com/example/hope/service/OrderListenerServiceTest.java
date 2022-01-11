@@ -17,7 +17,7 @@ class OrderListenerServiceTest {
     @Test
     public void createOrder() {
         Orders order = new Orders();
-        order.setId(1);
+        order.setId(1L);
         amqpTemplate.convertAndSend("order.exchange", "order.created", order);
     }
 }

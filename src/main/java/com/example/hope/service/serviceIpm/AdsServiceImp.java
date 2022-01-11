@@ -8,6 +8,7 @@ import com.example.hope.service.AdsService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +25,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class AdsServiceImp extends BaseServiceImp<Ads, AdsMapper> implements AdsService {
 
-    @Resource
     private RedisService redisService;
 
+    public AdsServiceImp(@Lazy RedisService redisService){
+        this.redisService = redisService;
+    }
     /**
      * 添加广告
      *

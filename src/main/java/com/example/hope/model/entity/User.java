@@ -38,7 +38,7 @@ public class User implements Serializable {
 
     private int score;
 
-    private int admin;
+    private boolean admin;
 
     @Field(type = FieldType.Text)
     private String name;

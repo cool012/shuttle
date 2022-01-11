@@ -1,12 +1,10 @@
 package com.example.hope.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.User;
 import com.github.pagehelper.PageInfo;
 import org.springframework.data.elasticsearch.core.SearchHits;
 
-import java.util.List;
 import java.util.Map;
 
 public interface UserService extends BaseService<User> {

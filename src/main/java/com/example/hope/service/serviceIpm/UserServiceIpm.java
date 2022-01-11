@@ -4,10 +4,10 @@ import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
+import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
@@ -17,6 +17,7 @@ import com.example.hope.service.MailService;
 import com.example.hope.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -27,8 +28,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @description: 用户相关服务
@@ -39,9 +42,6 @@ import java.util.Map;
 @Log4j2
 @Service
 public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements UserService {
-
-    @Resource
-    private UserMapper userMapper;
 
     @Resource
     private UserRepository userRepository;
@@ -55,13 +55,16 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
     @Resource
     private CommentsService commentsService;
 
+    @Resource
+    private RedisService redisService;
+
     /**
      * 用户注册
      *
      * @param user 用户
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "user", allEntries = true)
     public boolean register(User user) {
         // 检查输入合法
@@ -103,10 +106,9 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @param id 用户id
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "user", allEntries = true)
     public boolean delete(long id) {
-//        log.info(LoggerHelper.logger(id, res));
         userRepository.deleteById(id);
         return this.removeById(id);
     }
@@ -117,15 +119,14 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @param user 用户
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "user", allEntries = true)
     public boolean update(User user, String token) {
         BusinessException.check(user.getId() != JwtUtils.getUserId(token), "只能修改当前用户的信息");
         // 修改对应评论的用户信息
         if (user.getName() != null) commentsService.updateByUserId(user.getId(), user.getName());
-//        log.info(LoggerHelper.logger(user, res));
-//        BusinessException.check(res, "更新失败");
         userRepository.save(user);
+        this.tokenHandler(token);
         return this.updateById(user);
     }
 
@@ -136,7 +137,7 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @param password 密码
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "user", allEntries = true)
     public boolean updatePassword(long id, String password, String token) {
         BusinessException.check(JwtUtils.getUserId(token) != id, "只能修改当前用户的密码");
@@ -151,11 +152,9 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @param id       用户id
      * @param password 密码
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "user", allEntries = true)
     public boolean resetPassword(long id, String password) {
-//        log.info(LoggerHelper.logger(id, res));
-//        BusinessException.check(res, "修改密码失败");
         Wrapper<User> wrapper = new LambdaUpdateWrapper<User>()
                 .set(User::getPassword, Utils.encode(password))
                 .eq(User::getId, id);
@@ -169,12 +168,9 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @param quantity 数量
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "user", allEntries = true)
     public boolean addScore(long id, int quantity) {
-//        int res = userMapper.addScore(id, quantity);
-//        log.info(LoggerHelper.logger(id, res));
-//        BusinessException.check(res, "增加点数失败");
         User user = this.getById(id, "用户不存在");
         user.setScore(user.getScore() + quantity);
         return this.updateById(user);
@@ -186,7 +182,7 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @param id 用户id
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "user", allEntries = true)
     public boolean reduceScore(long id) {
         if (findByScore(id) == 0) {
@@ -203,7 +199,7 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
     @Override
     @Cacheable(value = "user", key = "methodName + #phone")
     public User findByPhone(String phone) {
-        return this.getOne(this.buildWrapper(User::getPhone, phone), false);
+        return this.getOne(this.getQueryWrapper(User::getPhone, phone), false);
     }
 
     /**
@@ -270,11 +266,8 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
     @Override
     @CacheEvict(value = "user", allEntries = true)
     public boolean admin(long id) {
-//        int res = userMapper.admin(id);
-//        log.info(LoggerHelper.logger(id, res));
-//        BusinessException.check(res, "设置管理员失败");
         Wrapper<User> wrapper = new LambdaUpdateWrapper<User>()
-                .set(User::getAdmin, 1)
+                .set(User::isAdmin, 1)
                 .eq(User::getId, id);
         return this.update(wrapper);
     }
@@ -312,10 +305,10 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      */
     @Override
     public void forget(String token, String newPassword) {
-        // 检查token是否有效
         long id = JwtUtils.getUserId(token);
         User User = findById(id);
         BusinessException.check(User == null, "用户不存在");
+        this.tokenHandler(token);
         resetPassword(id, newPassword);
     }
 
@@ -326,9 +319,9 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      */
     @Override
     public void sendEmail(String email) {
-        User user = userMapper.findByEmail(email);
+        User user = this.getOne(getQueryWrapper(User::getEmail, email), false);
         // 检查邮箱存不存在
-        BusinessException.check(user == null ? 0 : 1, "用户不存在");
+        BusinessException.check(user == null, "用户不存在");
         // 加密生成邮箱token
         String token = JwtUtils.createToken(user, 60);
         // 发送邮箱
@@ -336,13 +329,18 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
     }
 
     /**
-     * 构建 wrapper
+     * token 处理
      *
-     * @param function function
-     * @param val      val
-     * @return Wrapper<User>
+     * @param token token
      */
-    private Wrapper<User> buildWrapper(SFunction<User, ?> function, Object val) {
-        return new LambdaQueryWrapper<User>().eq(function, val);
+    private void tokenHandler(String token) {
+        // 重置密码时把 token 加入黑名单
+        Claims claims = JwtUtils.parseJWT(token);
+        Date expiration = claims.getExpiration();
+        Date now = new Date();
+        if (now.before(expiration)) {
+            int diff = (int) (expiration.getTime() - now.getTime()) / 1000 % 60;
+            redisService.expire(claims.getId(), token, diff, TimeUnit.SECONDS);
+        }
     }
 }

@@ -49,7 +49,7 @@ public class RedisService {
     public void del(final String key) {
         try {
             if (redisTemplate.hasKey(key)) redisTemplate.delete(key);
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -71,7 +71,6 @@ public class RedisService {
      * @param key   key
      * @param value value
      * @param score score
-     * @return score
      */
     public void incrScore(String key, String value, double score) {
         stringRedisTemplate.opsForZSet().incrementScore(key, value, score);
@@ -100,5 +99,15 @@ public class RedisService {
     public void review(double rate, double sales, String key, String value) {
         double score = Utils.changeRate(rate, sales);
         incrScore(key, value, score);
+    }
+
+    /**
+     * 从 redis 获取元素
+     *
+     * @param key key
+     * @return String
+     */
+    public String get(Object key) {
+        return redisTemplate.opsForValue().get(key);
     }
 }

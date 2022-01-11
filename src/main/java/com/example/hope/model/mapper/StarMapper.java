@@ -1,5 +1,6 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.hope.common.provider.StarProvider;
 import com.example.hope.model.entity.Star;
 import org.apache.ibatis.annotations.*;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Component
 @Mapper
-public interface StarMapper {
+public interface StarMapper extends BaseMapper<Star> {
 
     @Insert("insert into star(sid,pid,uid,type) values(#{sid},#{pid},#{uid},#{type})")
     int insert(Star star);

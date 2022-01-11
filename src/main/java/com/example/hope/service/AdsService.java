@@ -1,16 +1,17 @@
 package com.example.hope.service;
 
+import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.Ads;
 
 import java.util.List;
 
-public interface AdsService {
+public interface AdsService extends BaseService<Ads> {
 
-    void insert(Ads ads, int expired);
+    boolean insert(Ads ads, int expired);
 
-    void delete(long id);
+    boolean delete(long id);
 
-    void update(Ads ads);
+    boolean update(Ads ads);
 
     List<Ads> findAll();
 }

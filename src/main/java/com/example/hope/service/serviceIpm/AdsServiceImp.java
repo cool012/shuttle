@@ -1,7 +1,6 @@
 package com.example.hope.service.serviceIpm;
 
-import com.example.hope.common.logger.LoggerHelper;
-import com.example.hope.config.exception.BusinessException;
+import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Ads;
 import com.example.hope.model.mapper.AdsMapper;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.beans.Transient;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Log4j2
 @Service
-public class AdsServiceImp implements AdsService {
-
-    @Resource
-    private AdsMapper adsMapper;
+public class AdsServiceImp extends BaseServiceImp<Ads, AdsMapper> implements AdsService {
 
     @Resource
     private RedisService redisService;
@@ -35,18 +30,17 @@ public class AdsServiceImp implements AdsService {
     /**
      * 添加广告
      *
-     * @param ads 广告
+     * @param ads     广告
      * @param expired 过期时间（单位：天）
      */
     @Override
     @Transactional
     @CacheEvict(value = "ads", allEntries = true)
-    public void insert(Ads ads, int expired) {
-        int res = adsMapper.insert(ads);
+    public boolean insert(Ads ads, int expired) {
+        boolean state = this.save(ads);
         // 设置过期时间
-        if (res > 0) redisService.expire("ads_" + ads.getId(), "expire", expired, TimeUnit.DAYS);
-        log.info(LoggerHelper.logger(ads, res));
-        BusinessException.check(res, "添加失败");
+        if (state) redisService.expire("ads_" + ads.getId(), "expire", expired, TimeUnit.DAYS);
+        return state;
     }
 
     /**
@@ -57,10 +51,8 @@ public class AdsServiceImp implements AdsService {
     @Override
     @Transactional
     @CacheEvict(value = "ads", allEntries = true)
-    public void delete(long id) {
-        int res = adsMapper.delete(id,"id");
-        log.info(LoggerHelper.logger(id, res));
-        BusinessException.check(res, "删除失败");
+    public boolean delete(long id) {
+        return this.removeById(id);
     }
 
     /**
@@ -70,9 +62,8 @@ public class AdsServiceImp implements AdsService {
      */
     @Transactional
     @CacheEvict(value = "ads", allEntries = true)
-    public void deleteByStoreId(long storeId) {
-        int res = adsMapper.delete(storeId,"storeId");
-        log.info(LoggerHelper.logger(storeId, res));
+    public boolean deleteByStoreId(long storeId) {
+        return this.remove(this.getQueryWrapper(Ads::getStoreId, storeId));
     }
 
     /**
@@ -83,10 +74,8 @@ public class AdsServiceImp implements AdsService {
     @Override
     @Transactional
     @CacheEvict(value = "ads", allEntries = true)
-    public void update(Ads ads) {
-        int res = adsMapper.update(ads);
-        log.info(LoggerHelper.logger(ads, res));
-        BusinessException.check(res, "更新失败");
+    public boolean update(Ads ads) {
+        return this.updateById(ads);
     }
 
     /**
@@ -97,6 +86,6 @@ public class AdsServiceImp implements AdsService {
     @Override
     @Cacheable(value = "ads", key = "methodName")
     public List<Ads> findAll() {
-        return adsMapper.select();
+        return this.list();
     }
 }

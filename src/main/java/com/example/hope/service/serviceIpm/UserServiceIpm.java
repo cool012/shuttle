@@ -100,11 +100,11 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
         BusinessException.check(user == null, "登录失败，用户名或密码错误");
         user.setPassword(null);
         Map<String, Object> map = new HashMap<>();
-        String key = String.valueOf(user.getId());
+        String key = String.format("%s_%d", "user", user.getId());
         String token = redisService.get(key);
         if (token == null) {
             token = JwtUtils.createToken(user, expired);
-            redisService.expire(String.valueOf(user.getId()), token, expired, TimeUnit.HOURS);
+            redisService.expire(key, token, expired, TimeUnit.HOURS);
         }
         map.put("token", token);
         map.put("user", user);

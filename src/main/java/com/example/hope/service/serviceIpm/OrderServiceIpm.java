@@ -99,7 +99,7 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
         // 只允许下单用户或管理员在订单为未接单或已完成的状态下删除订单
         boolean state = orders.stream().anyMatch(x -> (x.getCid() != userId || !isAdmin) && x.getStatus() == 0);
         BusinessException.check(state, "删除无效");
-        return this.removeBatchByIds(orders);
+        return this.removeByIds(orders);
     }
 
     /**

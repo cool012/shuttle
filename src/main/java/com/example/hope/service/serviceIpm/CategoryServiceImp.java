@@ -77,9 +77,9 @@ public class CategoryServiceImp extends BaseServiceImp<Category, CategoryMapper>
         List<Long> categoryIds = categoryList.stream()
                 .map(Category::getId).collect(Collectors.toList());
         Wrapper<Store> wrapper = new LambdaQueryWrapper<Store>()
-                .in(Store::getCategory, categoryIds);
+                .in(Store::getCategoryId, categoryIds);
         return this.remove(this.getQueryWrapper(Category::getBusinessId, businessId))
-                && storeService.removeBatchByIds(storeService.list(wrapper));
+                && storeService.removeByIds(storeService.list(wrapper));
     }
 
     /**

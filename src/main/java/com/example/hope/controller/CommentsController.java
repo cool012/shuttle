@@ -5,7 +5,7 @@ import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.Comments;
 import com.example.hope.model.entity.ReturnMessage;
-import com.example.hope.service.CommentsService;
+import com.example.hope.service.business.CommentsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

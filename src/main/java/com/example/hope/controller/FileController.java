@@ -3,7 +3,7 @@ package com.example.hope.controller;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.ReturnMessage;
-import com.example.hope.service.FileService;
+import com.example.hope.service.other.FileService;
 import com.example.hope.service.serviceIpm.FileServiceImp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

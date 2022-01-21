@@ -1,4 +1,4 @@
-package com.example.hope.service;
+package com.example.hope.service.other;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

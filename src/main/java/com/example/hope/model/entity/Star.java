@@ -28,8 +28,4 @@ public class Star implements Serializable {
     private long uid;
 
     private boolean type;
-
-    private Store store;
-
-    private Product product;
 }

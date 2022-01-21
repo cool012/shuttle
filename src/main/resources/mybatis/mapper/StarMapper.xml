@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.hope.model.mapper.StarMapper">
+
+    <resultMap id="storeResult" type="com.example.hope.model.vo.StarVO">
+        <result column="storeId" property="store.id"/>
+        <result column="storeName" property="store.name"/>
+        <result column="storeBusinessId" property="store.businessId"/>
+        <result column="storeCategoryId" property="store.categoryId"/>
+        <result column="storeImage" property="store.image"/>
+        <result column="storeRate" property="store.rate"/>
+        <result column="storeSales" property="store.sales"/>
+    </resultMap>
+
+    <resultMap id="productResult" type="com.example.hope.model.vo.StarVO">
+        <result column="storeId" property="store.id"/>
+        <result column="storeName" property="store.name"/>
+        <result column="storeBusinessId" property="store.businessId"/>
+        <result column="productId" property="product.id"/>
+        <result column="productName" property="product.name"/>
+        <result column="productPrice" property="product.price"/>
+        <result column="productImage" property="product.image"/>
+        <result column="productRate" property="product.rate"/>
+        <result column="productSales" property="product.sales"/>
+        <result column="productStoreId" property="product.storeId"/>
+    </resultMap>
+
+    <select id="findByStore" resultMap="storeResult" parameterType="long">
+        SELECT
+            star.*,
+            store.id AS storeId,
+            store.NAME AS storeName,
+            store.business_id AS storeBusinessId,
+            store.category_id AS storeCategoryId,
+            store.image AS storeImage,
+            store.rate AS storeRate,
+            store.sales AS storeSales
+        FROM
+            star
+            LEFT JOIN store ON star.sid = store.id
+        WHERE
+            star.uid = #{userId}
+            AND star.type = 0;
+    </select>
+
+    <select id="findByProduct" resultMap="productResult" parameterType="long">
+        SELECT
+            star.*,
+            product.id AS productId,
+            product.name AS productName,
+            product.price AS productPrice,
+            product.image AS productImage,
+            product.rate AS productRate,
+            product.sales AS productSales,
+            product.store_id AS productStoreId,
+            store.NAME AS storeName,
+            store.business_id AS StoreBusinessId,
+            store.id AS storeId
+        FROM
+            star
+            LEFT JOIN product ON star.pid = product.id
+            LEFT JOIN store ON product.store_id = store.id
+        WHERE
+            star.uid = #{userId}
+            AND star.type = 1;
+    </select>
+</mapper>

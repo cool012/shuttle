@@ -1,8 +1,10 @@
-package com.example.hope.service;
+package com.example.hope.service.business;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.BaseService;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Product;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.model.vo.ProductVO;
 import org.springframework.data.elasticsearch.core.SearchHits;
 
 import java.util.List;
@@ -22,17 +24,17 @@ public interface ProductService extends BaseService<Product> {
 
     boolean addSales(long id, int sales);
 
-    List<Product> rank(Map<String, String> option);
+    boolean exist(long id);
 
-    SearchHits<Product> search(String keyword, Map<String, String> option);
-
-    PageInfo<Product> page(Map<String, String> option);
+    List<ProductVO> rank(Map<String, String> option);
 
     List<Product> findByStoreId(long storeId);
 
-    PageInfo<Product> findByStoreId(long storeId, Map<String, String> option);
+    SearchHits<Product> search(String keyword, Map<String, String> option);
 
-    Product findById(long id);
+    IPage<ProductVO> page(Query query);
 
-    boolean exist(long id);
+    IPage<ProductVO> findByStoreId(long storeId, Query query);
+
+    ProductVO findById(long id);
 }

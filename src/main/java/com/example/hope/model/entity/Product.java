@@ -35,8 +35,5 @@ public class Product implements Serializable {
 
     private long storeId;
 
-    private Store store;
-
     private int quantity;
-
 }

@@ -1,6 +1,6 @@
 package com.example.hope.controller;
 
-import com.example.hope.service.PayService;
+import com.example.hope.service.other.PayService;
 import com.example.hope.service.serviceIpm.PayServiceImp;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

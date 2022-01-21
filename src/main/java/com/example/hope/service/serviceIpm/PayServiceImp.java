@@ -7,8 +7,8 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.alipay.AlipayConfig;
-import com.example.hope.service.PayService;
-import com.example.hope.service.UserService;
+import com.example.hope.service.other.PayService;
+import com.example.hope.service.business.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

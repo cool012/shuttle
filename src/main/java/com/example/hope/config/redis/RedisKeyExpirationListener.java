@@ -1,6 +1,6 @@
 package com.example.hope.config.redis;
 
-import com.example.hope.service.AdsService;
+import com.example.hope.service.business.AdsService;
 import com.example.hope.service.serviceIpm.OrderServiceIpm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

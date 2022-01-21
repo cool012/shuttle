@@ -1,37 +1,19 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.hope.common.provider.ProductProvider;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.example.hope.model.entity.Product;
+import com.example.hope.model.vo.ProductVO;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @Mapper
 public interface ProductMapper extends BaseMapper<Product> {
 
-    @Insert("insert into product(name,price,image,quantity,rate,storeId) values(#{name},#{price},#{image},#{quantity},#{rate},#{storeId})")
-    int insert(Product product);
+    IPage<ProductVO> selectByPage(IPage<ProductVO> page, @Param(Constants.WRAPPER) Wrapper<Product> wrapper);
 
-    @Delete("delete from product where ${key} = #{id}")
-    int delete(long id, String key);
-
-    @Update("update product set name = #{name},price = #{price},image = #{image},rate = #{rate},storeId = #{storeId}, sales = #{sales} where id = #{id}")
-    int update(Product product);
-
-    @SelectProvider(type = ProductProvider.class, method = "selectByKey")
-    @Results(value = {
-            @Result(column = "storeName", property = "store.name"),
-            @Result(column = "serviceId", property = "store.serviceId")
-
-    })
-    List<Product> select(@Param("id") String storeId, @Param("key") String key);
-
-    @Update("update product set sales = sales + #{quantity} where id = #{id}")
-    int addSales(long id, int quantity);
-
-    @Update("update product set rate = (rate * sales + #{rate}) / (sales + 1) where id = #{id}")
-    int review(long id, float rate);
+    ProductVO detail(@Param("id") Long id);
 }

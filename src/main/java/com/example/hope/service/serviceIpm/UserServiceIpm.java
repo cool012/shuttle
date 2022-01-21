@@ -4,19 +4,19 @@ import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.*;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.UserMapper;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.UserRepository;
-import com.example.hope.service.CommentsService;
-import com.example.hope.service.MailService;
-import com.example.hope.service.UserService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.service.business.CommentsService;
+import com.example.hope.service.other.MailService;
+import com.example.hope.service.business.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -231,12 +231,10 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @return 用户列表
      */
     @Override
-    @Cacheable(value = "user", key = "methodName + #option.toString()")
-    public PageInfo<User> findAll(Map<String, String> option) {
-        Utils.checkOption(option, User.class);
-        String orderBy = String.format("%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(this.list());
+    @Cacheable(value = "user", key = "methodName + #query.toString()")
+    public IPage<User> findAll(Query query) {
+        IPage<User> userPage = PageUtils.getQuery(query);
+        return this.page(userPage);
     }
 
 
@@ -260,7 +258,7 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      * @return 用户列表
      */
     @Override
-    public SearchHits search(String keyword, Map<String, String> option) {
+    public SearchHits<User> search(String keyword, Map<String, String> option) {
         // todo 字母模糊搜索
         QueryBuilder queryBuilder = QueryBuilders
                 .boolQuery()

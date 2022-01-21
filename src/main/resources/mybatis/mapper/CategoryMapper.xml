@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.hope.model.mapper.CategoryMapper">
+
+    <resultMap id="result" type="com.example.hope.model.vo.CategoryVO">
+        <result column="businessName" property="business.name"/>
+        <result column="businessColor" property="business.color"/>
+        <result column="businessIcon" property="business.icon"/>
+    </resultMap>
+
+    <sql id="select">
+        SELECT
+            category.*,
+            business.name AS businessName,
+            business.color AS businessColor,
+            business.icon AS businessIcon
+        FROM
+            category
+            LEFT JOIN business ON category.business_Id = business.id
+    </sql>
+
+    <select id="selectByPage" resultMap="result">
+        <include refid="select"/>
+    </select>
+
+    <select id="detail" resultMap="result" parameterType="long">
+        <include refid="select"/>
+        WHERE
+        category.id = #{id}
+    </select>
+
+    <select id="selectByList" resultMap="result">
+        <include refid="select"/>
+        #{ew.customSqlSegment}
+    </select>
+</mapper>

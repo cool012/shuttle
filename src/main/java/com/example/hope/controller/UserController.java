@@ -5,10 +5,11 @@ import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.annotation.WebLog;
 import com.example.hope.common.utils.ReturnMessageUtil;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.User;
-import com.example.hope.service.PayService;
-import com.example.hope.service.UserService;
+import com.example.hope.service.other.PayService;
+import com.example.hope.service.business.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -52,8 +53,7 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @WebLog(description = "'用户 ' + #user.name + ' 注册成功'")
     public ReturnMessage<Object> register(User user) {
-        userService.register(user);
-        return ReturnMessageUtil.success();
+        return ReturnMessageUtil.status(userService.register(user));
     }
 
     @LoginUser
@@ -61,8 +61,7 @@ public class UserController {
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     @WebLog(description = "'用户 ' + #id + ' 重置密码成功'")
     public ReturnMessage<Object> resetPassword(long id, String password, HttpServletRequest request) {
-        userService.updatePassword(id, password, request.getHeader("Authorization"));
-        return ReturnMessageUtil.success();
+        return ReturnMessageUtil.status(userService.updatePassword(id, password, request.getHeader("Authorization")));
     }
 
     @Admin
@@ -93,8 +92,8 @@ public class UserController {
     @Admin
     @ApiOperation("查询全部用户")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.success(userService.findAll(option));
+    public ReturnMessage<Object> findAll(Query query) {
+        return ReturnMessageUtil.success(userService.findAll(query));
     }
 
     @Admin

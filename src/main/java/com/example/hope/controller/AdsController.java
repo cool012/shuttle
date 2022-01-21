@@ -5,7 +5,7 @@ import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.Ads;
 import com.example.hope.model.entity.ReturnMessage;
-import com.example.hope.service.AdsService;
+import com.example.hope.service.business.AdsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

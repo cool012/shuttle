@@ -1,20 +1,24 @@
 package com.example.hope.service.serviceIpm;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.JwtUtils;
+import com.example.hope.common.utils.PageUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.mapper.ProductMapper;
+import com.example.hope.model.vo.ProductVO;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.ProductRepository;
-import com.example.hope.service.OrderService;
-import com.example.hope.service.ProductService;
-import com.example.hope.service.StoreService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.service.business.OrderService;
+import com.example.hope.service.business.ProductService;
+import com.example.hope.service.business.StoreService;
 import lombok.extern.log4j.Log4j2;
 
 import org.elasticsearch.index.query.QueryBuilders;
@@ -86,7 +90,7 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public boolean delete(long id) {
-        orderService.deleteByPid(id);
+        BusinessException.check(orderService.deleteByPid(id), "删除订单失败");
         productRepository.deleteById(id);
         return this.removeById(id);
     }
@@ -100,11 +104,11 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
     @Transactional
     @CacheEvict(value = "product", allEntries = true)
     public boolean deleteByStoreId(long storeId) {
-        // todo 返回布尔值
+        boolean state = false;
         for (Product product : findByStoreId(storeId)) {
-            orderService.deleteByPid(product.getId());
+            state = orderService.deleteByPid(product.getId());
         }
-        return this.remove(this.getQueryWrapper(Product::getStoreId, storeId));
+        return this.remove(this.getQueryWrapper(Product::getStoreId, storeId)) && state;
     }
 
     /**
@@ -149,12 +153,10 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
      * @return 分页包装类
      */
     @Override
-    @Cacheable(value = "product", key = "methodName + #option.toString()")
-    public PageInfo<Product> page(Map<String, String> option) {
-        Utils.checkOption(option, Product.class);
-        String orderBy = String.format("product.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(getList());
+    @Cacheable(value = "product", key = "methodName + #query.toString()")
+    public IPage<ProductVO> page(Query query) {
+        IPage<ProductVO> page = PageUtils.getQuery(query);
+        return this.baseMapper.selectByPage(page, new QueryWrapper<>());
     }
 
     /**
@@ -186,12 +188,12 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
      * @return 产品列表
      */
     @Override
-    @Cacheable(value = "product", key = "methodName + #storeId + #option.toString()")
-    public PageInfo<Product> findByStoreId(long storeId, Map<String, String> option) {
-        Utils.checkOption(option, Product.class);
-        String orderBy = String.format("product.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(findByStoreId(storeId));
+    @Cacheable(value = "product", key = "methodName + #storeId + #query.toString()")
+    public IPage<ProductVO> findByStoreId(long storeId, Query query) {
+        IPage<ProductVO> page = PageUtils.getQuery(query);
+        Wrapper<Product> wrapper = new QueryWrapper<Product>()
+                .eq("a.store_id", storeId);
+        return this.baseMapper.selectByPage(page, wrapper);
     }
 
     /**
@@ -202,8 +204,8 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
      */
     @Override
     @Cacheable(value = "product", key = "methodName + #id")
-    public Product findById(long id) {
-        return this.getById(id);
+    public ProductVO findById(long id) {
+        return this.baseMapper.detail(id);
     }
 
     /**
@@ -212,7 +214,7 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
      * @return 产品列表
      */
     @Override
-    public List<Product> rank(Map<String, String> option) {
+    public List<ProductVO> rank(Map<String, String> option) {
         Utils.checkQuantity(option);
         int quantity = Integer.parseInt(option.get("quantity"));
         Set<String> rank = redisService.range("product_rank", 0, (quantity - 1));
@@ -225,7 +227,7 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
             }
             rank = redisService.range("product_rank", 0, (quantity - 1));
         }
-        List<Product> products = new ArrayList<>();
+        List<ProductVO> products = new ArrayList<>();
         for (String id : rank) {
             products.add(findById(Long.parseLong(id)));
         }
@@ -240,7 +242,7 @@ public class ProductServiceIpm extends BaseServiceImp<Product, ProductMapper> im
      * @return 分页包装类
      */
     @Override
-    public SearchHits search(String keywords, Map<String, String> option) {
+    public SearchHits<Product> search(String keywords, Map<String, String> option) {
         return esPageHelper.build(QueryBuilders.matchQuery("name", keywords), option, Product.class);
     }
 

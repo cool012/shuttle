@@ -6,7 +6,7 @@ import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.Store;
-import com.example.hope.service.StoreService;
+import com.example.hope.service.business.StoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -98,7 +98,6 @@ public class StoreController {
     @ApiOperation("评分")
     @RequestMapping(value = "/review", method = RequestMethod.POST)
     public ReturnMessage<Object> review(long id, float rate, HttpServletRequest request) {
-        storeService.review(id, rate, request.getHeader("Authorization"));
-        return ReturnMessageUtil.success();
+        return ReturnMessageUtil.status(storeService.review(id, rate, request.getHeader("Authorization")));
     }
 }

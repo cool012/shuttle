@@ -1,21 +1,8 @@
 package com.example.hope.config.elasticsearch;
 
-import com.example.hope.model.entity.Product;
-import com.example.hope.model.entity.Store;
-import com.example.hope.model.entity.User;
-import com.example.hope.repository.elasticsearch.ProductRepository;
-import com.example.hope.repository.elasticsearch.StoreRepository;
-import com.example.hope.repository.elasticsearch.UserRepository;
-import com.example.hope.service.ProductService;
-import com.example.hope.service.StoreService;
-import com.example.hope.service.UserService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @description: 启动初始化es数据

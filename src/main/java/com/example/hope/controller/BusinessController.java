@@ -3,19 +3,17 @@ package com.example.hope.controller;
 import com.example.hope.annotation.Admin;
 import com.example.hope.annotation.LoginUser;
 import com.example.hope.common.utils.ReturnMessageUtil;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.ReturnMessage;
 import com.example.hope.model.entity.Business;
-import com.example.hope.service.BusinessService;
+import com.example.hope.service.business.BusinessService;
 import com.example.hope.service.serviceIpm.BusinessServiceIpm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 
 @RestController
@@ -57,8 +55,8 @@ public class BusinessController {
     @LoginUser
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
-    public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
-        return ReturnMessageUtil.success(businessService.page(option));
+    public ReturnMessage<Object> findAll(Query query) {
+        return ReturnMessageUtil.success(businessService.selectByPage(query));
     }
 
     @LoginUser

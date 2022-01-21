@@ -1,4 +1,4 @@
-package com.example.hope.service;
+package com.example.hope.service.business;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.BaseService;

@@ -1,13 +1,13 @@
 package com.example.hope.service.serviceIpm;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.imp.BaseServiceImp;
-import com.example.hope.common.utils.Utils;
+import com.example.hope.common.utils.PageUtils;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Business;
 import com.example.hope.model.mapper.BusinessMapper;
-import com.example.hope.service.CategoryService;
-import com.example.hope.service.BusinessService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.service.business.CategoryService;
+import com.example.hope.service.business.BusinessService;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @Service
@@ -47,9 +46,7 @@ public class BusinessServiceIpm extends BaseServiceImp<Business, BusinessMapper>
     @Transactional
     @CacheEvict(value = "service", allEntries = true)
     public boolean delete(Long id) {
-        // todo 删除成功判断
-        categoryService.deleteByServiceId(id);
-        return this.removeById(id);
+        return this.removeById(id) && categoryService.deleteByServiceId(id);
     }
 
     /**
@@ -70,12 +67,10 @@ public class BusinessServiceIpm extends BaseServiceImp<Business, BusinessMapper>
      * @return 分页包装类
      */
     @Override
-    @Cacheable(value = "service", key = "methodName + #option.toString()")
-    public PageInfo<Business> page(Map<String, String> option) {
-        Utils.checkOption(option, Business.class);
-        String orderBy = String.format("%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(this.list());
+    @Cacheable(value = "service", key = "methodName + #query.toString()")
+    public IPage<Business> selectByPage(Query query) {
+        IPage<Business> businessPage = PageUtils.getQuery(query);
+        return this.page(businessPage);
     }
 
     /**

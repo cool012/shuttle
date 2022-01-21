@@ -1,4 +1,4 @@
-package com.example.hope.service;
+package com.example.hope.service.business;
 
 import com.example.hope.base.service.BaseService;
 import com.example.hope.model.entity.Ads;

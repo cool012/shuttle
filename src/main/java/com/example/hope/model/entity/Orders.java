@@ -36,16 +36,4 @@ public class Orders implements Serializable {
     private String file;
 
     private int status;
-
-    private User client;
-
-    private User service;
-
-    private Product product;
-
-    private String storeName;
-
-    private long businessId;
-
-    private long storeId;
 }

@@ -1,11 +1,11 @@
-package com.example.hope.service;
+package com.example.hope.service.business;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.BaseService;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Business;
-import com.github.pagehelper.PageInfo;
 
 import java.util.List;
-import java.util.Map;
 
 public interface BusinessService extends BaseService<Business> {
 
@@ -15,11 +15,11 @@ public interface BusinessService extends BaseService<Business> {
 
     boolean update(Business business);
 
-    PageInfo<Business> page(Map<String, String> option);
+    boolean exist(long id);
 
     Business get(long id);
 
-    boolean exist(long id);
+    IPage<Business> selectByPage(Query query);
 
     List<Business> getList();
 }

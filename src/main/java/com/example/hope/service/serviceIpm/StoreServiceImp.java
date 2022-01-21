@@ -15,10 +15,11 @@ import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
+import com.example.hope.model.vo.OrdersVO;
 import com.example.hope.model.vo.StoreVO;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.StoreRepository;
-import com.example.hope.service.*;
+import com.example.hope.service.business.*;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.cache.annotation.CacheEvict;
@@ -136,9 +137,9 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
     @CacheEvict(value = "store", allEntries = true)
     public boolean review(long id, float rate, String token) {
         long userId = JwtUtils.getUserId(token);
-        List<Orders> list = orderService.findByCid(userId);
+        List<OrdersVO> list = orderService.findByCid(userId);
         boolean status = false;
-        for (Orders orders : list) {
+        for (OrdersVO orders : list) {
             if (orders.getStoreId() == id) {
                 status = true;
                 break;

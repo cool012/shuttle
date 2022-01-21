@@ -4,7 +4,7 @@ import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.config.redis.RedisService;
 import com.example.hope.model.entity.Ads;
 import com.example.hope.model.mapper.AdsMapper;
-import com.example.hope.service.AdsService;
+import com.example.hope.service.business.AdsService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

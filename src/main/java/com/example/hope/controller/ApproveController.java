@@ -6,7 +6,7 @@ import com.example.hope.common.utils.ReturnMessageUtil;
 import com.example.hope.model.entity.ApproveProduct;
 import com.example.hope.model.entity.ApproveStore;
 import com.example.hope.model.entity.ReturnMessage;
-import com.example.hope.service.ApproveService;
+import com.example.hope.service.business.ApproveService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.example.hope.service;
+package com.example.hope.service.other;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

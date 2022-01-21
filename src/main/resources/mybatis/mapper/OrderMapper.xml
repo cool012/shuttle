@@ -1,30 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.hope.model.mapper.OrderMapper">
-    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        insert into orders(cid,pid,sid,date,address,note,file,status)
-        values
-        <foreach collection="list" item="order" separator=",">
-            (#{order.cid},#{order.pid},1,#{order.date},#{order.address},#{order.note},#{order.file},#{order.status})
-        </foreach>
-    </insert>
-    <delete id="deleteBatch" parameterType="java.util.List">
-        delete from orders
-        where id in
-        <foreach collection="list" item="order" separator="," open="(" close=")">
-            #{order.id}
-        </foreach>
-    </delete>
-    <resultMap id="orderList" type="com.example.hope.model.entity.Orders">
-        <id column="id" property="id"/>
-        <result column="cid" property="cid"/>
-        <result column="sid" property="sid"/>
-        <result column="pid" property="pid"/>
-        <result column="date" property="date"/>
-        <result column="address" property="address"/>
-        <result column="note" property="note"/>
-        <result column="file" property="file"/>
-        <result column="status" property="status"/>
+
+    <resultMap id="result" type="com.example.hope.model.vo.OrdersVO">
         <result column="clientName" property="client.name"/>
         <result column="clientPhone" property="client.phone"/>
         <result column="clientAddress" property="client.address"/>
@@ -38,79 +16,46 @@
         <result column="productSales" property="product.sales"/>
     </resultMap>
 
-    <select id="searchByCid" resultMap="orderList">
-        select
+    <sql id="select">
+        SELECT
         orders.*,
-        client.name as clientName,
-        client.phone as clientPhone,
-        client.address as ClientAddress,
-        service.name as serviceName,
-        service.phone as servicePhone,
-        product.name as productName,
-        product.image as productImage,
-        product.price as productPrice,
-        round(product.rate,1) as productRate,
-        product.sales as productSales,
-        store.name as storeName,
-        store.serviceId as serviceId,
-        store.id as storeId
-        from orders,
-        user as client,
-        user as service,
-        product
-        left join
-        store
-        on
-        product.storeId = store.id
-        where
-        orders.cid = client.id and orders.sid = service.id and orders.pid = product.id and
-        orders.status = #{status} and orders.cid = #{userId}
-        <if test="start != null and end != null">
-            and orders.date between #{start} and #{end}
-        </if>
-        <if test="serverId != 0">
-            and orders.sid = #{serverId}
-        </if>
-        <if test="productId != 0">
-            and orders.pid = #{productId}
-        </if>
+        client.NAME AS clientName,
+        client.phone AS clientPhone,
+        client.address AS ClientAddress,
+        service.NAME AS serviceName,
+        service.phone AS servicePhone,
+        product.NAME AS productName,
+        product.image AS productImage,
+        product.price AS productPrice,
+        round( product.rate, 1 ) AS productRate,
+        product.sales AS productSales,
+        store.NAME AS storeName,
+        store.business_id AS businessId,
+        store.id AS storeId
+        FROM
+            orders,
+            USER AS client,
+            USER AS service,
+            product
+            LEFT JOIN store ON product.store_id = store.id
+        WHERE
+            orders.cid = client.id
+            AND orders.sid = service.id
+            AND orders.pid = product.id
+    </sql>
+
+    <select id="selectByPage" resultMap="result">
+        <include refid="select"/>
+        #{ew.customSqlSegment}
     </select>
 
-    <select id="searchByReceive" resultMap="orderList">
-        select
-        orders.*,
-        client.name as clientName,
-        client.phone as clientPhone,
-        client.address as ClientAddress,
-        service.name as serviceName,
-        service.phone as servicePhone,
-        product.name as productName,
-        product.image as productImage,
-        product.price as productPrice,
-        round(product.rate,1) as productRate,
-        product.sales as productSales,
-        store.name as storeName,
-        store.serviceId as serviceId,
-        store.id as storeId
-        from orders,
-        user as client,
-        user as service,
-        product
-        left join
-        store
-        on
-        product.storeId = store.id
-        where
-        orders.cid = client.id and orders.sid = service.id and orders.pid = product.id and
-        orders.status = -1
-        <if test="start != null and end != null">
-            and orders.date between #{start} and #{end}
-        </if>
-        <if test="serviceId != 0">
-            and store.serviceId = #{serviceId}
-        </if>
-        <if test="address != null">
-            and orders.address like CONCAT('%',#{address},'%')
-        </if>
+    <select id="selectByList" resultMap="result">
+        <include refid="select"/>
+        #{ew.customSqlSegment}
+    </select>
+
+    <select id="detail" resultMap="result" parameterType="long">
+        <include refid="select"/>
+        AND orders.id = #{id}
     </select>
 </mapper>

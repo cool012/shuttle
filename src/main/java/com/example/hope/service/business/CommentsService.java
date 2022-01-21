@@ -1,4 +1,4 @@
-package com.example.hope.service;
+package com.example.hope.service.business;
 
 import com.example.hope.model.entity.Comments;
 import com.example.hope.model.entity.Page;

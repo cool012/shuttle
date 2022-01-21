@@ -1,4 +1,4 @@
-package com.example.hope.service;
+package com.example.hope.service.other;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;

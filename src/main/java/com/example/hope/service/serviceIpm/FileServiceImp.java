@@ -1,7 +1,7 @@
 package com.example.hope.service.serviceIpm;
 
 import com.example.hope.config.exception.BusinessException;
-import com.example.hope.service.FileService;
+import com.example.hope.service.other.FileService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;

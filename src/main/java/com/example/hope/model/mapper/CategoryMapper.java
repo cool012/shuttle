@@ -1,8 +1,11 @@
 package com.example.hope.model.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.hope.common.provider.CategoryProvider;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.example.hope.model.entity.Category;
+import com.example.hope.model.vo.CategoryVO;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -12,20 +15,9 @@ import java.util.List;
 @Mapper
 public interface CategoryMapper extends BaseMapper<Category> {
 
-    @Insert("insert into category(name,serviceId) values(#{name},#{serviceId})")
-    int insert(Category category);
+    IPage<CategoryVO> selectByPage(IPage<Category> page);
 
-    @Delete("delete from category where ${key} = #{id}")
-    int delete(@Param("id") long id, @Param("key") String key);
+    List<CategoryVO> selectByList(@Param(Constants.WRAPPER) Wrapper<Category> wrapper);
 
-    @Update("update category set name = #{name},serviceId = #{serviceId} where id = #{id}")
-    int update(Category category);
-
-    @SelectProvider(type = CategoryProvider.class, method = "selectByKey")
-    @Results({
-            @Result(column = "serviceName", property = "services.name"),
-            @Result(column = "serviceColor", property = "services.color"),
-            @Result(column = "serviceIcon", property = "services.icon")
-    })
-    List<Category> select(@Param("id") String id, @Param("key") String key);
+    CategoryVO detail(@Param("id") Long id);
 }

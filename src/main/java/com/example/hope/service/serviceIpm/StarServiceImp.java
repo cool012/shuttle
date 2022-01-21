@@ -2,17 +2,19 @@ package com.example.hope.service.serviceIpm;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.JwtUtils;
-import com.example.hope.common.utils.Utils;
+import com.example.hope.common.utils.PageUtils;
 import com.example.hope.config.exception.BusinessException;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Star;
 import com.example.hope.model.mapper.StarMapper;
-import com.example.hope.service.ProductService;
-import com.example.hope.service.StarService;
-import com.example.hope.service.StoreService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.model.vo.StarVO;
+import com.example.hope.service.business.ProductService;
+import com.example.hope.service.business.StarService;
+import com.example.hope.service.business.StoreService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Map;
 
 /**
  * @description: 收藏服务实现类
@@ -83,12 +84,10 @@ public class StarServiceImp extends BaseServiceImp<Star, StarMapper> implements 
      */
     @Override
     @Transactional
-    @Cacheable(value = "star", key = "methodName + #option.toString()")
-    public PageInfo<Star> findByStore(String token, Map<String, String> option) {
-        Utils.checkOption(option, Star.class);
-        String orderBy = String.format("%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(starMapper.findByStore(JwtUtils.getUserId(token)));
+    @Cacheable(value = "star", key = "methodName + #query.toString()")
+    public IPage<StarVO> findByStore(String token, Query query) {
+        Page<Star> page = PageUtils.getQuery(query);
+        return starMapper.findByStore(page, JwtUtils.getUserId(token));
     }
 
     /**
@@ -99,12 +98,10 @@ public class StarServiceImp extends BaseServiceImp<Star, StarMapper> implements 
      */
     @Override
     @Transactional
-    @Cacheable(value = "star", key = "methodName + #option.toString()")
-    public PageInfo<Star> findByProduct(String token, Map<String, String> option) {
-        Utils.checkOption(option, Star.class);
-        String orderBy = String.format("%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(starMapper.findByProduct(JwtUtils.getUserId(token)));
+    @Cacheable(value = "star", key = "methodName + #query.toString()")
+    public IPage<StarVO> findByProduct(String token, Query query) {
+        Page<Star> page = PageUtils.getQuery(query);
+        return starMapper.findByProduct(page, JwtUtils.getUserId(token));
     }
 
     /**

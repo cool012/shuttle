@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.hope.model.mapper.ProductMapper">
+
+    <resultMap id="result" type="com.example.hope.model.vo.ProductVO">
+        <result property="store.name" column="storeName"/>
+        <result property="store.businessId" column="businessId"/>
+    </resultMap>
+
+    <sql id="select">
+        SELECT
+            a.*,
+            b.name as storeName,
+            b.business_id as businessId
+        FROM
+            product AS a
+        LEFT JOIN store AS b ON a.id = b.id
+    </sql>
+
+    <select id="selectByPage" resultMap="result">
+        <include refid="select"/>
+        #{ew.customSqlSegment}
+    </select>
+
+    <select id="detail" resultMap="result" parameterType="long">
+        <include refid="select"/>
+        WHERE
+        a.id = #{id}
+    </select>
+
+</mapper>

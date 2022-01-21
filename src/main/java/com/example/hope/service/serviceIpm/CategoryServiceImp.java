@@ -2,17 +2,19 @@ package com.example.hope.service.serviceIpm;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.imp.BaseServiceImp;
-import com.example.hope.common.utils.Utils;
+import com.example.hope.common.utils.PageUtils;
 import com.example.hope.config.exception.BusinessException;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Category;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.CategoryMapper;
-import com.example.hope.service.CategoryService;
-import com.example.hope.service.BusinessService;
-import com.example.hope.service.StoreService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.model.vo.CategoryVO;
+import com.example.hope.service.business.CategoryService;
+import com.example.hope.service.business.BusinessService;
+import com.example.hope.service.business.StoreService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -90,9 +91,9 @@ public class CategoryServiceImp extends BaseServiceImp<Category, CategoryMapper>
     @Override
     @Transactional
     @CacheEvict(value = "category", allEntries = true)
-    public boolean update(Category category) {
+    public boolean updateCategory(Category category) {
         BusinessException.check(!businessService.exist(category.getBusinessId()), "业务不存在");
-        return this.update(category);
+        return this.updateById(category);
     }
 
     /**
@@ -101,12 +102,10 @@ public class CategoryServiceImp extends BaseServiceImp<Category, CategoryMapper>
      * @return 类别列表
      */
     @Override
-    @Cacheable(value = "category", key = "methodName + #option.toString()")
-    public PageInfo<Category> page(Map<String, String> option) {
-        Utils.checkOption(option, Category.class);
-        String orderBy = String.format("category.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(this.list());
+    @Cacheable(value = "category", key = "methodName + #query.toString()")
+    public IPage<CategoryVO> page(Query query) {
+        IPage<Category> categoryPage = PageUtils.getQuery(query);
+        return this.baseMapper.selectByPage(categoryPage);
     }
 
     /**
@@ -117,8 +116,10 @@ public class CategoryServiceImp extends BaseServiceImp<Category, CategoryMapper>
      */
     @Override
     @Cacheable(value = "category", key = "methodName + #businessId")
-    public List<Category> findAllByServiceId(long businessId) {
-        return this.list(this.getQueryWrapper(Category::getBusinessId, businessId));
+    public List<CategoryVO> findAllByServiceId(long businessId) {
+        Wrapper<Category> wrapper = new QueryWrapper<Category>()
+                .eq("category.business_id", businessId);
+        return this.baseMapper.selectByList(wrapper);
     }
 
     /**
@@ -140,7 +141,7 @@ public class CategoryServiceImp extends BaseServiceImp<Category, CategoryMapper>
      */
     @Override
     @Cacheable(value = "category", key = "methodName + #id")
-    public Category detail(long id) {
-        return this.getById(id);
+    public CategoryVO detail(long id) {
+        return this.baseMapper.detail(id);
     }
 }

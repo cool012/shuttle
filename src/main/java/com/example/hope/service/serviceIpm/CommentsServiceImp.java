@@ -6,9 +6,10 @@ import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.Comments;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Page;
+import com.example.hope.model.vo.OrdersVO;
 import com.example.hope.repository.mongo.CommentsRepository;
-import com.example.hope.service.CommentsService;
-import com.example.hope.service.OrderService;
+import com.example.hope.service.business.CommentsService;
+import com.example.hope.service.business.OrderService;
 import lombok.extern.log4j.Log4j2;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -51,8 +52,8 @@ public class CommentsServiceImp implements CommentsService {
         long userId = JwtUtils.getUserId(token);
         comments.setUserId(userId);
         boolean status = false;
-        List<Orders> orders = orderService.findByCid(userId);
-        for (Orders order : orders) {
+        List<OrdersVO> orders = orderService.findByCid(userId);
+        for (OrdersVO order : orders) {
             if (order.getStoreId() == comments.getStoreId() && order.getStatus() == 1) {
                 commentsRepository.insert(comments);
                 status = true;

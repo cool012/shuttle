@@ -1,20 +1,23 @@
 package com.example.hope.service.serviceIpm;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.JwtUtils;
-import com.example.hope.common.utils.Utils;
+import com.example.hope.common.utils.PageUtils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
 import com.example.hope.enums.OrdersState;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Product;
 import com.example.hope.model.entity.User;
 import com.example.hope.model.mapper.OrderMapper;
-import com.example.hope.service.FileService;
-import com.example.hope.service.OrderService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.model.vo.OrdersVO;
+import com.example.hope.service.other.FileService;
+import com.example.hope.service.business.OrderService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -149,12 +151,14 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<Orders> page(Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(null, null, null));
+    @Cacheable(value = "order", key = "methodName + #query.toString()")
+    public IPage<OrdersVO> selectByPage(Query query) {
+        return this.pageByWrapper(query, new QueryWrapper<>());
+    }
+
+    private IPage<OrdersVO> pageByWrapper(Query query, Wrapper<Orders> wrapper) {
+        IPage<OrdersVO> page = PageUtils.getQuery(query);
+        return this.baseMapper.selectByPage(page, wrapper);
     }
 
     /**
@@ -165,12 +169,11 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #pid.toString() +  #option.toString()")
-    public PageInfo<Orders> findByPid(long pid, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(pid), "pid", null));
+    @Cacheable(value = "order", key = "methodName + #pid.toString() + #query.toString()")
+    public IPage<OrdersVO> findByPid(long pid, Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.pid", pid);
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -181,12 +184,11 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
-    public PageInfo<Orders> findByCid(long cid, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", null));
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #query.toString()")
+    public IPage<OrdersVO> findByCid(long cid, Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.cid", cid);
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -197,12 +199,12 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
-    public PageInfo<Orders> findByCidOrOrder(long cid, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", "-1"));
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #query.toString()")
+    public IPage<OrdersVO> findByCidOrOrder(long cid, Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.cid", cid)
+                .eq("orders.status", OrdersState.HAVE.getCode());
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -213,12 +215,12 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
-    public PageInfo<Orders> findByCidOrPresent(long cid, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", "0"));
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #query.toString()")
+    public IPage<OrdersVO> findByCidOrPresent(long cid, Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.cid", cid)
+                .eq("orders.status", OrdersState.SERVICING.getCode());
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -229,12 +231,12 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #cid.toString() + #option.toString()")
-    public PageInfo<Orders> findByCidOrCompleted(long cid, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(cid), "cid", "1"));
+    @Cacheable(value = "order", key = "methodName + #cid.toString() + #query.toString()")
+    public IPage<OrdersVO> findByCidOrCompleted(long cid, Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.cid", cid)
+                .eq("orders.status", OrdersState.COMPLETE.getCode());
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -245,8 +247,9 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #cid.toString() + 'override'")
-    public List<Orders> findByCid(long cid) {
-        return orderMapper.select(String.valueOf(cid), "cid", null);
+    public List<OrdersVO> findByCid(long cid) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>().eq("orders.cid", cid);
+        return orderMapper.selectByList(wrapper);
     }
 
     /**
@@ -257,12 +260,21 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #userId.toString() + #option.toString()")
-    public PageInfo<Orders> searchByCid(long userId, String start, String end, Long productId, Long serverId, int status, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.searchByCid(userId, start, end, productId, serverId, status));
+    @Cacheable(value = "order", key = "methodName + #userId.toString() + #query.toString()")
+    public IPage<OrdersVO> searchByCid(long userId, String start, String end, Long productId, Long businessId, int status, Query query) {
+        QueryWrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.status", status)
+                .eq("orders.cid", userId);
+        if (start != null && end != null) {
+            wrapper.between("orders.date", start, end);
+        }
+        if (businessId != 0) {
+            wrapper.eq("orders.sid", businessId);
+        }
+        if (productId != 0) {
+            wrapper.eq("orders.pid", productId);
+        }
+        return this.pageByWrapper(query, wrapper);
     }
 
 
@@ -274,12 +286,11 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #sid.toString() + #option.toString()")
-    public PageInfo<Orders> findBySidOrCompleted(long sid, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid", String.valueOf(1)));
+    @Cacheable(value = "order", key = "methodName + #sid.toString() + #query.toString()")
+    public IPage<OrdersVO> findBySidOrCompleted(long sid, Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.sid", sid);
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -290,12 +301,12 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #sid.toString() + #option.toString()")
-    public PageInfo<Orders> findBySidOrPresent(long sid, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select(String.valueOf(sid), "sid", String.valueOf(0)));
+    @Cacheable(value = "order", key = "methodName + #sid.toString() + #query.toString()")
+    public IPage<OrdersVO> findBySidOrPresent(long sid, Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.sid", sid)
+                .eq("orders.status", OrdersState.SERVICING.getCode());
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -306,10 +317,10 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      */
     @Override
     @Cacheable(value = "order", key = "methodName + #id.toString()")
-    public Orders findById(long id) {
-        List<Orders> orders = orderMapper.select(String.valueOf(id), "id", null);
-        if (orders.size() == 0) throw new BusinessException(0, "没有该订单");
-        return orders.get(0);
+    public OrdersVO findById(long id) {
+        OrdersVO orders = this.baseMapper.detail(id);
+        if (orders == null) throw new BusinessException(0, "没有该订单");
+        return orders;
     }
 
     /**
@@ -319,12 +330,11 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<Orders> findByReceive(Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select("-1", "status", null));
+    @Cacheable(value = "order", key = "methodName + #query.toString()")
+    public IPage<OrdersVO> findByReceive(Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .isNull("orders.status");
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -335,12 +345,20 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<Orders> searchByReceive(String start, String end, long serviceId, String address, Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.searchByReceive(start, end, serviceId, address));
+    @Cacheable(value = "order", key = "methodName + #query.toString()")
+    public IPage<OrdersVO> searchByReceive(String start, String end, long businessId, String address, Query query) {
+        QueryWrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.status", OrdersState.HAVE.getCode());
+        if (start != null && end != null) {
+            wrapper.between("orders.date", start, end);
+        }
+        if (businessId != 0) {
+            wrapper.eq("store.business_id", businessId);
+        }
+        if (address != null) {
+            wrapper.like("orders.address", address);
+        }
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -350,12 +368,11 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<Orders> findByCompleted(Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select("1", "status", null));
+    @Cacheable(value = "order", key = "methodName + #query.toString()")
+    public IPage<OrdersVO> findByCompleted(Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.status", OrdersState.SERVICING.getCode());
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -365,12 +382,11 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @return 分页包装数据
      */
     @Override
-    @Cacheable(value = "order", key = "methodName + #option.toString()")
-    public PageInfo<Orders> findByPresent(Map<String, String> option) {
-        Utils.checkOption(option, Orders.class);
-        String orderBy = String.format("orders.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(orderMapper.select("0", "status", null));
+    @Cacheable(value = "order", key = "methodName + #query.toString()")
+    public IPage<OrdersVO> findByPresent(Query query) {
+        Wrapper<Orders> wrapper = new QueryWrapper<Orders>()
+                .eq("orders.status", OrdersState.SERVICING.getCode());
+        return this.pageByWrapper(query, wrapper);
     }
 
     /**
@@ -385,11 +401,11 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
         Orders orders = findById(id);
         orders.setSid(userId);
         // 减少点数
-        userService.reduceScore(userId);
+        boolean status = userService.reduceScore(userId);
         redisService.del("order_" + id);
         // 下单1小时后自动更新为完成状态
         redisService.expire("completed_" + id, "expire", 1, TimeUnit.HOURS);
-        return this.updateById(orders);
+        return this.updateById(orders) && status;
     }
 
     /**
@@ -408,7 +424,7 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
         // 如果存在文件，完成订单时删除文件
         if (orders.getFile() != null && !orders.getFile().equals("")) fileService.remove(orders.getFile());
         // 增加产品销量
-        productService.addSales(orders.getPid(), 1);
+        BusinessException.check(productService.addSales(orders.getPid(), 1), "增加产品销量失败");
         orders.setStatus(OrdersState.COMPLETE.getCode());
         return this.updateById(orders);
     }
@@ -419,14 +435,14 @@ public class OrderServiceIpm extends BaseServiceImp<Orders, OrderMapper> impleme
      * @param orderId 订单id
      */
     @CacheEvict(value = "order", allEntries = true)
-    public boolean completed(long orderId) {
+    public void completed(long orderId) {
         Orders orders = findById(orderId);
         // 如果存在文件，完成订单时删除文件
         if (orders.getFile() != null) fileService.remove(orders.getFile());
         // 增加产品销量
         productService.addSales(orders.getPid(), 1);
         orders.setStatus(OrdersState.COMPLETE.getCode());
-        return this.updateById(orders);
+        this.updateById(orders);
     }
 
     /**

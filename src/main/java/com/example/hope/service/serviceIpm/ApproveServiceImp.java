@@ -6,6 +6,7 @@ import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.model.entity.*;
 import com.example.hope.model.mapper.ApproveMapper;
+import com.example.hope.model.vo.StoreVO;
 import com.example.hope.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -62,7 +63,7 @@ public class ApproveServiceImp implements ApproveService {
     @Transactional
     @CacheEvict(value = "approve", allEntries = true)
     public void insertProduct(ApproveProduct approveProduct, String token) {
-        if (storeService.findByName(approveProduct.getStoreName()).size() == 0) throw new BusinessException(1, "商店不存在");
+        if (storeService.findByName(approveProduct.getStoreName()) == null) throw new BusinessException(1, "商店不存在");
         if (JwtUtils.getUserId(token) != approveProduct.getUid()) throw new BusinessException(1, "只能当前用户才能提交产品审批");
         approveProduct.setStatus(false);
         int res = approveMapper.insertProduct(approveProduct);
@@ -110,9 +111,8 @@ public class ApproveServiceImp implements ApproveService {
         BusinessException.check(res, "操作失败");
         String content;
         if (allow) {
-            List<Store> stores = storeService.findByName(approveProduct.getName());
-            if (stores.size() == 0) throw new BusinessException(1, "商店不存在");
-            Store store = stores.get(0);
+            StoreVO store = storeService.findByName(approveProduct.getName());
+            if (store == null) throw new BusinessException(1, "商店不存在");
             Product product = new Product();
             product.setName(approveProduct.getName());
             product.setImage(approveProduct.getImage());

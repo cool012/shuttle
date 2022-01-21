@@ -1,12 +1,12 @@
-mybatis:
+mybatis-plus:
   type-aliases-package: com.example.hope.model
   mapper-locations: classpath:mybatis/mapper/*.xml
 spring:
-  rabbitmq:
-    host: ${mqHost}
-    port: 5672
-    username: ${mqUser}
-    password: ${mqPasswd}
+#  rabbitmq:
+#    host: ${mqHost}
+#    port: 5672
+#    username: ${mqUser}
+#    password: ${mqPasswd}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: ${dbPasswd}
@@ -73,13 +73,13 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB # 单个文件的最大值
-  elasticsearch:
-    rest:
-      uris: ${elasticsearchUrl}
-  data:
-    mongodb:
-      uri: mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/?authSource=admin
-      database: shuttle
+#  elasticsearch:
+#    rest:
+#      uris: ${elasticsearchUrl}
+#  data:
+#    mongodb:
+#      uri: mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/?authSource=admin
+#      database: shuttle
   mail:
     host: smtp.163.com #SMTP服务器地址
     username: touwaerioe #登陆账号
@@ -95,9 +95,11 @@ spring:
             port: 465
             class: javax.net.ssl.SSLSocketFactory
 
+#logging:
+#  config: classpath:log4j2.xml
 logging:
-  config: classpath:log4j2.xml
-
+  level:
+    com.baomidou.mybatisplus.samples.mysql: debug
 pagehelper:
   helperDialect: mysql
   params: count=countSql

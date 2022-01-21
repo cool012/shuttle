@@ -1,8 +1,10 @@
 package com.example.hope.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.hope.base.service.BaseService;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Store;
-import com.github.pagehelper.PageInfo;
+import com.example.hope.model.vo.StoreVO;
 import org.springframework.data.elasticsearch.core.SearchHits;
 
 import java.util.List;
@@ -18,25 +20,25 @@ public interface StoreService extends BaseService<Store> {
 
     boolean update(Store store);
 
-    List<Store> rank(Map<String, String> option);
-
     boolean sales(long id, int quantity);
-
-    SearchHits search(String keyword, Map<String, String> option);
-
-    PageInfo<Store> page(Map<String, String> option);
-
-    PageInfo<Store> findByServiceId(long serviceId, Map<String, String> option);
-
-    List<Store> findByCategoryId(long categoryId);
-
-    PageInfo<Store> findByCategoryId(long categoryId, Map<String, String> option);
-
-    Store detail(long id);
 
     boolean review(long id, float rate, String token);
 
     boolean exist(long id);
 
-    List<Store> findByName(String name);
+    IPage<StoreVO> page(Query query);
+
+    IPage<StoreVO> findByServiceId(long serviceId, Query query);
+
+    IPage<StoreVO>findByCategoryId(long categoryId, Query query);
+
+    List<Store> rank(Map<String, String> option);
+
+    List<Store> findByCategoryId(long categoryId);
+
+    StoreVO detail(long id);
+
+    StoreVO findByName(String name);
+
+    SearchHits<Store> search(String keyword, Map<String, String> option);
 }

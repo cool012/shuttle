@@ -24,6 +24,8 @@ public class ExceptionHandle {
             return ReturnMessageUtil.error(0, "数据已经存在");
         }
 
+
+        exception.printStackTrace();
         log.error(exception.getMessage());
 
         // 系统异常 code:-1

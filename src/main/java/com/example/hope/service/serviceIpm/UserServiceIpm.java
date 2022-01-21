@@ -104,7 +104,7 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
         String token = redisService.get(key);
         if (token == null) {
             token = JwtUtils.createToken(user, expired);
-            redisService.expire(key, token, expired, TimeUnit.HOURS);
+            redisService.expire(key, token, expired, TimeUnit.MINUTES);
         }
         map.put("token", token);
         map.put("user", user);
@@ -351,7 +351,7 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
         Date now = new Date();
         if (now.before(expiration)) {
             int diff = (int) (expiration.getTime() - now.getTime()) / 1000 % 60;
-            redisService.expire(claims.getId(), token, diff, TimeUnit.SECONDS);
+            redisService.expire("user_black_".concat(claims.get("userId").toString()), token, diff, TimeUnit.SECONDS);
         }
     }
 }

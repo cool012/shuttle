@@ -11,18 +11,18 @@ public class StoreProvider {
 
     private static final String SQL = "select " +
             "store.*," +
-            "service.name as serviceName," +
-            "service.color as serviceColor," +
+            "business.name as businessName," +
+            "business.color as businessColor," +
             "category.name as categoryName " +
             "from store " +
             "left join " +
-            "service " +
+            "business " +
             "on " +
-            "store.serviceId = service.id " +
+            "store.business_id = business.id " +
             "left join " +
             "category " +
             "on " +
-            "store.categoryId = category.id";
+            "store.category_id = category.id";
 
     public String selectByKey(Map<String, Object> para) {
         return Provider.selectByKey(para, SQL, "store");

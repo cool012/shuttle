@@ -39,8 +39,4 @@ public class Store implements Serializable {
     private float rate;
 
     private int sales;
-
-    private Business business;
-
-    private Category category;
 }

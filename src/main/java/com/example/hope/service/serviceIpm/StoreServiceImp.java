@@ -2,19 +2,23 @@ package com.example.hope.service.serviceIpm;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.hope.base.service.imp.BaseServiceImp;
 import com.example.hope.common.utils.JwtUtils;
+import com.example.hope.common.utils.PageUtils;
 import com.example.hope.common.utils.Utils;
 import com.example.hope.config.exception.BusinessException;
 import com.example.hope.config.redis.RedisService;
+import com.example.hope.model.bo.Query;
 import com.example.hope.model.entity.Orders;
 import com.example.hope.model.entity.Store;
 import com.example.hope.model.mapper.StoreMapper;
+import com.example.hope.model.vo.StoreVO;
 import com.example.hope.repository.elasticsearch.EsPageHelper;
 import com.example.hope.repository.elasticsearch.StoreRepository;
 import com.example.hope.service.*;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.cache.annotation.CacheEvict;
@@ -69,8 +73,8 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public boolean insert(Store store) {
-        if (!categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getBusinessId()))
-            throw new BusinessException(0, "类别或业务id不存在");
+        boolean status = !categoryService.exist(store.getCategoryId()) || !businessService.exist(store.getBusinessId());
+        BusinessException.check(status, "类别或业务id不存在");
         storeRepository.save(store);
         return this.save(store);
     }
@@ -112,13 +116,13 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
     @Transactional
     @CacheEvict(value = "store", allEntries = true)
     public boolean deleteByCategoryId(long categoryId) {
-        // todo 删除返回布尔
+        boolean state = false;
         for (Store store : findByCategoryId(categoryId)) {
-            productService.deleteByStoreId(store.getId());
+            state = productService.deleteByStoreId(store.getId());
         }
         Wrapper<Store> wrapper = new LambdaQueryWrapper<Store>()
                 .eq(Store::getCategoryId, categoryId);
-        return this.remove(wrapper);
+        return this.remove(wrapper) && state;
     }
 
     /**
@@ -168,12 +172,11 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
      * @return 分页包装类
      */
     @Override
-    @Cacheable(value = "store", key = "methodName + #option.toString()")
-    public PageInfo<Store> page(Map<String, String> option) {
-        Utils.checkOption(option, Store.class);
-        String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(this.getList());
+    @Cacheable(value = "store", key = "methodName + #query.toString()")
+    public IPage<StoreVO> page(Query query) {
+        Page<StoreVO> page = PageUtils.getQuery(query);
+        Wrapper<Store> wrapper = new QueryWrapper<>();
+        return this.baseMapper.selectByPage(page, wrapper);
     }
 
     /**
@@ -182,8 +185,8 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
      * @return List<Store>
      */
     @Cacheable(value = "store", key = "methodName")
-    public List<Store> getList() {
-        return this.list();
+    public List<StoreVO> getList() {
+        return this.baseMapper.findAll();
     }
 
     /**
@@ -193,14 +196,12 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
      * @return 商店列表
      */
     @Override
-    @Cacheable(value = "store", key = "methodName + #businessId + #option.toString()")
-    public PageInfo<Store> findByServiceId(long businessId, Map<String, String> option) {
-        Utils.checkOption(option, Store.class);
-        String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        Wrapper<Store> wrapper = new LambdaQueryWrapper<Store>()
-                .eq(Store::getBusiness, businessId);
-        return PageInfo.of(this.list(wrapper));
+    @Cacheable(value = "store", key = "methodName + #businessId + #query.toString()")
+    public IPage<StoreVO> findByServiceId(long businessId, Query query) {
+        Page<StoreVO> page = PageUtils.getQuery(query);
+        Wrapper<Store> wrapper = new QueryWrapper<Store>()
+                .eq("a.business_id", businessId);
+        return this.baseMapper.selectByPage(page, wrapper);
     }
 
     /**
@@ -222,12 +223,12 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
      * @return 商店列表
      */
     @Override
-    @Cacheable(value = "store", key = "methodName + #categoryId + #option.toString()")
-    public PageInfo<Store> findByCategoryId(long categoryId, Map<String, String> option) {
-        Utils.checkOption(option, Store.class);
-        String orderBy = String.format("store.%s %s", option.get("sort"), option.get("order"));
-        PageHelper.startPage(Integer.parseInt(option.get("pageNo")), Integer.parseInt(option.get("pageSize")), orderBy);
-        return PageInfo.of(this.findByCategoryId(categoryId));
+    @Cacheable(value = "store", key = "methodName + #categoryId + #query.toString()")
+    public IPage<StoreVO> findByCategoryId(long categoryId, Query query) {
+        IPage<StoreVO> page = PageUtils.getQuery(query);
+        Wrapper<Store> wrapper = new QueryWrapper<Store>()
+                .eq("category_id", categoryId);
+        return this.baseMapper.selectByPage(page, wrapper);
     }
 
     /**
@@ -238,8 +239,8 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #id")
-    public Store detail(long id) {
-        return this.getById(id);
+    public StoreVO detail(long id) {
+        return this.baseMapper.detail(id);
     }
 
     /**
@@ -255,7 +256,7 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
         Set<String> range = redisService.range("store_rank", 0, (quantity - 1));
         // 如果排行榜为空，将所有商店加入进去，分数为0
         if (range.size() == 0) {
-            List<Store> stores = getList();
+            List<StoreVO> stores = getList();
             for (Store store : stores) {
                 double score = Utils.changeRate(store.getRate(), store.getSales());
                 redisService.incrScore("store_rank", String.valueOf(store.getId()), score);
@@ -276,7 +277,7 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
      * @return 商店列表
      */
     @Override
-    public SearchHits search(String keyword, Map<String, String> option) {
+    public SearchHits<Store> search(String keyword, Map<String, String> option) {
         return esPageHelper.build(QueryBuilders.matchQuery("name", keyword), option, Store.class);
     }
 
@@ -295,11 +296,11 @@ public class StoreServiceImp extends BaseServiceImp<Store, StoreMapper> implemen
      * 根据名字查询商店
      *
      * @param name 名字
-     * @return 商店列表
+     * @return 查询结果
      */
     @Override
     @Cacheable(value = "store", key = "methodName + #name")
-    public List<Store> findByName(String name) {
+    public StoreVO findByName(String name) {
         return storeMapper.findByName(name);
     }
 }

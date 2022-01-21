@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.hope.model.mapper.StoreMapper">
+
+    <resultMap id="result" type="com.example.hope.model.vo.StoreVO">
+        <result property="business.name" column="businessName"/>
+        <result property="business.color" column="businessColor"/>
+        <result property="category.name" column="categoryName"/>
+    </resultMap>
+
+    <sql id="select">
+        SELECT
+            a.*,
+            b.name as businessName,
+            b.color as businessColor,
+            c.name as categoryName
+        FROM
+            store AS a
+            LEFT JOIN business AS b ON a.business_id = b.id
+            LEFT JOIN category AS c ON a.category_id = c.id
+    </sql>
+
+    <select id="findAll" resultMap="result">
+        <include refid="select"/>
+    </select>
+
+    <select id="findByName" resultMap="result" parameterType="string">
+        <include refid="select"/>
+        WHERE
+        a.name like CONCAT('%',#{name},'%')
+    </select>
+
+    <select id="selectByPage" resultMap="result">
+        <include refid="select"/>
+        #{ew.customSqlSegment}
+    </select>
+
+    <select id="detail" resultMap="result" parameterType="long">
+        <include refid="select"/>
+        WHERE
+        a.id = #{id}
+    </select>
+</mapper>

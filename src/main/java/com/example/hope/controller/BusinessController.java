@@ -30,20 +30,6 @@ public class BusinessController {
         this.businessService = serviceService;
     }
 
-    /**
-     * showdoc
-     * @catalog 服务
-     * @title 添加
-     * @description 添加服务的接口
-     * @method post
-     * @header Authorization 必选 String token
-     * @url /service/insert
-     * @param services.name 必选 string 服务名称
-     * @param services.icon 必选 string 服务图标
-     * @param services.color 必选 string 服务颜色
-     * @return {"code": 1,"message": "success","data": "null"}
-     * @remark 只允许管理员操作
-     */
     @Admin
     @ApiOperation("添加服务")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
@@ -52,18 +38,6 @@ public class BusinessController {
         return ReturnMessageUtil.success();
     }
 
-    /**
-     * showdoc
-     * @catalog 服务
-     * @title 删除
-     * @description 删除服务的接口
-     * @method delete
-     * @header Authorization 必选 String token
-     * @url /service/delete
-     * @param id 必选 long 服务id
-     * @return {"code": 1,"message": "success","data": "null"}
-     * @remark 只允许管理员操作
-     */
     @Admin
     @ApiOperation("删除服务")
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
@@ -72,20 +46,6 @@ public class BusinessController {
         return ReturnMessageUtil.success();
     }
 
-    /**
-     * showdoc
-     * @catalog 服务
-     * @title 修改
-     * @description 修改服务的接口
-     * @method post
-     * @header Authorization 必选 String token
-     * @url /service/update
-     * @param services.name 必选 string 服务名称
-     * @param services.icon 必选 string 服务图标
-     * @param services.color 必选 string 服务颜色
-     * @return {"code": 1,"message": "success","data": "null"}
-     * @remark 只允许管理员操作
-     */
     @Admin
     @ApiOperation("修改服务")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -94,28 +54,17 @@ public class BusinessController {
         return ReturnMessageUtil.success();
     }
 
-    /**
-     * showdoc
-     * @catalog 服务
-     * @title 查询全部
-     * @description 查询服务的接口
-     * @method post
-     * @header Authorization 必选 String token
-     * @url /service/findAll
-     * @param pageNo 可选 int 页数
-     * @param pageSize 可选 int 每页数据条数
-     * @param sort 可选 string 排序
-     * @param order 可选 string 顺序(ASC/DESC)
-     * @return {"code": 1,"message": "success","data": "services"}
-     * @return_param services.name string 服务名称
-     * @return_param services.icon string 服务图标
-     * @return_param services.color string 服务颜色
-     * @remark 只允许用户操作
-     */
     @LoginUser
     @ApiOperation("查询全部服务")
     @RequestMapping(value = "/findAll", method = RequestMethod.GET)
     public ReturnMessage<Object> findAll(@RequestParam Map<String, String> option) {
         return ReturnMessageUtil.success(businessService.page(option));
+    }
+
+    @LoginUser
+    @ApiOperation("查询全部服务(列表)")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ReturnMessage<Object> list() {
+        return ReturnMessageUtil.success(businessService.list());
     }
 }

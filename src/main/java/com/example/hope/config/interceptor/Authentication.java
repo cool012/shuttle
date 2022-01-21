@@ -38,7 +38,7 @@ public class Authentication implements HandlerInterceptor {
                 throw new BusinessException(0, "无token,请重新登陆");
             }
             Claims claims = JwtUtils.parseJWT(token);
-            return redisService.get(claims.getId()) == null;
+            return redisService.get("user_black_".concat(claims.get("userId").toString())) == null;
         }
         if (method.isAnnotationPresent(Admin.class)) {
             if (token == null) {

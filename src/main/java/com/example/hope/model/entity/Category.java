@@ -24,6 +24,4 @@ public class Category implements Serializable {
     private String name;
 
     private long businessId;
-
-    private Business business;
 }

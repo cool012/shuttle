@@ -46,12 +46,12 @@
 
     <select id="selectByPage" resultMap="result">
         <include refid="select"/>
-        #{ew.customSqlSegment}
+        ${ew.customSqlSegment}
     </select>
 
     <select id="selectByList" resultMap="result">
         <include refid="select"/>
-        #{ew.customSqlSegment}
+        ${ew.customSqlSegment}
     </select>
 
     <select id="detail" resultMap="result" parameterType="long">

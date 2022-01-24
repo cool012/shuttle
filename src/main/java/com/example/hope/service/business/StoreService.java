@@ -41,4 +41,5 @@ public interface StoreService extends BaseService<Store> {
     StoreVO findByName(String name);
 
     SearchHits<Store> search(String keyword, Map<String, String> option);
+
 }

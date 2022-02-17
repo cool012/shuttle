@@ -74,6 +74,14 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
         // 检查输入合法
         boolean isLegal = Validator.isEmail(user.getEmail());
         BusinessException.check(!isLegal, "邮件格式不正确");
+        // 判断用户已存在
+        Wrapper<User> wrapper = new LambdaQueryWrapper<User>()
+                .eq(User::getName, user.getName())
+                .or()
+                .eq(User::getEmail, user.getEmail());
+        if (this.getOne(wrapper, false) != null) {
+            throw new BusinessException(0, "用户已存在");
+        }
         // 用户密码加密
         user.setPassword(Utils.encode(user.getPassword()));
         userRepository.save(user);
@@ -311,14 +319,15 @@ public class UserServiceIpm extends BaseServiceImp<User, UserMapper> implements 
      *
      * @param token       token
      * @param newPassword 新密码
+     * @param boolean     是否修改成功
      */
     @Override
-    public void forget(String token, String newPassword) {
+    public boolean forget(String token, String newPassword) {
         long id = JwtUtils.getUserId(token);
         User User = findById(id);
         BusinessException.check(User == null, "用户不存在");
         this.tokenHandler(token);
-        resetPassword(id, newPassword);
+        return resetPassword(id, newPassword);
     }
 
     /**

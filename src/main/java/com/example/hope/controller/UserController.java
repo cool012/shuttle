@@ -145,7 +145,6 @@ public class UserController {
     @RequestMapping(value = "/forget", method = RequestMethod.POST)
     @WebLog(description = "用户忘记密码")
     public ReturnMessage<Object> forget(String token, String newPassword) {
-        userService.forget(token, newPassword);
-        return ReturnMessageUtil.success();
+        return ReturnMessageUtil.status(userService.forget(token, newPassword));
     }
 }

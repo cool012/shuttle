@@ -26,7 +26,7 @@ public interface UserService extends BaseService<User> {
 
     boolean exist(long userId);
 
-    void forget(String token, String newPassword);
+    boolean forget(String token, String newPassword);
 
     void sendEmail(String email);
 

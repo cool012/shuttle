@@ -147,7 +147,6 @@ public class ProductServiceIpm implements ProductService {
             log.info(LoggerHelper.logger(product, res));
             BusinessException.check(res, "更新评分失败");
         }else throw new BusinessException(0, "只允许下单此产品的用户对产品评分");
-
     }
 
     /**

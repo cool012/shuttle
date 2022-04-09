@@ -289,14 +289,12 @@ public class UserServiceIpm implements UserService {
      * 重置密码 -> 输入邮箱，点击发送邮件 -> 根据user加密生成token -> 邮箱发送成功，跳转到（前端）重置密码界面 ->
      * 用户获取邮箱中的token，提交新密码 -> 重置密码（输入新密码） -> /user/restPassword
      *
-     * @param password 新密码
+     * @param newPassword 新密码
      */
     @Override
     public void forget(String token, String newPassword) {
         // 检查token是否有效
         long id = JwtUtils.getUserId(token);
-
-        System.out.println(id);
         List<User> list = findById(id);
         BusinessException.check(list.size() != 0 ? 1 : 0, "用户不存在");
         resetPassword(id, newPassword);

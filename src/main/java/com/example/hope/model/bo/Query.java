@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @Description todo
+ * @Description 分页参数类
  * @Author duhongyu
  * @Data 2022/1/21 11:05
  **/

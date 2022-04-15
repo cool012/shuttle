@@ -112,7 +112,8 @@ public class UserServiceIpm implements UserService {
     @Transactional
     @CacheEvict(value = "user", allEntries = true)
     public void update(User user, String token) {
-        if (user.getId() != JwtUtils.getUserId(token)) throw new BusinessException(1, "只能修改当前用户的信息");
+        if (user.getId() != JwtUtils.getUserId(token) || !JwtUtils.is_admin(token))
+            throw new BusinessException(1, "只有管理员或当前用户才能修改");
         if (user.getName() != null) commentsService.updateByUserId(user.getId(), user.getName());
         int res = userMapper.update(user);
         log.info(LoggerHelper.logger(user, res));

@@ -95,9 +95,6 @@ spring:
             port: 465
             class: javax.net.ssl.SSLSocketFactory
 
-logging:
-  config: classpath:log4j2.xml
-
 pagehelper:
   helperDialect: mysql
   params: count=countSql

@@ -73,7 +73,7 @@ public class PayServiceImp implements PayService {
                 AlipayConfig.sign_type);
         String redirectUrl;
         if (this.redirectUrl.equals("")) redirectUrl = alipayConfig.redirect_url;
-        else redirectUrl = String.format("http://%s/result/", this.redirectUrl);
+        else redirectUrl = this.redirectUrl;
         if (!signVerified) return redirectUrl + "0";
         return redirectUrl + "1";
     }
